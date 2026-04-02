@@ -1,0 +1,537 @@
+========== GRUP 1: CONTROLLERS ========== 
+ 
+========== FILE: app\Http\Controllers\Web\AchievementController.php ========== 
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\Achievement;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+
+class AchievementController extends Controller
+{
+    public function index()
+    {
+        $achievements = Achievement::withCount('mahasiswas')->orderBy('nama')->get();
+        return view('admin.achievement.index', compact('achievements'));
+    }
+
+    public function create()
+    {
+        return view('admin.achievement.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:100',
+            'deskripsi' => 'nullable|string',
+            'icon' => 'nullable|string|max:255',
+            'syarat_type' => 'required|in:total_kg,streak,transaksi_count,first_time',
+            'syarat_value' => 'required|integer|min:0',
+            'poin_bonus' => 'required|integer|min:0',
+        ]);
+
+        $achievement = Achievement::create($validated);
+
+        $this->logActivity('Menambahkan achievement baru: ' . $achievement->nama, 'achievement');
+
+        return redirect()->route('admin.achievement.index')
+            ->with('success', 'Achievement berhasil ditambahkan.');
+    }
+
+    public function edit(Achievement $achievement)
+    {
+        return view('admin.achievement.edit', compact('achievement'));
+    }
+
+    public function update(Request $request, Achievement $achievement)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:100',
+            'deskripsi' => 'nullable|string',
+            'icon' => 'nullable|string|max:255',
+            'syarat_type' => 'required|in:total_kg,streak,transaksi_count,first_time',
+            'syarat_value' => 'required|integer|min:0',
+            'poin_bonus' => 'required|integer|min:0',
+        ]);
+
+        $achievement->update($validated);
+
+        $this->logActivity('Mengupdate achievement: ' . $achievement->nama, 'achievement');
+
+        return redirect()->route('admin.achievement.index')
+            ->with('success', 'Achievement berhasil diupdate.');
+    }
+
+    public function destroy(Achievement $achievement)
+    {
+        if ($achievement->mahasiswas()->count() > 0) {
+            return back()->with('error', 'Achievement tidak bisa dihapus karena sudah diraih oleh mahasiswa.');
+        }
+
+        $name = $achievement->nama;
+        $achievement->delete();
+
+        $this->logActivity('Menghapus achievement: ' . $name, 'achievement');
+
+        return redirect()->route('admin.achievement.index')
+            ->with('success', 'Achievement berhasil dihapus.');
+    }
+
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+ 
+========== FILE: app\Http\Controllers\Web\SettingPoinController.php ========== 
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\SettingPoin;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+
+class SettingPoinController extends Controller
+{
+    public function index()
+    {
+        $settings = SettingPoin::orderBy('nama_setting')->get();
+        return view('admin.setting-poin.index', compact('settings'));
+    }
+
+    public function edit(SettingPoin $settingPoin)
+    {
+        return view('admin.setting-poin.edit', compact('settingPoin'));
+    }
+
+    public function update(Request $request, SettingPoin $settingPoin)
+    {
+        $validated = $request->validate([
+            'value' => 'required|integer|min:0',
+            'deskripsi' => 'nullable|string',
+        ]);
+
+        $oldValue = $settingPoin->value;
+        $settingPoin->update($validated);
+
+        $this->logActivity(
+            "Mengubah setting '{$settingPoin->nama_setting}' dari {$oldValue} ke {$validated['value']}",
+            'setting_poin'
+        );
+
+        return redirect()->route('admin.setting-poin.index')
+            ->with('success', 'Setting poin berhasil diupdate.');
+    }
+
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+ 
+========== FILE: app\Http\Controllers\Web\MahasiswaController.php ========== 
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\Mahasiswa;
+use App\Models\Level;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
+class MahasiswaController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Mahasiswa::with('level');
+
+        // Filter by level
+        if ($request->filled('level_id')) {
+            $query->where('level_id', $request->level_id);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('nim', 'like', "%{$search}%")
+                  ->orWhere('rfid_uid', 'like', "%{$search}%");
+            });
+        }
+
+        // Sort
+        $sortBy = $request->get('sort', 'created_at');
+        $sortDir = $request->get('dir', 'desc');
+        $query->orderBy($sortBy, $sortDir);
+
+        $mahasiswas = $query->paginate(15);
+        $levels = Level::orderBy('urutan')->get();
+
+        return view('admin.mahasiswa.index', compact('mahasiswas', 'levels'));
+    }
+
+    public function show(Mahasiswa $mahasiswa)
+    {
+        $mahasiswa->load([
+            'level',
+            'achievements',
+            'leaderboard',
+            'transaksiSampah' => function ($q) {
+                $q->with(['jenisSampah', 'bakSampah'])
+                  ->orderBy('tanggal_transaksi', 'desc')
+                  ->limit(20);
+            },
+        ]);
+
+        return view('admin.mahasiswa.show', compact('mahasiswa'));
+    }
+
+    public function edit(Mahasiswa $mahasiswa)
+    {
+        $levels = Level::orderBy('urutan')->get();
+        return view('admin.mahasiswa.edit', compact('mahasiswa', 'levels'));
+    }
+
+    public function update(Request $request, Mahasiswa $mahasiswa)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'nim' => 'nullable|string|max:20',
+            'prodi' => 'nullable|string|max:30',
+            'rfid_uid' => ['nullable', 'string', 'max:20', Rule::unique('mahasiswa')->ignore($mahasiswa->id)],
+            'total_poin' => 'required|integer|min:0',
+            'level_id' => 'required|exists:level,id',
+        ]);
+
+        $mahasiswa->update($validated);
+
+        $this->logActivity('Mengupdate data mahasiswa: ' . $mahasiswa->name, 'mahasiswa');
+
+        return redirect()->route('admin.mahasiswa.index')
+            ->with('success', 'Data mahasiswa berhasil diupdate.');
+    }
+
+    public function destroy(Mahasiswa $mahasiswa)
+    {
+        $name = $mahasiswa->name;
+        $mahasiswa->delete();
+
+        $this->logActivity('Menghapus mahasiswa: ' . $name, 'mahasiswa');
+
+        return redirect()->route('admin.mahasiswa.index')
+            ->with('success', 'Mahasiswa berhasil dihapus.');
+    }
+
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+ 
+========== FILE: app\Http\Controllers\Web\TransaksiController.php ========== 
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\TransaksiSampah;
+use App\Models\Mahasiswa;
+use App\Models\JenisSampah;
+use App\Models\BakSampah;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+
+class TransaksiController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = TransaksiSampah::with(['mahasiswa', 'jenisSampah', 'bakSampah']);
+
+        // Filter tanggal
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('tanggal_transaksi', '>=', $request->tanggal_dari);
+        }
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal_transaksi', '<=', $request->tanggal_sampai);
+        }
+
+        // Filter jenis sampah
+        if ($request->filled('jenis_sampah_id')) {
+            $query->where('jenis_sampah_id', $request->jenis_sampah_id);
+        }
+
+        // Filter bak sampah
+        if ($request->filled('bak_sampah_id')) {
+            $query->where('bak_sampah_id', $request->bak_sampah_id);
+        }
+
+        // Filter mahasiswa
+        if ($request->filled('mahasiswa_id')) {
+            $query->where('mahasiswa_id', $request->mahasiswa_id);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('mahasiswa', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('nim', 'like', "%{$search}%");
+            });
+        }
+
+        $transaksis = $query->orderBy('tanggal_transaksi', 'desc')->paginate(20);
+
+        // Data untuk filter
+        $jenisSampahs = JenisSampah::where('is_active', 1)->orderBy('nama')->get();
+        $bakSampahs = BakSampah::orderBy('nama')->get();
+
+        // Summary
+        $summary = [
+            'total_transaksi' => $query->count(),
+            'total_berat' => $query->sum('berat'),
+            'total_poin' => $query->sum('poin_didapat'),
+        ];
+
+        return view('admin.transaksi.index', compact(
+            'transaksis',
+            'jenisSampahs',
+            'bakSampahs',
+            'summary'
+        ));
+    }
+
+    public function show(TransaksiSampah $transaksi)
+    {
+        $transaksi->load(['mahasiswa.level', 'jenisSampah', 'bakSampah.lokasi']);
+        return view('admin.transaksi.show', compact('transaksi'));
+    }
+}
+ 
+========== FILE: app\Http\Controllers\Web\LaporanController.php ========== 
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\TransaksiSampah;
+use App\Models\Mahasiswa;
+use App\Models\JenisSampah;
+use App\Models\BakSampah;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Carbon\Carbon;
+use Barryvdh\DomPDF\Facade\Pdf;
+
+class LaporanController extends Controller
+{
+    /**
+     * Laporan Transaksi
+     */
+    public function transaksi(Request $request)
+    {
+        $tanggalDari = $request->get('tanggal_dari', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $tanggalSampai = $request->get('tanggal_sampai', Carbon::now()->format('Y-m-d'));
+
+        $query = TransaksiSampah::with(['mahasiswa', 'jenisSampah', 'bakSampah'])
+            ->whereDate('tanggal_transaksi', '>=', $tanggalDari)
+            ->whereDate('tanggal_transaksi', '<=', $tanggalSampai);
+
+        // Summary
+        $summary = [
+            'total_transaksi' => (clone $query)->count(),
+            'total_berat' => (clone $query)->sum('berat'),
+            'total_poin' => (clone $query)->sum('poin_didapat'),
+            'mahasiswa_aktif' => (clone $query)->distinct('mahasiswa_id')->count('mahasiswa_id'),
+        ];
+
+        // Per Jenis Sampah
+        $perJenisSampah = TransaksiSampah::select(
+                'jenis_sampah_id',
+                DB::raw('SUM(berat) as total_berat'),
+                DB::raw('SUM(poin_didapat) as total_poin'),
+                DB::raw('COUNT(*) as total_transaksi')
+            )
+            ->whereDate('tanggal_transaksi', '>=', $tanggalDari)
+            ->whereDate('tanggal_transaksi', '<=', $tanggalSampai)
+            ->groupBy('jenis_sampah_id')
+            ->with('jenisSampah')
+            ->get();
+
+        // Per Hari (untuk chart)
+        $perHari = TransaksiSampah::select(
+                DB::raw('DATE(tanggal_transaksi) as tanggal'),
+                DB::raw('SUM(berat) as total_berat'),
+                DB::raw('COUNT(*) as total_transaksi')
+            )
+            ->whereDate('tanggal_transaksi', '>=', $tanggalDari)
+            ->whereDate('tanggal_transaksi', '<=', $tanggalSampai)
+            ->groupBy('tanggal')
+            ->orderBy('tanggal')
+            ->get();
+
+        // Detail transaksi
+        $transaksis = $query->orderBy('tanggal_transaksi', 'desc')->get();
+
+        return view('admin.laporan.transaksi', compact(
+            'tanggalDari',
+            'tanggalSampai',
+            'summary',
+            'perJenisSampah',
+            'perHari',
+            'transaksis'
+        ));
+    }
+
+    /**
+     * Export PDF Laporan Transaksi
+     */
+    public function transaksiPdf(Request $request)
+    {
+        $tanggalDari = $request->get('tanggal_dari', Carbon::now()->startOfMonth()->format('Y-m-d'));
+        $tanggalSampai = $request->get('tanggal_sampai', Carbon::now()->format('Y-m-d'));
+
+        $transaksis = TransaksiSampah::with(['mahasiswa', 'jenisSampah', 'bakSampah'])
+            ->whereDate('tanggal_transaksi', '>=', $tanggalDari)
+            ->whereDate('tanggal_transaksi', '<=', $tanggalSampai)
+            ->orderBy('tanggal_transaksi', 'desc')
+            ->get();
+
+        $summary = [
+            'total_transaksi' => $transaksis->count(),
+            'total_berat' => $transaksis->sum('berat'),
+            'total_poin' => $transaksis->sum('poin_didapat'),
+        ];
+
+        $pdf = Pdf::loadView('admin.laporan.transaksi-pdf', compact(
+            'tanggalDari',
+            'tanggalSampai',
+            'transaksis',
+            'summary'
+        ));
+
+        $filename = "laporan-transaksi-{$tanggalDari}-to-{$tanggalSampai}.pdf";
+
+        return $pdf->download($filename);
+    }
+
+    /**
+     * Laporan Mahasiswa
+     */
+    public function mahasiswa(Request $request)
+    {
+        $query = Mahasiswa::with('level')
+            ->withCount('transaksiSampah')
+            ->withSum('transaksiSampah', 'berat');
+
+        // Sort
+        $sortBy = $request->get('sort', 'total_poin');
+        $sortDir = $request->get('dir', 'desc');
+
+        if ($sortBy === 'total_berat') {
+            $query->orderBy('transaksi_sampah_sum_berat', $sortDir);
+        } else {
+            $query->orderBy($sortBy, $sortDir);
+        }
+
+        $mahasiswas = $query->get();
+
+        // Summary
+        $summary = [
+            'total_mahasiswa' => $mahasiswas->count(),
+            'total_poin' => $mahasiswas->sum('total_poin'),
+            'total_berat' => $mahasiswas->sum('transaksi_sampah_sum_berat'),
+            'total_transaksi' => $mahasiswas->sum('transaksi_sampah_count'),
+        ];
+
+        return view('admin.laporan.mahasiswa', compact('mahasiswas', 'summary'));
+    }
+
+    /**
+     * Export PDF Laporan Mahasiswa
+     */
+    public function mahasiswaPdf()
+    {
+        $mahasiswas = Mahasiswa::with('level')
+            ->withCount('transaksiSampah')
+            ->withSum('transaksiSampah', 'berat')
+            ->orderBy('total_poin', 'desc')
+            ->get();
+
+        $summary = [
+            'total_mahasiswa' => $mahasiswas->count(),
+            'total_poin' => $mahasiswas->sum('total_poin'),
+            'total_berat' => $mahasiswas->sum('transaksi_sampah_sum_berat'),
+        ];
+
+        $pdf = Pdf::loadView('admin.laporan.mahasiswa-pdf', compact('mahasiswas', 'summary'));
+
+        return $pdf->download('laporan-mahasiswa-' . date('Y-m-d') . '.pdf');
+    }
+}
+ 
+========== FILE: app\Http\Controllers\Web\LogAktivitasController.php ========== 
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+
+class LogAktivitasController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = LogAktivitas::query();
+
+        // Filter by user type
+        if ($request->filled('user_type')) {
+            $query->where('user_type', $request->user_type);
+        }
+
+        // Filter tanggal
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('created_at', '>=', $request->tanggal_dari);
+        }
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('created_at', '<=', $request->tanggal_sampai);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $query->where('aktivitas', 'like', "%{$request->search}%");
+        }
+
+        $logs = $query->orderBy('created_at', 'desc')->paginate(30);
+
+        return view('admin.log-aktivitas.index', compact('logs'));
+    }
+}

@@ -1,0 +1,171 @@
+<?php
+
+namespace App\Services;
+
+use App\Models\Mahasiswa;
+use App\Models\Level;
+use App\Models\Achievement;
+use App\Models\Leaderboard;
+use App\Models\TransaksiSampah;
+use App\Models\Notifikasi;
+use App\Models\SettingPoin;
+use Illuminate\Support\Facades\DB;
+
+class GamifikasiService
+{
+    /**
+     * Check dan update level mahasiswa berdasarkan total poin
+     */
+    public function checkLevelUp(Mahasiswa $mahasiswa): ?array
+    {
+        $currentLevel = $mahasiswa->level;
+
+        // Cari level yang sesuai dengan total poin saat ini
+        $newLevel = Level::where('min_poin', '<=', $mahasiswa->total_poin)
+            ->where('max_poin', '>=', $mahasiswa->total_poin)
+            ->first();
+
+        // Jika tidak ada perubahan level
+        if (!$newLevel || $newLevel->id === $currentLevel->id) {
+            return null;
+        }
+
+        // Update level mahasiswa
+        $mahasiswa->update(['level_id' => $newLevel->id]);
+
+        // Tambahkan bonus poin level up (jika ada setting)
+        $bonusPoin = (int) (SettingPoin::where('nama_setting', 'bonus_level_up')->value('value') ?? 0);
+        if ($bonusPoin > 0) {
+            $mahasiswa->increment('total_poin', $bonusPoin);
+        }
+
+        // Kirim notifikasi
+        Notifikasi::create([
+            'mahasiswa_id' => $mahasiswa->id,
+            'judul' => 'Level Up! 🎉',
+            'pesan' => "Selamat! Kamu naik ke level {$newLevel->nama_level}!"
+                . ($bonusPoin > 0 ? " Bonus +{$bonusPoin} poin!" : ""),
+            'tipe' => 'level_up',
+            'is_read' => 0,
+        ]);
+
+        return [
+            'old_level' => $currentLevel->nama_level,
+            'new_level' => $newLevel->nama_level,
+            'bonus_poin' => $bonusPoin,
+        ];
+    }
+
+    /**
+     * Check dan unlock achievement
+     */
+    public function checkAchievements(Mahasiswa $mahasiswa): array
+    {
+        $unlockedAchievements = [];
+
+        // Ambil semua achievement yang belum di-unlock
+        $achievements = Achievement::whereNotIn('id', function ($query) use ($mahasiswa) {
+            $query->select('achievement_id')
+                ->from('mahasiswa_achievement')
+                ->where('mahasiswa_id', $mahasiswa->id);
+        })->get();
+
+        foreach ($achievements as $achievement) {
+            $unlocked = false;
+
+            switch ($achievement->syarat_type) {
+                case 'first_time':
+                    $transaksiCount = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->count();
+                    $unlocked = ($transaksiCount >= 1);
+                    break;
+
+                case 'total_kg':
+                    $totalBerat = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('berat');
+                    $unlocked = ($totalBerat >= $achievement->syarat_value);
+                    break;
+
+                case 'transaksi_count':
+                    $transaksiCount = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->count();
+                    $unlocked = ($transaksiCount >= $achievement->syarat_value);
+                    break;
+
+                case 'streak':
+                    // TODO: Implementasi pengecekan streak hari berturut-turut
+                    $unlocked = false;
+                    break;
+            }
+
+            if ($unlocked) {
+                // Unlock achievement via pivot table
+                DB::table('mahasiswa_achievement')->insert([
+                    'mahasiswa_id' => $mahasiswa->id,
+                    'achievement_id' => $achievement->id,
+                    'unlocked_at' => now(),
+                    'created_at' => now(),
+                    'updated_at' => now(),
+                ]);
+
+                // Tambahkan bonus poin
+                if ($achievement->poin_bonus > 0) {
+                    $mahasiswa->increment('total_poin', $achievement->poin_bonus);
+                }
+
+                // Kirim notifikasi
+                Notifikasi::create([
+                    'mahasiswa_id' => $mahasiswa->id,
+                    'judul' => 'Achievement Unlocked! 🏆',
+                    'pesan' => "Kamu mendapatkan achievement '{$achievement->nama}'!"
+                        . ($achievement->poin_bonus > 0 ? " Bonus +{$achievement->poin_bonus} poin!" : ""),
+                    'tipe' => 'achievement',
+                    'is_read' => 0,
+                ]);
+
+                $unlockedAchievements[] = [
+                    'achievement' => $achievement->nama,
+                    'bonus_poin' => $achievement->poin_bonus,
+                ];
+            }
+        }
+
+        return $unlockedAchievements;
+    }
+
+    /**
+     * Update atau buat entry leaderboard
+     */
+    public function updateLeaderboard(Mahasiswa $mahasiswa): void
+    {
+        $totalBerat = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('berat');
+
+        // Update atau buat leaderboard entry (Eloquent handles timestamps otomatis)
+        Leaderboard::updateOrCreate(
+            ['mahasiswa_id' => $mahasiswa->id],
+            ['total_berat_kg' => $totalBerat]
+        );
+
+        // Recalculate ranking all-time
+        $this->recalculateRanking('ranking_alltime', 'total_poin');
+    }
+
+    /**
+     * Recalculate ranking — hanya mahasiswa yang punya leaderboard entry
+     */
+    private function recalculateRanking(string $rankingField, string $sortBy): void
+    {
+        // Hanya ambil mahasiswa yang punya entry di leaderboard
+        $rankedMahasiswaIds = Mahasiswa::whereHas('leaderboard')
+            ->orderBy($sortBy, 'desc')
+            ->pluck('id')
+            ->toArray();
+
+        // Update ranking berurutan tanpa gap
+        foreach ($rankedMahasiswaIds as $index => $mahasiswaId) {
+            DB::table('leaderboard')
+                ->where('mahasiswa_id', $mahasiswaId)
+                ->update([
+                    $rankingField => $index + 1,
+                    'updated_at' => now(),
+                ]);
+        }
+    }
+}

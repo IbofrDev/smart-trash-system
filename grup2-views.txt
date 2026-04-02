@@ -1,0 +1,46 @@
+========== GRUP 2: VIEWS ========== 
+ 
+========== FILE: resources\views\admin\achievement\index.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\achievement\create.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\achievement\edit.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\setting-poin\index.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\setting-poin\edit.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\mahasiswa\index.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\mahasiswa\show.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\mahasiswa\edit.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\transaksi\index.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\transaksi\show.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\laporan\transaksi.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\laporan\transaksi-pdf.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\laporan\mahasiswa.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\laporan\mahasiswa-pdf.blade.php ========== 
+
+ 
+========== FILE: resources\views\admin\log-aktivitas\index.blade.php ========== 
+
