@@ -8,16 +8,17 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 class Leaderboard extends Model
 {
     protected $table = 'leaderboard';
+    public $timestamps = true;
+
     protected $fillable = [
         'mahasiswa_id',
         'ranking_harian',
         'ranking_mingguan',
         'ranking_bulanan',
         'ranking_alltime',
-        'total_berat_kg',
+        'total_berat_gram',
+        'total_botol',
     ];
-
-    public $timestamps = true;
 
     public function mahasiswa(): BelongsTo
     {

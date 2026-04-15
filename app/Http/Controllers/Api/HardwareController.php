@@ -7,6 +7,7 @@ use App\Events\TransaksiCreated;
 use App\Models\Mahasiswa;
 use App\Models\JenisSampah;
 use App\Models\TransaksiSampah;
+use App\Models\TransaksiSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -14,23 +15,25 @@ use Illuminate\Support\Facades\Validator;
 class HardwareController extends Controller
 {
     /**
-     * Verify RFID UID
      * POST /api/hardware/verify-rfid
+     * Verifikasi RFID & cari session aktif dari mobile
      */
     public function verifyRfid(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'rfid_uid' => 'required|string|max:20',
+            'rfid_uid'     => 'required|string|max:20',
+            'bak_sampah_id' => 'required|integer',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal',
-                'errors' => $validator->errors(),
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
+        // Cari mahasiswa by RFID
         $mahasiswa = Mahasiswa::where('rfid_uid', $request->rfid_uid)
             ->with('level')
             ->first();
@@ -38,132 +41,363 @@ class HardwareController extends Controller
         if (!$mahasiswa) {
             return response()->json([
                 'success' => false,
-                'message' => 'RFID tidak terdaftar',
+                'error'   => 'RFID_NOT_FOUND',
+                'message' => 'RFID tidak terdaftar. Mahasiswa harus register KTM di aplikasi.',
             ], 404);
         }
 
+        // Cari session aktif milik mahasiswa ini
+        $session = TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'pending')
+            ->where('expired_at', '>', now())
+            ->latest('created_at')
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'error'   => 'NO_SESSION',
+                'message' => 'Tidak ada session aktif. Silakan input jumlah di aplikasi terlebih dahulu.',
+            ], 404);
+        }
+
+        // Hitung expected weight range
+        $botol  = JenisSampah::find(1); // Botol Plastik
+        $kaleng = JenisSampah::find(2); // Kaleng Aluminium
+
+        $minExpected = ($session->jumlah_botol * $botol->berat_min_gram)
+                     + ($session->jumlah_kaleng * $kaleng->berat_min_gram);
+
+        $maxExpected = ($session->jumlah_botol * $botol->berat_max_gram)
+                     + ($session->jumlah_kaleng * $kaleng->berat_max_gram);
+
+        // Update status session → tapped
+        $session->update(['status' => 'tapped']);
+
         return response()->json([
             'success' => true,
-            'data' => [
-                'mahasiswa_id' => $mahasiswa->id,
-                'name' => $mahasiswa->name,
-                'nim' => $mahasiswa->nim,
-                'total_poin' => $mahasiswa->total_poin,
-                'level' => $mahasiswa->level->nama_level ?? 'Eco Starter',
+            'data'    => [
+                'mahasiswa' => [
+                    'id'   => $mahasiswa->id,
+                    'name' => $mahasiswa->name,
+                    'nim'  => $mahasiswa->nim,
+                ],
+                'session' => [
+                    'id'            => $session->id,
+                    'token'         => $session->session_token,
+                    'jumlah_botol'  => $session->jumlah_botol,
+                    'jumlah_kaleng' => $session->jumlah_kaleng,
+                    'total_input'   => $session->jumlah_botol + $session->jumlah_kaleng,
+                ],
+                'expected_weight' => [
+                    'min_gram' => (int) ($minExpected * 0.9),
+                    'max_gram' => (int) ($maxExpected * 1.1),
+                ],
             ],
-        ], 200);
+            'message' => 'Halo ' . $mahasiswa->name . '! Silakan timbang ' . ($session->jumlah_botol + $session->jumlah_kaleng) . ' botol/kaleng.',
+        ]);
     }
 
     /**
-     * Store Transaksi from Hardware
-     * POST /api/hardware/transaksi
+     * POST /api/hardware/submit-weight
+     * Kirim data berat dari load cell + validasi anti-cheat
      */
-    public function storeTransaksi(Request $request)
+    public function submitWeight(Request $request)
     {
         $validator = Validator::make($request->all(), [
-            'rfid_uid' => 'required|string|max:20',
-            'jenis_sampah_id' => 'required|exists:jenis_sampah,id',
-            'berat' => 'required|numeric|min:0.01|max:100',
+            'session_token' => 'required|string',
+            'berat_gram'    => 'required|integer|min:1',
         ]);
 
         if ($validator->fails()) {
             return response()->json([
                 'success' => false,
                 'message' => 'Validasi gagal',
-                'errors' => $validator->errors(),
+                'errors'  => $validator->errors(),
             ], 422);
         }
 
-        $mahasiswa = Mahasiswa::where('rfid_uid', $request->rfid_uid)->first();
+        // Cari session
+        $session = TransaksiSession::where('session_token', $request->session_token)
+            ->where('status', 'tapped')
+            ->where('expired_at', '>', now())
+            ->first();
 
-        if (!$mahasiswa) {
+        if (!$session) {
             return response()->json([
                 'success' => false,
-                'message' => 'RFID tidak terdaftar',
+                'error'   => 'SESSION_INVALID',
+                'message' => 'Session tidak valid atau sudah expired.',
             ], 404);
         }
 
-        $jenisSampah = JenisSampah::find($request->jenis_sampah_id);
+        // Ambil berat standar
+        $botol  = JenisSampah::find(1);
+        $kaleng = JenisSampah::find(2);
 
-        if (!$jenisSampah || !$jenisSampah->is_active) {
+        $minExpected = ($session->jumlah_botol * $botol->berat_min_gram)
+                     + ($session->jumlah_kaleng * $kaleng->berat_min_gram);
+
+        $maxExpected = ($session->jumlah_botol * $botol->berat_max_gram)
+                     + ($session->jumlah_kaleng * $kaleng->berat_max_gram);
+
+        // Toleransi 10%
+        $minTolerance = $minExpected * 0.9;
+        $maxTolerance = $maxExpected * 1.1;
+
+        // Validasi berat
+        $isValid = $request->berat_gram >= $minTolerance
+                && $request->berat_gram <= $maxTolerance;
+
+        $statusValidasi = $isValid ? 'valid' : 'anomali';
+        $penalty        = $isValid ? 0 : 1;
+
+        // Simpan berat di session (pakai completed_at sebagai temp storage tidak ideal,
+        // jadi kita simpan di cache session via DB update notes)
+        // Kita update status → weighing dan simpan berat sementara
+        $session->update(['status' => 'weighing']);
+
+        // Simpan berat sementara di request untuk dipakai complete()
+        // Karena tidak ada kolom temp, kita simpan di cache
+        cache()->put(
+            'session_weight_' . $session->id,
+            [
+                'berat_gram'      => $request->berat_gram,
+                'status_validasi' => $statusValidasi,
+                'penalty'         => $penalty,
+            ],
+            now()->addMinutes(15)
+        );
+
+        return response()->json([
+            'success' => true,
+            'data'    => [
+                'berat_gram'      => $request->berat_gram,
+                'status_validasi' => $statusValidasi,
+                'penalty'         => $penalty,
+                'message'         => $isValid
+                    ? 'Berat sesuai. Silakan masukkan botol/kaleng satu per satu.'
+                    : 'Berat tidak sesuai, akan dikurangi 1 unit sebagai penalti.',
+            ],
+        ]);
+    }
+
+    /**
+     * POST /api/hardware/submit-count
+     * Kirim jumlah dari ultrasonik
+     */
+    public function submitCount(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'session_token'    => 'required|string',
+            'jumlah_terhitung' => 'required|integer|min:0',
+        ]);
+
+        if ($validator->fails()) {
             return response()->json([
                 'success' => false,
-                'message' => 'Jenis sampah tidak valid atau tidak aktif',
-            ], 400);
+                'message' => 'Validasi gagal',
+                'errors'  => $validator->errors(),
+            ], 422);
         }
 
-        // Hitung poin berdasarkan berat × poin_per_kg
-        $poinDidapat = (int) round($request->berat * $jenisSampah->poin_per_kg);
+        $session = TransaksiSession::where('session_token', $request->session_token)
+            ->where('status', 'weighing')
+            ->where('expired_at', '>', now())
+            ->first();
 
-        // Ambil bak_sampah dari middleware
-        $bakSampah = $request->bak_sampah;
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'error'   => 'SESSION_INVALID',
+                'message' => 'Session tidak valid atau sudah expired.',
+            ], 404);
+        }
+
+        // Ambil data berat dari cache
+        $weightData = cache()->get('session_weight_' . $session->id);
+        $penalty    = $weightData['penalty'] ?? 0;
+
+        // Hitung jumlah final
+        $jumlahFinal = max(0, $request->jumlah_terhitung - $penalty);
+
+        // Update status → counting, simpan jumlah terhitung di cache
+        $session->update(['status' => 'counting']);
+
+        cache()->put(
+            'session_count_' . $session->id,
+            [
+                'jumlah_terhitung' => $request->jumlah_terhitung,
+                'jumlah_final'     => $jumlahFinal,
+            ],
+            now()->addMinutes(15)
+        );
+
+        return response()->json([
+            'success' => true,
+            'data'    => [
+                'jumlah_terhitung'  => $request->jumlah_terhitung,
+                'jumlah_final'      => $jumlahFinal,
+                'ready_to_complete' => true,
+            ],
+        ]);
+    }
+
+    /**
+     * POST /api/hardware/complete
+     * Finalisasi transaksi
+     */
+    public function complete(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'session_token' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors'  => $validator->errors(),
+            ], 422);
+        }
+
+        $session = TransaksiSession::where('session_token', $request->session_token)
+            ->where('status', 'counting')
+            ->where('expired_at', '>', now())
+            ->with('mahasiswa')
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'error'   => 'SESSION_INVALID',
+                'message' => 'Session tidak valid atau sudah expired.',
+            ], 404);
+        }
+
+        // Ambil data dari cache
+        $weightData = cache()->get('session_weight_' . $session->id);
+        $countData  = cache()->get('session_count_' . $session->id);
+
+        if (!$weightData || !$countData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data transaksi tidak lengkap. Ulangi proses.',
+            ], 422);
+        }
+
+        $mahasiswa      = $session->mahasiswa;
+        $beratGram      = $weightData['berat_gram'];
+        $statusValidasi = $weightData['status_validasi'];
+        $jumlahTerhitung = $countData['jumlah_terhitung'];
+        $jumlahFinal    = $countData['jumlah_final'];
+
+        // Reject jika jumlah final 0
+        if ($jumlahFinal < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jumlah sampah tidak valid. Transaksi dibatalkan.',
+            ], 422);
+        }
+
+        // Hitung poin: (berat_gram / 1000) × rata-rata poin_per_kg
+        // Karena campur botol & kaleng, pakai rata-rata weighted
+        $botol  = JenisSampah::find(1);
+        $kaleng = JenisSampah::find(2);
+
+        $totalInput   = $session->jumlah_botol + $session->jumlah_kaleng;
+        $rataRataPoin = $totalInput > 0
+            ? (($session->jumlah_botol * $botol->poin_per_kg) + ($session->jumlah_kaleng * $kaleng->poin_per_kg)) / $totalInput
+            : $botol->poin_per_kg;
+
+        $poinDidapat = (int) round(($beratGram / 1000) * $rataRataPoin);
+        $koinDidapat = $jumlahFinal;
 
         DB::beginTransaction();
         try {
+            // Simpan transaksi
             $transaksi = TransaksiSampah::create([
-                'mahasiswa_id' => $mahasiswa->id,
-                'bak_sampah_id' => $bakSampah->id,
-                'jenis_sampah_id' => $jenisSampah->id,
-                'berat' => $request->berat,
-                'poin_didapat' => $poinDidapat,
-                'tanggal_transaksi' => now(),
+                'mahasiswa_id'        => $mahasiswa->id,
+                'bak_sampah_id'       => $request->bak_sampah->id,
+                'session_id'          => $session->id,
+                'jenis_sampah_id'     => 1, // default botol (mixed)
+                'berat'               => $beratGram,
+                'jumlah_input_botol'  => $session->jumlah_botol,
+                'jumlah_input_kaleng' => $session->jumlah_kaleng,
+                'jumlah_terhitung'    => $jumlahTerhitung,
+                'jumlah_final'        => $jumlahFinal,
+                'status_validasi'     => $statusValidasi,
+                'poin_didapat'        => $poinDidapat,
+                'koin_didapat'        => $koinDidapat,
+                'tanggal_transaksi'   => now(),
             ]);
 
-            // Update total poin mahasiswa
+            // Update mahasiswa
             $mahasiswa->increment('total_poin', $poinDidapat);
+            $mahasiswa->increment('total_koin_botol', $koinDidapat);
 
-            // Trigger gamifikasi: achievement check, level up, leaderboard update
+            // Update session → completed
+            $session->update([
+                'status'       => 'completed',
+                'completed_at' => now(),
+            ]);
+
+            // Trigger gamifikasi
             event(new TransaksiCreated($transaksi));
 
-            // Refresh untuk mendapatkan data terbaru setelah gamifikasi
+            // Bersihkan cache
+            cache()->forget('session_weight_' . $session->id);
+            cache()->forget('session_count_' . $session->id);
+
             $mahasiswa->refresh();
+            $levelUp = false;
+            $levelNama = $mahasiswa->level->nama_level ?? 'Eco Starter';
 
             DB::commit();
 
             return response()->json([
                 'success' => true,
-                'message' => 'Transaksi berhasil disimpan',
-                'data' => [
-                    'transaksi_id' => $transaksi->id,
-                    'mahasiswa' => [
-                        'name' => $mahasiswa->name,
-                        'total_poin' => $mahasiswa->total_poin,
-                        'level' => $mahasiswa->level->nama_level ?? 'Eco Starter',
-                    ],
-                    'berat' => $transaksi->berat,
-                    'poin_didapat' => $poinDidapat,
-                    'jenis_sampah' => $jenisSampah->nama,
+                'data'    => [
+                    'transaksi_id'    => $transaksi->id,
+                    'mahasiswa_name'  => $mahasiswa->name,
+                    'berat_gram'      => $beratGram,
+                    'jumlah_final'    => $jumlahFinal,
+                    'status_validasi' => $statusValidasi,
+                    'poin_didapat'    => $poinDidapat,
+                    'koin_didapat'    => $koinDidapat,
+                    'total_poin'      => $mahasiswa->total_poin,
+                    'total_koin'      => $mahasiswa->total_koin_botol,
+                    'level'           => $levelNama,
+                    'level_up'        => $levelUp,
                 ],
-            ], 201);
+                'message' => "Transaksi berhasil! +{$koinDidapat} koin, +{$poinDidapat} poin.",
+            ]);
         } catch (\Exception $e) {
             DB::rollBack();
-
             return response()->json([
                 'success' => false,
-                'message' => 'Terjadi kesalahan saat menyimpan transaksi',
-                'error' => $e->getMessage(),
+                'message' => 'Terjadi kesalahan.',
+                'error'   => $e->getMessage(),
             ], 500);
         }
     }
 
     /**
-     * Get list jenis sampah aktif
      * GET /api/hardware/jenis-sampah
      */
     public function getJenisSampah()
     {
         $jenisSampah = JenisSampah::where('is_active', 1)
-            ->select('id', 'nama', 'poin_per_kg', 'satuan')
+            ->select('id', 'nama', 'poin_per_kg', 'berat_min_gram', 'berat_max_gram', 'satuan')
             ->get();
 
         return response()->json([
             'success' => true,
-            'data' => $jenisSampah,
-        ], 200);
+            'data'    => $jenisSampah,
+        ]);
     }
 
     /**
-     * Heartbeat - hardware status check
      * POST /api/hardware/heartbeat
      */
     public function heartbeat(Request $request)
@@ -173,12 +407,12 @@ class HardwareController extends Controller
         return response()->json([
             'success' => true,
             'message' => 'Hardware terhubung',
-            'data' => [
+            'data'    => [
                 'bak_sampah_id' => $bakSampah->id,
-                'nama' => $bakSampah->nama,
-                'status' => $bakSampah->status,
-                'server_time' => now()->toDateTimeString(),
+                'nama'          => $bakSampah->nama,
+                'status'        => $bakSampah->status,
+                'server_time'   => now()->toDateTimeString(),
             ],
-        ], 200);
+        ]);
     }
 }

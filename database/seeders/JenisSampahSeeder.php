@@ -3,59 +3,38 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\JenisSampah;
+use Illuminate\Support\Facades\DB;
 
 class JenisSampahSeeder extends Seeder
 {
     public function run(): void
     {
-        $jenisSampah = [
+        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
+        DB::table('jenis_sampah')->truncate();
+        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
+        DB::table('jenis_sampah')->insert([
             [
-                'nama' => 'Plastik',
-                'deskripsi' => 'Botol plastik, kantong plastik, kemasan plastik',
+                'nama' => 'Botol Plastik',
+                'deskripsi' => 'Botol plastik bekas minuman yang sudah dikosongkan',
                 'poin_per_kg' => 100,
-                'satuan' => 'kg',
+                'berat_min_gram' => 15,
+                'berat_max_gram' => 35,
+                'satuan' => 'pcs',
                 'is_active' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
             [
-                'nama' => 'Kertas',
-                'deskripsi' => 'Kertas HVS, kardus, koran, majalah',
-                'poin_per_kg' => 80,
-                'satuan' => 'kg',
+                'nama' => 'Kaleng Aluminium',
+                'deskripsi' => 'Kaleng aluminium bekas minuman yang sudah dikosongkan',
+                'poin_per_kg' => 120,
+                'berat_min_gram' => 10,
+                'berat_max_gram' => 25,
+                'satuan' => 'pcs',
                 'is_active' => 1,
+                'created_at' => now(),
+                'updated_at' => now(),
             ],
-            [
-                'nama' => 'Logam',
-                'deskripsi' => 'Kaleng aluminium, besi, tembaga',
-                'poin_per_kg' => 150,
-                'satuan' => 'kg',
-                'is_active' => 1,
-            ],
-            [
-                'nama' => 'Kaca',
-                'deskripsi' => 'Botol kaca, pecahan kaca',
-                'poin_per_kg' => 70,
-                'satuan' => 'kg',
-                'is_active' => 1,
-            ],
-            [
-                'nama' => 'Elektronik',
-                'deskripsi' => 'Komponen elektronik, kabel, baterai',
-                'poin_per_kg' => 200,
-                'satuan' => 'kg',
-                'is_active' => 1,
-            ],
-            [
-                'nama' => 'Organik',
-                'deskripsi' => 'Sisa makanan, daun, ranting',
-                'poin_per_kg' => 50,
-                'satuan' => 'kg',
-                'is_active' => 1,
-            ],
-        ];
-
-        foreach ($jenisSampah as $jenis) {
-            JenisSampah::create($jenis);
-        }
+        ]);
     }
 }

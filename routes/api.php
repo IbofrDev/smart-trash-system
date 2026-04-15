@@ -1,38 +1,38 @@
 <?php
 
 use Illuminate\Support\Facades\Route;
-use App\Http\Controllers\Api\HardwareController;
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\TransaksiController;
 use App\Http\Controllers\Api\LeaderboardController;
 use App\Http\Controllers\Api\AchievementController;
 use App\Http\Controllers\Api\NotifikasiController;
-use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\HardwareController;
+use App\Http\Controllers\Api\VoucherController;
 
 /*
 |--------------------------------------------------------------------------
-| Hardware IoT Routes
+| Hardware Routes
 |--------------------------------------------------------------------------
 */
 Route::prefix('hardware')->middleware('hardware.apikey')->group(function () {
     Route::post('/verify-rfid', [HardwareController::class, 'verifyRfid']);
-    Route::post('/transaksi', [HardwareController::class, 'storeTransaksi']);
+    Route::post('/submit-weight', [HardwareController::class, 'submitWeight']);
+    Route::post('/submit-count', [HardwareController::class, 'submitCount']);
+    Route::post('/complete', [HardwareController::class, 'complete']);
     Route::get('/jenis-sampah', [HardwareController::class, 'getJenisSampah']);
     Route::post('/heartbeat', [HardwareController::class, 'heartbeat']);
 });
 
 /*
 |--------------------------------------------------------------------------
-| Auth Routes (PUBLIC - No Token Required)
+| Auth Routes (PUBLIC)
 |--------------------------------------------------------------------------
 */
 Route::post('/auth/google', [AuthController::class, 'loginGoogle']);
 
-// ============================================
-// TEMPORARY: Mock Login untuk testing Flutter
-// HAPUS ini sebelum production!
-// ============================================
+// TEMPORARY: Mock Login untuk testing Flutter - HAPUS sebelum production!
 Route::post('/auth/mock-login', function () {
     $mahasiswa = \App\Models\Mahasiswa::first();
 
@@ -59,6 +59,7 @@ Route::post('/auth/mock-login', function () {
                 'prodi' => $mahasiswa->prodi,
                 'rfid_uid' => $mahasiswa->rfid_uid,
                 'total_poin' => $mahasiswa->total_poin,
+                'total_koin_botol' => $mahasiswa->total_koin_botol,
                 'level_id' => $mahasiswa->level_id,
                 'level' => $mahasiswa->level,
             ]
@@ -68,7 +69,7 @@ Route::post('/auth/mock-login', function () {
 
 /*
 |--------------------------------------------------------------------------
-| Protected Routes (Requires Sanctum Token)
+| Protected Routes (Mahasiswa - Sanctum)
 |--------------------------------------------------------------------------
 */
 Route::middleware('auth:sanctum')->group(function () {
@@ -84,9 +85,18 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::post('/profile/rfid', [ProfileController::class, 'updateRfid']);
     Route::post('/profile/fcm-token', [ProfileController::class, 'updateFcmToken']);
 
-    // Transaksi
+    // Transaksi Session (BARU)
+    Route::post('/transaksi/session', [TransaksiController::class, 'createSession']);
+    Route::get('/transaksi/session/{token}', [TransaksiController::class, 'checkSession']);
+
+    // Transaksi History
     Route::get('/transaksi', [TransaksiController::class, 'index']);
     Route::get('/transaksi/{id}', [TransaksiController::class, 'show']);
+
+    // Voucher (BARU)
+    Route::get('/vouchers', [VoucherController::class, 'index']);
+    Route::post('/vouchers/redeem', [VoucherController::class, 'redeem']);
+    Route::post('/vouchers/{id}/use', [VoucherController::class, 'useVoucher']);
 
     // Leaderboard
     Route::get('/leaderboard', [LeaderboardController::class, 'index']);

@@ -7,11 +7,11 @@ use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
-use Laravel\Sanctum\HasApiTokens; // ← Tambahkan ini
+use Laravel\Sanctum\HasApiTokens;
 
 class Mahasiswa extends Model
 {
-    use HasApiTokens; // ← Tambahkan ini
+    use HasApiTokens;
 
     protected $table = 'mahasiswa';
     protected $fillable = [
@@ -23,6 +23,7 @@ class Mahasiswa extends Model
         'nim',
         'rfid_uid',
         'total_poin',
+        'total_koin_botol',
         'level_id',
         'fcm_token',
     ];
@@ -35,6 +36,16 @@ class Mahasiswa extends Model
     public function transaksiSampah(): HasMany
     {
         return $this->hasMany(TransaksiSampah::class);
+    }
+
+    public function transaksiSession(): HasMany
+    {
+        return $this->hasMany(TransaksiSession::class);
+    }
+
+    public function vouchers(): HasMany
+    {
+        return $this->hasMany(VoucherMahasiswa::class);
     }
 
     public function leaderboard(): HasOne

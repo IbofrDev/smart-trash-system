@@ -3,32 +3,50 @@
 namespace Database\Seeders;
 
 use Illuminate\Database\Seeder;
-use App\Models\SettingPoin;
+use Illuminate\Support\Facades\DB;
 
 class SettingPoinSeeder extends Seeder
 {
     public function run(): void
     {
-        $settings = [
-            [
-                'nama_setting' => 'bonus_level_up',
-                'value' => 100,
-                'deskripsi' => 'Bonus poin yang didapat saat naik level',
-            ],
-            [
-                'nama_setting' => 'minimum_berat',
-                'value' => 10,
-                'deskripsi' => 'Berat minimum (gram) untuk transaksi valid',
-            ],
-            [
-                'nama_setting' => 'maksimum_berat_harian',
-                'value' => 50000,
-                'deskripsi' => 'Berat maksimum (gram) per hari per mahasiswa',
-            ],
-        ];
+        DB::table('setting_poin')->truncate();
 
-        foreach ($settings as $setting) {
-            SettingPoin::create($setting);
-        }
+        DB::table('setting_poin')->insert([
+            [
+                'nama_setting' => 'koin_per_voucher',
+                'value'        => 20,
+                'deskripsi'    => 'Jumlah koin yang dibutuhkan untuk menukar 1 voucher',
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ],
+            [
+                'nama_setting' => 'voucher_expired_days',
+                'value'        => 7,
+                'deskripsi'    => 'Masa berlaku voucher dalam hari',
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ],
+            [
+                'nama_setting' => 'voucher_min_belanja',
+                'value'        => 10000,
+                'deskripsi'    => 'Minimal belanja di ETU untuk menggunakan voucher (Rp)',
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ],
+            [
+                'nama_setting' => 'voucher_max_diskon',
+                'value'        => 5000,
+                'deskripsi'    => 'Maksimal diskon yang diberikan voucher (Rp)',
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ],
+            [
+                'nama_setting' => 'timeout_ultrasonik',
+                'value'        => 30,
+                'deskripsi'    => 'Timeout deteksi ultrasonik dalam detik',
+                'created_at'   => now(),
+                'updated_at'   => now(),
+            ],
+        ]);
     }
 }
