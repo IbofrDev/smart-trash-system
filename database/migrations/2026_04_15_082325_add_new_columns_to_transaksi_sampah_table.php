@@ -9,7 +9,7 @@ return new class extends Migration
     public function up(): void
     {
         Schema::table('transaksi_sampah', function (Blueprint $table) {
-            $table->integer('jumlah_input_botol')->default(0)->after('session_id');
+            $table->integer('jumlah_input_botol')->default(0);
             $table->integer('jumlah_input_kaleng')->default(0)->after('jumlah_input_botol');
             $table->integer('jumlah_terhitung')->default(0)->after('jumlah_input_kaleng');
             $table->integer('jumlah_final')->default(0)->after('jumlah_terhitung');

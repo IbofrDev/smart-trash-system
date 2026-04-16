@@ -22,8 +22,12 @@ use App\Http\Controllers\Web\LogAktivitasController;
 */
 
 Route::get('/', function () {
-    return redirect()->route('login');
-});
+    // Jika sudah login, langsung ke dashboard
+    if (Auth::check()) {
+        return redirect()->route('admin.dashboard'); 
+    }
+    return view('welcome');
+})->name('welcome');
 
 Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
 Route::post('/login', [AuthController::class, 'login'])->name('login.submit');

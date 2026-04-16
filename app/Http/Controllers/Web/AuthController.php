@@ -18,7 +18,8 @@ class AuthController extends Controller
             return redirect()->route('admin.dashboard');
         }
 
-        return view('auth.login');
+        // Arahkan ke welcome karena form login sekarang ada di landing page
+        return view('welcome'); 
     }
 
     /**
