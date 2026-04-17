@@ -213,6 +213,17 @@
         .stat-card { background: #fff; border: 1px solid #e5e7eb; border-radius: 8px; padding: 1.5rem; text-align: center; height: 100%; }
         .stat-value { font-size: 1.5rem; font-weight: 700; margin-top: 0.5rem; }
 
+        /* --- STAGGERED ANIMATION (BARU) --- */
+        .staggered-item {
+            opacity: 0;
+            transform: translateY(30px);
+            transition: opacity 0.6s ease-out, transform 0.6s ease-out;
+        }
+        .staggered-item.is-visible {
+            opacity: 1;
+            transform: translateY(0);
+        }
+
         /* --- FAQ STYLING --- */
         .accordion-button:not(.collapsed) {
             background-color: #ecfdf5 !important;
@@ -538,10 +549,30 @@
     <section class="py-5 bg-white">
         <div class="container py-4">
             <div class="row gy-3">
-                <div class="col-md-3 col-6"><div class="stat-card"><div class="text-muted small">Mahasiswa</div><div class="stat-value">1,240</div></div></div>
-                <div class="col-md-3 col-6"><div class="stat-card"><div class="text-muted small">Sampah</div><div class="stat-value">4,500 kg</div></div></div>
-                <div class="col-md-3 col-6"><div class="stat-card"><div class="text-muted small">IoT Aktif</div><div class="stat-value">12 Unit</div></div></div>
-                <div class="col-md-3 col-6"><div class="stat-card"><div class="text-muted small">Poin</div><div class="stat-value">125k pts</div></div></div>
+                <div class="col-md-3 col-6 staggered-item" style="transition-delay: 0.1s;">
+                    <div class="stat-card">
+                        <div class="text-muted small">Mahasiswa</div>
+                        <div class="stat-value">1,240</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 staggered-item" style="transition-delay: 0.3s;">
+                    <div class="stat-card">
+                        <div class="text-muted small">Sampah</div>
+                        <div class="stat-value">4,500 kg</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 staggered-item" style="transition-delay: 0.5s;">
+                    <div class="stat-card">
+                        <div class="text-muted small">IoT Aktif</div>
+                        <div class="stat-value">12 Unit</div>
+                    </div>
+                </div>
+                <div class="col-md-3 col-6 staggered-item" style="transition-delay: 0.7s;">
+                    <div class="stat-card">
+                        <div class="text-muted small">Poin</div>
+                        <div class="stat-value">125k pts</div>
+                    </div>
+                </div>
             </div>
         </div>
     </section>
@@ -705,6 +736,7 @@
         }
 
         document.addEventListener("DOMContentLoaded", function() {
+            // NAVBAR SCROLL
             const navbar = document.getElementById("mainNav");
             window.addEventListener("scroll", function() {
                 if (window.scrollY > 50) {
@@ -715,8 +747,30 @@
                     navbar.classList.add("navbar-transparent");
                 }
             });
+
+            // INTERSECTION OBSERVER UNTUK ANIMASI STAGGERED
+            const observerOptions = {
+                root: null,
+                rootMargin: '0px',
+                threshold: 0.2 // Animasi jalan saat 20% elemen terlihat
+            };
+
+            const observer = new IntersectionObserver((entries, observer) => {
+                entries.forEach(entry => {
+                    if (entry.isIntersecting) {
+                        entry.target.classList.add('is-visible');
+                        observer.unobserve(entry.target); // Biar animasi cuma 1x
+                    }
+                });
+            }, observerOptions);
+
+            const staggeredElements = document.querySelectorAll('.staggered-item');
+            staggeredElements.forEach((el) => {
+                observer.observe(el);
+            });
         });
 
+        // TOGGLE PASSWORD
         document.getElementById('togglePassword').addEventListener('click', function () {
             const pwd = document.getElementById('password');
             const icon = this.querySelector('i');
