@@ -20,26 +20,21 @@ class GamifikasiService
     {
         $currentLevel = $mahasiswa->level;
 
-        // Cari level yang sesuai dengan total poin saat ini
         $newLevel = Level::where('min_poin', '<=', $mahasiswa->total_poin)
             ->where('max_poin', '>=', $mahasiswa->total_poin)
             ->first();
 
-        // Jika tidak ada perubahan level
         if (!$newLevel || $newLevel->id === $currentLevel->id) {
             return null;
         }
 
-        // Update level mahasiswa
         $mahasiswa->update(['level_id' => $newLevel->id]);
 
-        // Tambahkan bonus poin level up (jika ada setting)
         $bonusPoin = (int) (SettingPoin::where('nama_setting', 'bonus_level_up')->value('value') ?? 0);
         if ($bonusPoin > 0) {
             $mahasiswa->increment('total_poin', $bonusPoin);
         }
 
-        // Kirim notifikasi
         Notifikasi::create([
             'mahasiswa_id' => $mahasiswa->id,
             'judul' => 'Level Up! 🎉',
@@ -63,7 +58,6 @@ class GamifikasiService
     {
         $unlockedAchievements = [];
 
-        // Ambil semua achievement yang belum di-unlock
         $achievements = Achievement::whereNotIn('id', function ($query) use ($mahasiswa) {
             $query->select('achievement_id')
                 ->from('mahasiswa_achievement')
@@ -80,8 +74,14 @@ class GamifikasiService
                     break;
 
                 case 'total_kg':
-                    $totalBerat = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('berat');
-                    $unlocked = ($totalBerat >= $achievement->syarat_value);
+                    // berat disimpan dalam gram, konversi ke kg
+                    $totalBeratKg = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('berat') / 1000;
+                    $unlocked = ($totalBeratKg >= $achievement->syarat_value);
+                    break;
+
+                case 'total_botol':
+                    $totalBotol = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('jumlah_final');
+                    $unlocked = ($totalBotol >= $achievement->syarat_value);
                     break;
 
                 case 'transaksi_count':
@@ -90,13 +90,11 @@ class GamifikasiService
                     break;
 
                 case 'streak':
-                    // TODO: Implementasi pengecekan streak hari berturut-turut
-                    $unlocked = false;
+                    $unlocked = $this->checkStreak($mahasiswa, $achievement->syarat_value);
                     break;
             }
 
             if ($unlocked) {
-                // Unlock achievement via pivot table
                 DB::table('mahasiswa_achievement')->insert([
                     'mahasiswa_id' => $mahasiswa->id,
                     'achievement_id' => $achievement->id,
@@ -105,12 +103,10 @@ class GamifikasiService
                     'updated_at' => now(),
                 ]);
 
-                // Tambahkan bonus poin
                 if ($achievement->poin_bonus > 0) {
                     $mahasiswa->increment('total_poin', $achievement->poin_bonus);
                 }
 
-                // Kirim notifikasi
                 Notifikasi::create([
                     'mahasiswa_id' => $mahasiswa->id,
                     'judul' => 'Achievement Unlocked! 🏆',
@@ -131,41 +127,86 @@ class GamifikasiService
     }
 
     /**
+     * Check streak hari berturut-turut
+     */
+    private function checkStreak(Mahasiswa $mahasiswa, int $targetStreak): bool
+    {
+        $dates = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->orderBy('tanggal_transaksi', 'desc')
+            ->pluck('tanggal_transaksi')
+            ->map(fn($d) => $d->format('Y-m-d'))
+            ->unique()
+            ->values();
+
+        if ($dates->count() < $targetStreak) {
+            return false;
+        }
+
+        $streak = 1;
+        for ($i = 0; $i < $dates->count() - 1; $i++) {
+            $current = \Carbon\Carbon::parse($dates[$i]);
+            $next = \Carbon\Carbon::parse($dates[$i + 1]);
+
+            if ($current->diffInDays($next) === 1) {
+                $streak++;
+                if ($streak >= $targetStreak) {
+                    return true;
+                }
+            } else {
+                $streak = 1;
+            }
+        }
+
+        return false;
+    }
+
+    /**
      * Update atau buat entry leaderboard
      */
     public function updateLeaderboard(Mahasiswa $mahasiswa): void
     {
-        $totalBerat = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('berat');
+        $totalBeratGram = (int) TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('berat');
+        $totalBotol = (int) TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('jumlah_final');
 
-        // Update atau buat leaderboard entry (Eloquent handles timestamps otomatis)
-        Leaderboard::updateOrCreate(
-            ['mahasiswa_id' => $mahasiswa->id],
-            ['total_berat_kg' => $totalBerat]
-        );
+        $leaderboard = Leaderboard::where('mahasiswa_id', $mahasiswa->id)->first();
 
-        // Recalculate ranking all-time
+        if ($leaderboard) {
+            $leaderboard->update([
+                'total_berat_gram' => $totalBeratGram,
+                'total_botol' => $totalBotol,
+                'updated_at' => now(),
+            ]);
+        } else {
+            DB::table('leaderboard')->insert([
+                'mahasiswa_id' => $mahasiswa->id,
+                'total_berat_gram' => $totalBeratGram,
+                'total_botol' => $totalBotol,
+                'updated_at' => now(),
+            ]);
+        }
+
+        // Recalculate semua periode ranking
         $this->recalculateRanking('ranking_alltime', 'total_poin');
+        $this->recalculateRanking('ranking_mingguan', 'total_poin');
+        $this->recalculateRanking('ranking_bulanan', 'total_poin');
+        $this->recalculateRanking('ranking_harian', 'total_poin');
     }
 
     /**
-     * Recalculate ranking — hanya mahasiswa yang punya leaderboard entry
+     * Recalculate ranking
      */
-    private function recalculateRanking(string $rankingField, string $sortBy): void
+    private function recalculateRanking(string $rankingColumn, string $orderBy): void
     {
-        // Hanya ambil mahasiswa yang punya entry di leaderboard
-        $rankedMahasiswaIds = Mahasiswa::whereHas('leaderboard')
-            ->orderBy($sortBy, 'desc')
-            ->pluck('id')
-            ->toArray();
+        $mahasiswas = DB::table('leaderboard')
+            ->join('mahasiswa', 'leaderboard.mahasiswa_id', '=', 'mahasiswa.id')
+            ->orderBy('mahasiswa.' . $orderBy, 'desc')
+            ->pluck('leaderboard.mahasiswa_id');
 
-        // Update ranking berurutan tanpa gap
-        foreach ($rankedMahasiswaIds as $index => $mahasiswaId) {
+        foreach ($mahasiswas as $index => $mahasiswaId) {
             DB::table('leaderboard')
                 ->where('mahasiswa_id', $mahasiswaId)
-                ->update([
-                    $rankingField => $index + 1,
-                    'updated_at' => now(),
-                ]);
+                ->update([$rankingColumn => $index + 1]);
         }
     }
+
 }

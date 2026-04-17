@@ -5,7 +5,8 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TransaksiSampah;
-use Illuminate\Support\Facades\DB;
+use App\Models\VoucherMahasiswa;
+use App\Models\SettingPoin;
 
 class DashboardController extends Controller
 {
@@ -18,28 +19,41 @@ class DashboardController extends Controller
         $mahasiswa = $request->user();
 
         // Summary statistik
-        $totalBerat = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+        $totalBeratGram = (int) TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
             ->sum('berat');
+
+        $totalBotol = (int) TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->sum('jumlah_final');
 
         $totalTransaksi = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
             ->count();
 
         $ranking = $mahasiswa->leaderboard->ranking_alltime ?? null;
 
+        // Voucher stats
+        $koinPerVoucher = (int) SettingPoin::where('nama_setting', 'koin_per_voucher')->value('value');
+
+        $voucherAktif = VoucherMahasiswa::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'aktif')
+            ->where('expired_at', '>', now())
+            ->count();
+
         // Recent transactions (3 terakhir)
         $recentTransactions = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
-            ->with(['jenisSampah', 'bakSampah.lokasi'])
-            ->orderBy('tanggal_transaksi', 'desc')
+            ->with(['bakSampah.lokasi'])
+            ->orderByDesc('tanggal_transaksi')
             ->limit(3)
             ->get()
             ->map(function ($transaksi) {
                 return [
-                    'id' => $transaksi->id,
-                    'jenis_sampah' => $transaksi->jenisSampah->nama,
-                    'berat' => $transaksi->berat,
-                    'poin' => $transaksi->poin_didapat,
-                    'lokasi' => $transaksi->bakSampah->nama ?? '-',
-                    'tanggal' => $transaksi->tanggal_transaksi,
+                    'id'              => $transaksi->id,
+                    'berat_gram'      => (int) $transaksi->berat,
+                    'jumlah_final'    => $transaksi->jumlah_final,
+                    'poin_didapat'    => $transaksi->poin_didapat,
+                    'koin_didapat'    => $transaksi->koin_didapat,
+                    'status_validasi' => $transaksi->status_validasi,
+                    'lokasi'          => $transaksi->bakSampah->nama ?? '-',
+                    'tanggal'         => $transaksi->tanggal_transaksi,
                 ];
             });
 
@@ -51,42 +65,46 @@ class DashboardController extends Controller
 
         $levelProgress = 0;
         if ($nextLevel) {
-            // Fix: pastikan poin mahasiswa >= min_poin level saat ini
             if ($mahasiswa->total_poin < $currentLevel->min_poin) {
-                // Edge case: poin lebih kecil dari min level (data manual)
                 $levelProgress = 0;
             } else {
                 $range = $nextLevel->min_poin - $currentLevel->min_poin;
                 $progress = $mahasiswa->total_poin - $currentLevel->min_poin;
-                $levelProgress = min(100, max(0, ($progress / $range) * 100)); // ← Tambahkan max(0, ...)
+                $levelProgress = min(100, max(0, ($progress / $range) * 100));
             }
         } else {
-            $levelProgress = 100; // Max level
+            $levelProgress = 100;
         }
 
         return response()->json([
             'success' => true,
             'data' => [
                 'mahasiswa' => [
-                    'name' => $mahasiswa->name,
+                    'name'   => $mahasiswa->name,
                     'avatar' => $mahasiswa->avatar,
-                    'nim' => $mahasiswa->nim,
-                    'prodi' => $mahasiswa->prodi,
+                    'nim'    => $mahasiswa->nim,
+                    'prodi'  => $mahasiswa->prodi,
                 ],
                 'poin' => [
-                    'total' => $mahasiswa->total_poin,
-                    'level' => $currentLevel->nama_level,
-                    'level_urutan' => $currentLevel->urutan,
-                    'next_level' => $nextLevel ? $nextLevel->nama_level : null,
+                    'total'               => $mahasiswa->total_poin,
+                    'level'               => $currentLevel->nama_level,
+                    'level_urutan'        => $currentLevel->urutan,
+                    'next_level'          => $nextLevel ? $nextLevel->nama_level : null,
                     'progress_percentage' => round($levelProgress, 2),
                 ],
+                'koin' => [
+                    'total'           => $mahasiswa->total_koin_botol,
+                    'koin_per_voucher' => $koinPerVoucher,
+                    'voucher_aktif'   => $voucherAktif,
+                ],
                 'stats' => [
-                    'total_berat_kg' => round($totalBerat, 2),
-                    'total_transaksi' => $totalTransaksi,
-                    'ranking' => $ranking,
+                    'total_berat_gram' => $totalBeratGram,
+                    'total_botol'      => $totalBotol,
+                    'total_transaksi'  => $totalTransaksi,
+                    'ranking'          => $ranking,
                 ],
                 'recent_transactions' => $recentTransactions,
-            ]
-        ], 200);
+            ],
+        ]);
     }
 }

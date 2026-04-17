@@ -34,6 +34,11 @@ class TransaksiController extends Controller
             $query->where('bak_sampah_id', $request->bak_sampah_id);
         }
 
+        // Filter status validasi (BARU)
+        if ($request->filled('status_validasi')) {
+            $query->where('status_validasi', $request->status_validasi);
+        }
+
         // Filter mahasiswa
         if ($request->filled('mahasiswa_id')) {
             $query->where('mahasiswa_id', $request->mahasiswa_id);
@@ -44,22 +49,24 @@ class TransaksiController extends Controller
             $search = $request->search;
             $query->whereHas('mahasiswa', function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('nim', 'like', "%{$search}%");
+                    ->orWhere('nim', 'like', "%{$search}%");
             });
         }
 
-        $transaksis = $query->orderBy('tanggal_transaksi', 'desc')->paginate(20);
+        // Summary dihitung SEBELUM paginate (pakai clone agar query tidak terpengaruh)
+        $summaryQuery = clone $query;
+        $summary = [
+            'total_transaksi' => $summaryQuery->count(),
+            'total_berat' => $summaryQuery->sum('berat'),
+            'total_poin' => $summaryQuery->sum('poin_didapat'),
+            'total_koin' => $summaryQuery->sum('koin_didapat'),
+        ];
+
+        $transaksis = $query->orderBy('tanggal_transaksi', 'desc')->paginate(20)->withQueryString();
 
         // Data untuk filter
         $jenisSampahs = JenisSampah::where('is_active', 1)->orderBy('nama')->get();
         $bakSampahs = BakSampah::orderBy('nama')->get();
-
-        // Summary
-        $summary = [
-            'total_transaksi' => $query->count(),
-            'total_berat' => $query->sum('berat'),
-            'total_poin' => $query->sum('poin_didapat'),
-        ];
 
         return view('admin.transaksi.index', compact(
             'transaksis',
