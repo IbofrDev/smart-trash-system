@@ -109,7 +109,7 @@
             border: 1px solid rgba(16, 185, 129, 0.2);
             border-radius: 16px; padding: 1.25rem 1rem; text-align: center;
         }
-        .help-card h6 { color: #ffffff; font-size: 0.9rem; font-weight: 700; }
+        .help-card h6 { color: #ffffff; font-size: 0.9rem; font-weight: 700; margin-bottom: 10px; }
         .btn-help {
             background: var(--primary-color); color: #ffffff;
             font-size: 0.8rem; font-weight: 600; padding: 0.5rem;
@@ -222,7 +222,9 @@
             <div class="help-card">
                 <i class="bi bi-question-circle-fill"></i>
                 <h6>Butuh Bantuan?</h6>
-                <a href="#" class="btn-help">Buka Panduan</a>
+                <a href="javascript:void(0)" onclick="alert('Buku Panduan sedang dalam tahap penyusunan. Akan tersedia pada rilis final Tugas Akhir.')" class="btn-help">
+                    <i class="bi bi-file-earmark-pdf me-1"></i> Buka Panduan
+                </a>
             </div>
         </div>
     </aside>
