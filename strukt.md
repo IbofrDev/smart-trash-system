@@ -1,6 +1,6 @@
 # File Tree: smart-trash-system
 
-**Generated:** 4/15/2026, 3:09:59 PM
+**Generated:** 4/23/2026, 1:15:38 PM
 **Root Path:** `c:\tugasakhir\smart-trash-system`
 
 ```
@@ -17,7 +17,8 @@
 │   │   │   │   ├── 🐘 LeaderboardController.php
 │   │   │   │   ├── 🐘 NotifikasiController.php
 │   │   │   │   ├── 🐘 ProfileController.php
-│   │   │   │   └── 🐘 TransaksiController.php
+│   │   │   │   ├── 🐘 TransaksiController.php
+│   │   │   │   └── 🐘 VoucherController.php
 │   │   │   ├── 📁 Web
 │   │   │   │   ├── 🐘 AchievementController.php
 │   │   │   │   ├── 🐘 AuthController.php
@@ -31,7 +32,8 @@
 │   │   │   │   ├── 🐘 MahasiswaController.php
 │   │   │   │   ├── 🐘 SettingPoinController.php
 │   │   │   │   ├── 🐘 TransaksiController.php
-│   │   │   │   └── 🐘 UserController.php
+│   │   │   │   ├── 🐘 UserController.php
+│   │   │   │   └── 🐘 VoucherController.php
 │   │   │   └── 🐘 Controller.php
 │   │   └── 📁 Middleware
 │   │       ├── 🐘 HardwareApiKeyMiddleware.php
@@ -52,7 +54,9 @@
 │   │   ├── 🐘 Notifikasi.php
 │   │   ├── 🐘 SettingPoin.php
 │   │   ├── 🐘 TransaksiSampah.php
-│   │   └── 🐘 User.php
+│   │   ├── 🐘 TransaksiSession.php
+│   │   ├── 🐘 User.php
+│   │   └── 🐘 VoucherMahasiswa.php
 │   ├── 📁 Providers
 │   │   ├── 🐘 AppServiceProvider.php
 │   │   └── 🐘 EventServiceProvider.php
@@ -95,8 +99,15 @@
 │   │   ├── 🐘 2026_03_19_032307_create_mahasiswa_achievement_table.php
 │   │   ├── 🐘 2026_03_19_032307_create_notifikasi_table.php
 │   │   ├── 🐘 2026_03_19_032309_create_log_aktivitas_table.php
-│   │   ├── 🐘 2026_03_22_051905_add_timestamps_to_mahasiswa_achievement_table.php
-│   │   └── 🐘 2026_03_22_052140_add_updated_at_to_notifikasi_table.php
+│   │   ├── 🐘 2026_03_22_052140_add_updated_at_to_notifikasi_table.php
+│   │   ├── 🐘 2026_04_15_081835_add_total_koin_to_mahasiswa_table.php
+│   │   ├── 🐘 2026_04_15_082149_add_berat_to_jenis_sampah_table.php
+│   │   ├── 🐘 2026_04_15_082325_add_new_columns_to_transaksi_sampah_table.php
+│   │   ├── 🐘 2026_04_15_082403_create_transaksi_session_table.php
+│   │   ├── 🐘 2026_04_15_082404_create_voucher_mahasiswa_table.php
+│   │   ├── 🐘 2026_04_15_082405_add_total_botol_to_leaderboard_table.php
+│   │   ├── 🐘 2026_04_15_083403_update_syarat_type_enum_in_achievement_table.php
+│   │   └── 🐘 2026_04_15_092911_rename_total_berat_kg_to_total_berat_gram_in_leaderboard_table.php
 │   ├── 📁 seeders
 │   │   ├── 🐘 AchievementSeeder.php
 │   │   ├── 🐘 BakSampahSeeder.php
@@ -109,6 +120,14 @@
 │   ├── 📁 snapshots
 │   └── ⚙️ .gitignore
 ├── 📁 public
+│   ├── 📁 images
+│   │   ├── 🖼️ Ellipse-1.png
+│   │   ├── 🖼️ Vector-1.png
+│   │   ├── 🖼️ Wireframe-HP.jpeg
+│   │   ├── 🖼️ background-sampah.png
+│   │   ├── 🖼️ section-login.png
+│   │   └── 🖼️ smart-waste-bg.png
+│   ├── 📁 js
 │   ├── ⚙️ .htaccess
 │   ├── 📄 favicon.ico
 │   ├── 🐘 index.php
@@ -165,6 +184,8 @@
 │       │   │   ├── 🐘 edit.blade.php
 │       │   │   ├── 🐘 index.blade.php
 │       │   │   └── 🐘 show.blade.php
+│       │   ├── 📁 voucher
+│       │   │   └── 🐘 index.blade.php
 │       │   └── 🐘 dashboard.blade.php
 │       ├── 📁 auth
 │       │   └── 🐘 login.blade.php
@@ -205,6 +226,7 @@
 │   │   │   ├── 🐘 15b9a14dcc9d6a5558ee48fffc4f08c6.php
 │   │   │   ├── 🐘 1c7fc44fceaa9aff6ba0113640be98e5.php
 │   │   │   ├── 🐘 1e154e4307f9f529ec1f3dff6312acf7.php
+│   │   │   ├── 🐘 1fa8d4e73ea0c61282fce8889a850a37.php
 │   │   │   ├── 🐘 1fac2b42a72ad80ab0a9b87aaab294aa.php
 │   │   │   ├── 🐘 22100dd25f2328ed06b291573bcce492.php
 │   │   │   ├── 🐘 27711974ae05d1a410a473be4db51fa2.php
@@ -236,8 +258,12 @@
 │   │   │   ├── 🐘 8d5b6ead9149b285ba6124da7b3e57d3.php
 │   │   │   ├── 🐘 9029966d749bcdc675f776e60ea62267.php
 │   │   │   ├── 🐘 90c01398f93674cc51dd9c891f341bf9.php
+│   │   │   ├── 🐘 912c7ff2e2fca20e6ec04ab99f60be19.php
+│   │   │   ├── 🐘 9190e6815bf7dcd40eaaa725b40f7bcc.php
 │   │   │   ├── 🐘 92f2dd4733637fa1132822bbf72db439.php
+│   │   │   ├── 🐘 945a9b711d93e5eaecddf910ed1348ed.php
 │   │   │   ├── 🐘 977cbbbcf0712214379180c5a8455e26.php
+│   │   │   ├── 🐘 a0059ca818d621c5b2d719a6fcf164fa.php
 │   │   │   ├── 🐘 a57f02142fa3b82a12c542bc55e9214f.php
 │   │   │   ├── 🐘 a8881cbad82be202110c0271b5a23db2.php
 │   │   │   ├── 🐘 a92fd56c66012a304fc0ab4e27bc8a80.php
@@ -249,6 +275,7 @@
 │   │   │   ├── 🐘 c9739f60918b417880802dbae1c40730.php
 │   │   │   ├── 🐘 d83e5e710e6b6e33bf9dcb5b6a29b744.php
 │   │   │   ├── 🐘 d95cb9abd0e9bdc21a4a23bee09408ac.php
+│   │   │   ├── 🐘 debcda632190e7e499f14f6649f3826e.php
 │   │   │   ├── 🐘 e1051b98d33f9b1e4fe48ec6baeb1663.php
 │   │   │   ├── 🐘 e1abdf3041cd9dab7ac4301d6033fbe1.php
 │   │   │   ├── 🐘 e3f1f2e5297f80230459da0861c1ccb1.php
@@ -274,9 +301,12 @@
 ├── 📄 grup1-controllers.txt
 ├── 📄 grup2-views.txt
 ├── 📄 grup3-4-routes-models.txt
+├── 📄 output.txt
+├── ⚙️ package-lock.json
 ├── ⚙️ package.json
 ├── ⚙️ phpunit.xml
 ├── 📄 smart_trash_db.sql
+├── 📝 struktur.md
 └── 📄 vite.config.js
 ```
 

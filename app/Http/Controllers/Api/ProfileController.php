@@ -27,6 +27,7 @@ class ProfileController extends Controller
                 'prodi' => $mahasiswa->prodi,
                 'rfid_uid' => $mahasiswa->rfid_uid,
                 'total_poin' => $mahasiswa->total_poin,
+                'total_koin_botol' => $mahasiswa->total_koin_botol,
                 'level' => [
                     'id' => $mahasiswa->level->id,
                     'nama' => $mahasiswa->level->nama_level,

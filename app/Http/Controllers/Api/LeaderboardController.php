@@ -16,7 +16,7 @@ class LeaderboardController extends Controller
     {
         $period = $request->query('period', 'alltime'); // harian, mingguan, bulanan, alltime
 
-        $rankingField = match($period) {
+        $rankingField = match ($period) {
             'harian' => 'ranking_harian',
             'mingguan' => 'ranking_mingguan',
             'bulanan' => 'ranking_bulanan',
@@ -30,12 +30,13 @@ class LeaderboardController extends Controller
             ->get()
             ->map(function ($item) use ($rankingField) {
                 return [
+                    'mahasiswa_id' => $item->mahasiswa_id,
                     'ranking' => $item->{$rankingField},
-                    'name' => $item->mahasiswa->name,
+                    'nama' => $item->mahasiswa->name,
                     'avatar' => $item->mahasiswa->avatar,
-                    'level' => $item->mahasiswa->level->nama_level ?? 'Eco Starter',
+                    'nama_level' => $item->mahasiswa->level->nama_level ?? 'Eco Starter',
                     'total_poin' => $item->mahasiswa->total_poin,
-                    'total_berat_kg' => $item->total_berat_kg,
+                    'total_berat_kg' => (float) $item->total_berat_gram / 1000,
                 ];
             });
 
@@ -54,7 +55,7 @@ class LeaderboardController extends Controller
         $mahasiswa = $request->user();
         $period = $request->query('period', 'alltime');
 
-        $rankingField = match($period) {
+        $rankingField = match ($period) {
             'harian' => 'ranking_harian',
             'mingguan' => 'ranking_mingguan',
             'bulanan' => 'ranking_bulanan',
@@ -79,7 +80,7 @@ class LeaderboardController extends Controller
             'data' => [
                 'ranking' => $myLeaderboard->{$rankingField},
                 'total_poin' => $mahasiswa->total_poin,
-                'total_berat_kg' => $myLeaderboard->total_berat_kg,
+                'total_berat_kg' => (float) $myLeaderboard->total_berat_gram / 1000,
             ]
         ], 200);
     }

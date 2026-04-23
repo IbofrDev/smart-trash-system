@@ -38,22 +38,22 @@ class DashboardController extends Controller
             ->where('expired_at', '>', now())
             ->count();
 
-        // Recent transactions (3 terakhir)
         $recentTransactions = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
-            ->with(['bakSampah.lokasi'])
+            ->with(['bakSampah.lokasi', 'jenisSampah'])
             ->orderByDesc('tanggal_transaksi')
             ->limit(3)
             ->get()
             ->map(function ($transaksi) {
                 return [
-                    'id'              => $transaksi->id,
-                    'berat_gram'      => (int) $transaksi->berat,
-                    'jumlah_final'    => $transaksi->jumlah_final,
-                    'poin_didapat'    => $transaksi->poin_didapat,
-                    'koin_didapat'    => $transaksi->koin_didapat,
+                    'id' => $transaksi->id,
+                    'jenis_sampah' => $transaksi->jenisSampah?->nama ?? '-',
+                    'berat' => (int) $transaksi->berat,
+                    'jumlah_final' => $transaksi->jumlah_final,
+                    'poin' => $transaksi->poin_didapat,
+                    'koin' => $transaksi->koin_didapat,
                     'status_validasi' => $transaksi->status_validasi,
-                    'lokasi'          => $transaksi->bakSampah->nama ?? '-',
-                    'tanggal'         => $transaksi->tanggal_transaksi,
+                    'lokasi' => $transaksi->bakSampah?->lokasi?->nama_lokasi ?? '-',
+                    'tanggal' => $transaksi->tanggal_transaksi,
                 ];
             });
 
@@ -80,28 +80,29 @@ class DashboardController extends Controller
             'success' => true,
             'data' => [
                 'mahasiswa' => [
-                    'name'   => $mahasiswa->name,
+                    'name' => $mahasiswa->name,
                     'avatar' => $mahasiswa->avatar,
-                    'nim'    => $mahasiswa->nim,
-                    'prodi'  => $mahasiswa->prodi,
+                    'nim' => $mahasiswa->nim,
+                    'prodi' => $mahasiswa->prodi,
                 ],
                 'poin' => [
-                    'total'               => $mahasiswa->total_poin,
-                    'level'               => $currentLevel->nama_level,
-                    'level_urutan'        => $currentLevel->urutan,
-                    'next_level'          => $nextLevel ? $nextLevel->nama_level : null,
+                    'total' => $mahasiswa->total_poin,
+                    'level' => $currentLevel->nama_level,
+                    'level_urutan' => $currentLevel->urutan,
+                    'next_level' => $nextLevel ? $nextLevel->nama_level : null,
                     'progress_percentage' => round($levelProgress, 2),
                 ],
                 'koin' => [
-                    'total'           => $mahasiswa->total_koin_botol,
+                    'total' => $mahasiswa->total_koin_botol,
                     'koin_per_voucher' => $koinPerVoucher,
-                    'voucher_aktif'   => $voucherAktif,
+                    'voucher_aktif' => $voucherAktif,
                 ],
                 'stats' => [
                     'total_berat_gram' => $totalBeratGram,
-                    'total_botol'      => $totalBotol,
-                    'total_transaksi'  => $totalTransaksi,
-                    'ranking'          => $ranking,
+                    'total_botol' => $totalBotol,
+                    'total_transaksi' => $totalTransaksi,
+                    'total_koin' => $mahasiswa->total_koin_botol,
+                    'ranking' => $ranking,
                 ],
                 'recent_transactions' => $recentTransactions,
             ],
