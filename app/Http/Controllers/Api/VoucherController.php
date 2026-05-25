@@ -80,49 +80,13 @@ class VoucherController extends Controller
     }
 
     /**
-     * Gunakan voucher (klik di depan kasir)
+     * Endpoint lama - sekarang voucher hanya bisa divalidasi oleh kasir
      */
     public function useVoucher(Request $request, $id)
     {
-        $mahasiswa = $request->user();
-
-        $voucher = VoucherMahasiswa::where('id', $id)
-            ->where('mahasiswa_id', $mahasiswa->id)
-            ->first();
-
-        if (!$voucher) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Voucher tidak ditemukan.',
-            ], 404);
-        }
-
-        // Cek expired
-        if ($voucher->isExpired()) {
-            $voucher->update(['status' => 'expired']);
-            return response()->json([
-                'success' => false,
-                'message' => 'Voucher sudah expired.',
-            ], 422);
-        }
-
-        if ($voucher->status !== 'aktif') {
-            return response()->json([
-                'success' => false,
-                'message' => "Voucher tidak bisa digunakan. Status: {$voucher->status}",
-            ], 422);
-        }
-
-        // Update status
-        $voucher->update([
-            'status'  => 'terpakai',
-            'used_at' => now(),
-        ]);
-
         return response()->json([
-            'success' => true,
-            'data' => $voucher->fresh(),
-            'message' => 'Voucher berhasil digunakan!',
-        ]);
+            'success' => false,
+            'message' => 'Voucher hanya bisa divalidasi oleh kasir. Tunjukkan kode voucher ke kasir untuk digunakan.',
+        ], 403);
     }
 }
