@@ -10,6 +10,7 @@ use App\Http\Controllers\Api\AchievementController;
 use App\Http\Controllers\Api\NotifikasiController;
 use App\Http\Controllers\Api\HardwareController;
 use App\Http\Controllers\Api\VoucherController;
+use App\Http\Controllers\Api\KasirController;
 
 /*
 |--------------------------------------------------------------------------
@@ -66,6 +67,30 @@ Route::post('/auth/mock-login', function () {
         ]
     ]);
 });
+
+
+/*
+|--------------------------------------------------------------------------
+| Kasir Auth Routes (PUBLIC)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('auth/kasir')->group(function () {
+    Route::post('/login', [AuthController::class, 'loginKasir']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Kasir Protected Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('kasir')
+    ->middleware(['auth:sanctum', 'role:kasir'])
+    ->group(function () {
+        Route::get('/me', [KasirController::class, 'me']);
+        Route::post('/logout', [AuthController::class, 'logoutKasir']);
+        Route::post('/voucher/validate', [KasirController::class, 'validateVoucher']);
+        Route::get('/voucher/check/{kode}', [KasirController::class, 'checkVoucher']);
+    });
 
 /*
 |--------------------------------------------------------------------------

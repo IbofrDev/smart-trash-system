@@ -8,6 +8,7 @@ use App\Models\Mahasiswa;
 use App\Models\Level;
 use Illuminate\Support\Facades\Validator;
 use Google\Client as GoogleClient;
+use Illuminate\Support\Facades\Auth;
 
 class AuthController extends Controller
 {
@@ -98,6 +99,92 @@ class AuthController extends Controller
                 'error' => $e->getMessage()
             ], 500);
         }
+    }
+
+    /**
+     * Login Kasir (email + password)
+     * POST /api/auth/kasir/login
+     */
+    public function loginKasir(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 6 karakter.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Cek credentials
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email atau password salah.',
+            ], 401);
+        }
+
+        $user = Auth::user();
+
+        // Pastikan role adalah kasir
+        if ($user->role !== 'kasir') {
+            Auth::logout();
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun ini bukan akun kasir.',
+            ], 403);
+        }
+
+        // Cek aktif
+        if (!$user->is_active) {
+            Auth::logout();
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun Anda tidak aktif. Hubungi administrator.',
+            ], 403);
+        }
+
+        // Hapus token lama, buat token baru
+        $user->tokens()->delete();
+        $token = $user->createToken('kasir-app')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login berhasil.',
+            'data' => [
+                'token' => $token,
+                'kasir' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Logout Kasir
+     * POST /api/auth/kasir/logout
+     */
+    public function logoutKasir(Request $request)
+    {
+        // Hapus token yang sedang dipakai
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logout berhasil.',
+        ]);
     }
 
     /**
