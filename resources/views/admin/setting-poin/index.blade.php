@@ -9,61 +9,61 @@
     .animate-fade-up { opacity: 0; transform: translateY(15px); animation: fadeUp 0.5s ease-out forwards; }
     @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
 
-    /* Card Utama */
-    .custom-card { border: none; border-radius: 16px; box-shadow: 0 4px 15px rgba(0, 0, 0, 0.03); background-color: #ffffff; overflow: hidden; }
+    /* Card Utama - Lebih Kotak & Bersih */
+    .custom-card { border: 1px solid #f1f5f9; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); background-color: #ffffff; overflow: hidden; }
 
     /* Header & Toolbar */
-    .table-toolbar { padding: 1.5rem; border-bottom: 1px solid #f3f4f6; display: flex; justify-content: space-between; align-items: center; background-color: #ffffff; }
+    .table-toolbar { padding: 1.5rem; border-bottom: 1px solid #f1f5f9; display: flex; justify-content: space-between; align-items: center; background-color: #ffffff; }
 
-    /* Styling Tabel Modern */
-    .table-modern { margin-bottom: 0; width: 100%; }
-    .table-modern th { background-color: #f9fafb; color: #6b7280; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.05em; padding: 1rem 1.5rem; border-bottom: 1px solid #e5e7eb; }
-    .table-modern td { padding: 1rem 1.5rem; vertical-align: middle; border-bottom: 1px solid #f3f4f6; color: #4b5563; }
-    .table-modern tbody tr { transition: background-color 0.2s; }
-    .table-modern tbody tr:hover { background-color: #f8fafc; }
+    /* Styling Tabel Clean */
+    .table-clean { margin-bottom: 0; width: 100%; }
+    .table-clean th { background-color: #ffffff; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; padding: 1rem 1.5rem; border-bottom: 2px solid #f1f5f9; }
+    .table-clean td { padding: 1rem 1.5rem; vertical-align: middle; border-bottom: 1px solid #f8fafc; color: #334155; }
+    .table-clean tbody tr { transition: background-color 0.2s; }
+    .table-clean tbody tr:hover { background-color: #f8fafc; }
     
-    /* System Key Box (Nama Setting) */
+    /* System Key Box (Nama Setting) - Lebih Boxy */
     .sys-key-box {
-        background-color: #f1f5f9; color: #334155; padding: 0.4rem 0.8rem;
-        border-radius: 8px; font-family: monospace; font-weight: 600; font-size: 0.85rem;
+        background-color: #f8fafc; color: #0f172a; padding: 0.5rem 1rem;
+        border-radius: 6px; font-family: monospace; font-weight: 700; font-size: 0.85rem;
         display: inline-block; border: 1px solid #e2e8f0;
     }
 
-    /* Value Badge */
+    /* Value Badge - Diubah dari Blue Pill menjadi Modern Boxy Mint */
     .value-badge {
-        background: linear-gradient(135deg, #3b82f6, #2563eb); color: white;
-        padding: 0.5rem 1rem; border-radius: 50px; font-weight: bold; font-size: 0.9rem;
-        box-shadow: 0 2px 8px rgba(37, 99, 235, 0.2); display: inline-flex; align-items: center; gap: 6px;
+        background-color: #ecfdf5; color: #047857;
+        padding: 0.5rem 1.25rem; border-radius: 6px; font-weight: 800; font-size: 0.95rem;
+        border: 1px solid #a7f3d0; display: inline-flex; align-items: center; gap: 6px;
     }
     
     /* Tombol Aksi */
-    .btn-icon { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 8px; border: none; transition: all 0.2s; text-decoration: none; cursor: pointer; }
-    .btn-edit { background-color: #eff6ff; color: #3b82f6; }
-    .btn-edit:hover { background-color: #3b82f6; color: #fff; transform: translateY(-2px); box-shadow: 0 4px 8px rgba(59, 130, 246, 0.3); }
+    .btn-icon { width: 32px; height: 32px; display: inline-flex; align-items: center; justify-content: center; border-radius: 6px; border: 1px solid #e2e8f0; background-color: #f8fafc; color: #64748b; transition: all 0.2s; text-decoration: none; cursor: pointer; }
+    .btn-icon:hover { transform: translateY(-2px); }
+    .btn-edit:hover { background-color: #0f172a; color: #ffffff; border-color: #0f172a; }
 
     /* Empty State */
-    .empty-state { padding: 4rem 1rem; text-align: center; color: #9ca3af; }
-    .empty-state i { font-size: 4rem; color: #e5e7eb; display: block; margin-bottom: 1rem; }
+    .empty-state { padding: 4rem 1rem; text-align: center; color: #94a3b8; }
+    .empty-state i { font-size: 4rem; color: #e2e8f0; display: block; margin-bottom: 1rem; }
 </style>
 
 <div class="d-flex flex-column flex-md-row justify-content-between align-items-md-center mb-4 animate-fade-up">
     <div class="mb-3 mb-md-0">
-        <h4 class="fw-bold text-dark mb-1">Konfigurasi Sistem Gamifikasi</h4>
+        <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Konfigurasi Sistem Gamifikasi</h4>
         <p class="text-muted mb-0 small">Atur variabel inti yang mempengaruhi perhitungan poin mahasiswa.</p>
     </div>
 </div>
 
-<div class="card custom-card animate-fade-up" style="animation-delay: 0.1s;">
+<div class="custom-card animate-fade-up" style="animation-delay: 0.1s;">
     
     <div class="table-toolbar">
-        <h6 class="m-0 fw-bold text-dark"><i class="bi bi-sliders text-primary me-2"></i>Daftar Parameter Sistem</h6>
+        <h6 class="m-0 fw-bold" style="color: #0f172a;"><i class="bi bi-sliders text-success me-2"></i>Daftar Parameter Sistem</h6>
     </div>
 
     <div class="table-responsive">
-        <table class="table table-modern">
+        <table class="table table-clean">
             <thead>
                 <tr>
-                    <th width="5%" class="text-center">#</th>
+                    <th width="5%" class="text-center">No</th>
                     <th width="25%">Variabel Sistem</th>
                     <th width="20%">Nilai (Value)</th>
                     <th width="40%">Fungsi & Deskripsi</th>
@@ -77,23 +77,23 @@
                     
                     <td>
                         <div class="sys-key-box">
-                            <i class="bi bi-gear-fill text-secondary me-1"></i> {{ $setting->nama_setting }}
+                            <i class="bi bi-gear-fill text-success me-1"></i> {{ $setting->nama_setting }}
                         </div>
                     </td>
                     
                     <td>
                         <div class="value-badge">
-                            {{ number_format($setting->value) }}
+                            <i class="bi bi-star-fill text-warning me-1"></i> {{ number_format($setting->value) }}
                         </div>
                     </td>
 
                     <td>
-                        <span class="text-muted" style="font-size: 0.85rem; line-height: 1.4; display: block;">
+                        <span class="text-muted" style="font-size: 0.85rem; line-height: 1.5; display: block;">
                             {{ $setting->deskripsi ?? 'Tidak ada deskripsi untuk parameter ini.' }}
                         </span>
                     </td>
                     
-                    <td>
+                    <td class="pe-4">
                         <div class="d-flex justify-content-end pe-2">
                             <a href="{{ route('admin.setting-poin.edit', $setting) }}" class="btn-icon btn-edit" title="Konfigurasi Parameter">
                                 <i class="bi bi-wrench-adjustable"></i>
@@ -101,7 +101,6 @@
                         </div>
                     </td>
                 </tr>
-                
                 @empty
                 <tr>
                     <td colspan="5" class="border-0">
