@@ -4,48 +4,39 @@
     <meta charset="utf-8">
     <title>Laporan Klasemen Mahasiswa</title>
     <style>
-        /* Menggunakan font standar yang aman untuk PDF */
         body { font-family: 'Helvetica Neue', Helvetica, Arial, sans-serif; font-size: 10px; color: #334155; line-height: 1.4; margin: 0; padding: 0; }
         
-        /* Layout Header menggunakan Table agar aman di DomPDF */
-        .header-table { width: 100%; border-bottom: 2px solid #3b82f6; padding-bottom: 15px; margin-bottom: 20px; }
+        .header-table { width: 100%; border-bottom: 2px solid #10b981; padding-bottom: 15px; margin-bottom: 20px; }
         .header-table td { vertical-align: bottom; }
         .title { font-size: 20px; font-weight: bold; color: #0f172a; margin: 0; letter-spacing: 0.5px; }
         .subtitle { font-size: 11px; color: #64748b; margin-top: 4px; }
         .info-text { font-size: 10px; color: #475569; line-height: 1.6; }
-        .info-text strong { color: #1e293b; }
+        .info-text strong { color: #0f172a; }
 
-        /* Summary Cards dengan metode border-spacing */
         .summary-wrapper { width: 100%; margin-bottom: 20px; border-collapse: separate; border-spacing: 8px 0; margin-left: -8px; margin-right: -8px; }
         .summary-box { background-color: #f8fafc; border: 1px solid #e2e8f0; padding: 12px 8px; text-align: center; border-radius: 4px; width: 16.66%; }
         .summary-label { font-size: 8px; color: #64748b; text-transform: uppercase; letter-spacing: 0.5px; margin-bottom: 5px; display: block; }
         .summary-value { font-size: 16px; font-weight: bold; margin: 0; }
         
-        /* Warna Khusus Data Summary */
-        .val-blue { color: #2563eb; }
-        .val-green { color: #059669; }
-        .val-amber { color: #d97706; }
-        .val-cyan { color: #0891b2; }
-        .val-slate { color: #475569; }
-        .val-indigo { color: #4f46e5; }
+        .val-primary { color: #0f172a; }
+        .val-success { color: #059669; }
 
         /* Main Data Table */
         .data-table { width: 100%; border-collapse: collapse; margin-bottom: 20px; }
         .data-table th, .data-table td { padding: 8px 10px; border-bottom: 1px solid #e2e8f0; }
-        .data-table th { background-color: #1e293b; color: #ffffff; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; }
-        .data-table tbody tr:nth-child(even) { background-color: #f8fafc; }
-        .data-table tfoot th { background-color: #f1f5f9; color: #0f172a; border-top: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1; font-size: 10px; }
+        .data-table th { background-color: #f8fafc; color: #475569; text-align: left; font-size: 9px; text-transform: uppercase; letter-spacing: 0.5px; border-bottom: 2px solid #e2e8f0; }
+        .data-table tbody tr:nth-child(even) { background-color: #fafafa; }
+        .data-table tfoot th { background-color: #f8fafc; color: #0f172a; border-top: 2px solid #cbd5e1; border-bottom: 2px solid #cbd5e1; font-size: 10px; }
 
         /* Peringkat Juara (Top 3) */
-        .rank-1 { background-color: #fffbeb !important; } /* Emas Halus */
-        .rank-2 { background-color: #f1f5f9 !important; } /* Perak Halus */
-        .rank-3 { background-color: #ffedd5 !important; } /* Perunggu Halus */
+        .rank-1 { background-color: #fffbeb !important; }
+        .rank-2 { background-color: #f8fafc !important; }
+        .rank-3 { background-color: #fff7ed !important; }
         
-        .medal-1 { color: #b45309; font-weight: bold; font-size: 12px; }
-        .medal-2 { color: #475569; font-weight: bold; font-size: 12px; }
-        .medal-3 { color: #9a3412; font-weight: bold; font-size: 12px; }
+        .medal-1 { color: #d97706; font-weight: bold; font-size: 11px; background-color: #fef3c7; padding: 2px 6px; border-radius: 3px; border: 1px solid #fde68a;}
+        .medal-2 { color: #475569; font-weight: bold; font-size: 11px; background-color: #f1f5f9; padding: 2px 6px; border-radius: 3px; border: 1px solid #e2e8f0;}
+        .medal-3 { color: #c2410c; font-weight: bold; font-size: 11px; background-color: #ffedd5; padding: 2px 6px; border-radius: 3px; border: 1px solid #fed7aa;}
 
-        /* Utilities */
         .text-center { text-align: center; }
         .text-right { text-align: right; }
         .footer { margin-top: 30px; text-align: center; font-size: 9px; color: #94a3b8; border-top: 1px dashed #cbd5e1; padding-top: 15px; }
@@ -70,11 +61,11 @@
         <tr>
             <td class="summary-box">
                 <span class="summary-label">Total Mahasiswa</span>
-                <div class="summary-value val-blue">{{ number_format($summary['total_mahasiswa']) }}</div>
+                <div class="summary-value val-primary">{{ number_format($summary['total_mahasiswa']) }}</div>
             </td>
             <td class="summary-box">
                 <span class="summary-label">Volume Berat</span>
-                <div class="summary-value val-green">
+                <div class="summary-value val-success">
                     @if($summary['total_berat'] >= 1000)
                         {{ number_format($summary['total_berat'] / 1000, 2) }} <span style="font-size:10px;">kg</span>
                     @else
@@ -84,19 +75,19 @@
             </td>
             <td class="summary-box">
                 <span class="summary-label">Total Poin</span>
-                <div class="summary-value val-amber">{{ number_format($summary['total_poin']) }}</div>
+                <div class="summary-value val-primary">{{ number_format($summary['total_poin']) }}</div>
             </td>
             <td class="summary-box">
                 <span class="summary-label">Saldo Koin</span>
-                <div class="summary-value val-cyan">{{ number_format($summary['total_koin']) }}</div>
+                <div class="summary-value val-primary">{{ number_format($summary['total_koin']) }}</div>
             </td>
             <td class="summary-box">
                 <span class="summary-label">Items (Botol)</span>
-                <div class="summary-value val-slate">{{ number_format($summary['total_botol']) }}</div>
+                <div class="summary-value val-primary">{{ number_format($summary['total_botol']) }}</div>
             </td>
             <td class="summary-box">
                 <span class="summary-label">Total Transaksi</span>
-                <div class="summary-value val-indigo">{{ number_format($summary['total_transaksi']) }}</div>
+                <div class="summary-value val-primary">{{ number_format($summary['total_transaksi']) }}</div>
             </td>
         </tr>
     </table>
@@ -135,10 +126,10 @@
                     <br><span style="color:#64748b; font-size:8.5px; font-family: monospace;">NIM: {{ $mhs->nim ?? '-' }}</span>
                 </td>
                 
-                <td style="color: #4338ca; font-weight: bold;">{{ $mhs->level->nama_level ?? '-' }}</td>
+                <td style="color: #0f172a; font-weight: bold;">{{ $mhs->level->nama_level ?? '-' }}</td>
                 
                 <td class="text-right" style="color: #059669; font-weight: bold;">{{ number_format($mhs->total_poin) }}</td>
-                <td class="text-right" style="color: #d97706; font-weight: bold;">{{ number_format($mhs->total_koin_botol ?? 0) }}</td>
+                <td class="text-right" style="color: #0f172a; font-weight: bold;">{{ number_format($mhs->total_koin_botol ?? 0) }}</td>
                 <td class="text-right" style="color: #475569;">{{ number_format($mhs->transaksi_sampah_sum_jumlah_final ?? 0) }} pcs</td>
                 
                 <td class="text-right" style="color: #0f172a; font-weight: bold;">
@@ -150,7 +141,7 @@
                     @endif
                 </td>
                 
-                <td class="text-center" style="color: #2563eb;">{{ number_format($mhs->transaksi_sampah_count) }}x</td>
+                <td class="text-center" style="color: #0f172a;">{{ number_format($mhs->transaksi_sampah_count) }}x</td>
             </tr>
             @empty
             <tr>
@@ -166,7 +157,7 @@
             <tr>
                 <th colspan="3" class="text-right" style="font-size: 11px;">TOTAL AKUMULASI SISTEM</th>
                 <th class="text-right" style="color: #059669;">{{ number_format($summary['total_poin']) }}</th>
-                <th class="text-right" style="color: #d97706;">{{ number_format($summary['total_koin']) }}</th>
+                <th class="text-right" style="color: #0f172a;">{{ number_format($summary['total_koin']) }}</th>
                 <th class="text-right" style="color: #475569;">{{ number_format($summary['total_botol']) }} pcs</th>
                 <th class="text-right" style="color: #0f172a;">
                     @if($summary['total_berat'] >= 1000)
@@ -175,7 +166,7 @@
                         {{ number_format($summary['total_berat'], 0) }} g
                     @endif
                 </th>
-                <th class="text-center" style="color: #2563eb;">{{ number_format($summary['total_transaksi']) }}x</th>
+                <th class="text-center" style="color: #0f172a;">{{ number_format($summary['total_transaksi']) }}x</th>
             </tr>
         </tfoot>
         @endif

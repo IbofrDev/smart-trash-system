@@ -3,152 +3,133 @@
 @section('title', 'Detail Transaksi')
 
 @section('content')
-<div class="row justify-content-center">
+
+<style>
+    /* Animasi Masuk */
+    .animate-fade-up { opacity: 0; transform: translateY(15px); animation: fadeUp 0.5s ease-out forwards; }
+    @keyframes fadeUp { to { opacity: 1; transform: translateY(0); } }
+
+    /* Card Layout Standar Berkelas */
+    .custom-card { border: 1px solid #e2e8f0; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); background-color: #ffffff; overflow: hidden; margin-bottom: 1.5rem; }
+    .card-header-custom { background-color: #ffffff; padding: 1.25rem 1.5rem; border-bottom: 1px solid #f1f5f9; font-weight: 700; color: #0f172a; display: flex; justify-content: space-between; align-items: center; }
+
+    /* List Group Custom (Boxy, Minimalist) */
+    .list-group-custom .list-group-item { border-color: #f1f5f9; padding: 1.2rem 1.5rem; display: flex; justify-content: space-between; align-items: center; background-color: transparent; }
+    .list-group-custom .list-group-item .item-label { color: #64748b; font-size: 0.9rem; font-weight: 600; display: flex; align-items: center; gap: 0.5rem; }
+    .list-group-custom .list-group-item .item-value { color: #0f172a; font-size: 0.95rem; font-weight: 700; text-align: right; }
+
+    /* Section Title */
+    .section-title { font-size: 0.8rem; font-weight: 700; color: #94a3b8; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 1rem; margin-top: 1.5rem; padding-left: 1.5rem; }
+</style>
+
+<div class="d-flex align-items-center justify-content-between mb-4 animate-fade-up">
+    <div class="d-flex align-items-center">
+        <a href="{{ route('admin.transaksi.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
+            <i class="bi bi-arrow-left fs-5"></i>
+        </a>
+        <div>
+            <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Detail Transaksi #{{ $transaksi->id }}</h4>
+            <p class="text-muted mb-0 small">Melihat rincian log setoran dan riwayat validasi alat.</p>
+        </div>
+    </div>
+</div>
+
+<div class="row justify-content-center animate-fade-up" style="animation-delay: 0.1s;">
     <div class="col-lg-8">
-        <div class="card mb-4">
-            <div class="card-header d-flex justify-content-between align-items-center">
-                <span><i class="bi bi-receipt me-2"></i>Detail Transaksi #{{ $transaksi->id }}</span>
+        <div class="custom-card">
+            <div class="card-header-custom bg-light" style="background-color: #f8fafc !important;">
+                <span><i class="bi bi-receipt-cutoff text-success me-2"></i>Invoice / Log Pembukuan</span>
                 @if(($transaksi->status_validasi ?? 'valid') === 'valid')
-                    <span class="badge bg-success">✓ Valid</span>
+                    <span class="badge px-3 py-1 rounded-2" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;"><i class="bi bi-check-circle me-1"></i> Valid</span>
                 @else
-                    <span class="badge bg-warning text-dark">⚠ Anomali</span>
+                    <span class="badge px-3 py-1 rounded-2" style="background: #fff1f2; color: #dc2626; border: 1px solid #fecaca;"><i class="bi bi-exclamation-triangle me-1"></i> Anomali</span>
                 @endif
             </div>
-            <div class="card-body">
 
-                {{-- INFO DASAR --}}
-                <table class="table table-borderless">
-                    <tr>
-                        <th width="200">ID Transaksi</th>
-                        <td>#{{ $transaksi->id }}</td>
-                    </tr>
-                    <tr>
-                        <th>Tanggal & Waktu</th>
-                        <td>{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d M Y, H:i:s') }}</td>
-                    </tr>
-                </table>
-
-                <hr>
-
-                {{-- MAHASISWA --}}
-                <h6 class="fw-semibold mb-3"><i class="bi bi-person me-1"></i> Mahasiswa</h6>
-                <table class="table table-borderless">
-                    <tr>
-                        <th width="200">Nama</th>
-                        <td>
-                            {{ $transaksi->mahasiswa->name ?? '-' }}
+            <div class="card-body p-0">
+                
+                <div class="section-title">Informasi Umum</div>
+                <ul class="list-group list-group-flush list-group-custom">
+                    <li class="list-group-item">
+                        <span class="item-label"><i class="bi bi-hash text-muted"></i> ID Transaksi</span>
+                        <span class="item-value">#{{ $transaksi->id }}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="item-label"><i class="bi bi-calendar-event text-muted"></i> Waktu Setoran</span>
+                        <span class="item-value">{{ \Carbon\Carbon::parse($transaksi->tanggal_transaksi)->format('d M Y, H:i:s') }}</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="item-label"><i class="bi bi-person text-muted"></i> Pelaku Transaksi</span>
+                        <span class="item-value">
+                            {{ $transaksi->mahasiswa->name ?? 'Tidak Diketahui' }}
                             @if($transaksi->mahasiswa)
-                                <a href="{{ route('admin.mahasiswa.show', $transaksi->mahasiswa) }}" class="ms-2 small">
+                                <a href="{{ route('admin.mahasiswa.show', $transaksi->mahasiswa) }}" class="ms-2 text-success" title="Lihat Profil">
                                     <i class="bi bi-box-arrow-up-right"></i>
                                 </a>
                             @endif
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>NIM</th>
-                        <td>{{ $transaksi->mahasiswa->nim ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Level Saat Ini</th>
-                        <td><span class="badge badge-info">{{ $transaksi->mahasiswa->level->nama_level ?? '-' }}</span></td>
-                    </tr>
-                </table>
+                        </span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="item-label"><i class="bi bi-card-heading text-muted"></i> NIM Mahasiswa</span>
+                        <span class="item-value font-monospace text-muted">{{ $transaksi->mahasiswa->nim ?? '-' }}</span>
+                    </li>
+                </ul>
 
-                <hr>
-
-                {{-- DETAIL JUMLAH --}}
-                <h6 class="fw-semibold mb-3"><i class="bi bi-123 me-1"></i> Detail Jumlah</h6>
-                <table class="table table-borderless">
-                    <tr>
-                        <th width="200">Jumlah Botol Plastik</th>
-                        <td>{{ $transaksi->jumlah_botol ?? 0 }} pcs</td>
-                    </tr>
-                    <tr>
-                        <th>Jumlah Kaleng Aluminium</th>
-                        <td>{{ $transaksi->jumlah_kaleng ?? 0 }} pcs</td>
-                    </tr>
-                    <tr>
-                        <th>Jumlah Terhitung (Sensor)</th>
-                        <td>{{ $transaksi->jumlah_terhitung ?? 0 }} pcs</td>
-                    </tr>
-                    <tr>
-                        <th>Jumlah Final</th>
-                        <td>
-                            <span class="fs-5 fw-semibold">{{ $transaksi->jumlah_final ?? 0 }} pcs</span>
+                <div class="section-title border-top pt-4">Rincian Fisik Sampah</div>
+                <ul class="list-group list-group-flush list-group-custom">
+                    <li class="list-group-item">
+                        <span class="item-label"><i class="bi bi-cup-straw text-success"></i> Botol Plastik (PET)</span>
+                        <span class="item-value">{{ $transaksi->jumlah_botol ?? 0 }} pcs</span>
+                    </li>
+                    <li class="list-group-item">
+                        <span class="item-label"><i class="bi bi-plugin text-warning"></i> Kaleng Aluminium</span>
+                        <span class="item-value">{{ $transaksi->jumlah_kaleng ?? 0 }} pcs</span>
+                    </li>
+                    <li class="list-group-item bg-light" style="background-color: #f8fafc !important;">
+                        <span class="item-label"><i class="bi bi-box-seam text-dark"></i> Total Terhitung (Final)</span>
+                        <span class="item-value fs-5">
+                            {{ $transaksi->jumlah_final ?? 0 }} pcs
                             @if(($transaksi->jumlah_terhitung ?? 0) > ($transaksi->jumlah_final ?? 0))
-                                <small class="text-warning ms-2">
-                                    <i class="bi bi-exclamation-triangle"></i>
-                                    Penalty {{ ($transaksi->jumlah_terhitung ?? 0) - ($transaksi->jumlah_final ?? 0) }} pcs
-                                </small>
+                                <br><small class="text-danger fs-6 fw-normal"><i class="bi bi-exclamation-triangle"></i> Selisih Sensor: {{ ($transaksi->jumlah_terhitung ?? 0) - ($transaksi->jumlah_final ?? 0) }} pcs</small>
                             @endif
-                        </td>
-                    </tr>
-                </table>
-
-                <hr>
-
-                {{-- DETAIL SAMPAH --}}
-                <h6 class="fw-semibold mb-3"><i class="bi bi-trash3 me-1"></i> Detail Berat & Reward</h6>
-                <table class="table table-borderless">
-                    <tr>
-                        <th width="200">Berat</th>
-                        <td>
-                            <span class="fs-5 fw-semibold">
-                                @if($transaksi->berat)
-                                    @if($transaksi->berat >= 1000)
-                                        {{ number_format($transaksi->berat / 1000, 3) }} kg
-                                        <small class="text-muted">({{ number_format($transaksi->berat, 0) }} gram)</small>
-                                    @else
-                                        {{ number_format($transaksi->berat, 0) }} gram
-                                    @endif
-                                @else
-                                    -
-                                @endif
-                            </span>
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Status Validasi Berat</th>
-                        <td>
-                            @if(($transaksi->status_validasi ?? 'valid') === 'valid')
-                                <span class="badge bg-success">✓ Valid — Berat sesuai ekspektasi</span>
+                        </span>
+                    </li>
+                    <li class="list-group-item bg-light" style="background-color: #f8fafc !important;">
+                        <span class="item-label"><i class="bi bi-speedometer2 text-dark"></i> Total Berat Fisik</span>
+                        <span class="item-value fs-5">
+                            @if(($transaksi->berat ?? 0) >= 1000)
+                                {{ number_format(($transaksi->berat ?? 0) / 1000, 3) }} kg
                             @else
-                                <span class="badge bg-warning text-dark">⚠ Anomali — Berat tidak sesuai ekspektasi</span>
+                                {{ number_format($transaksi->berat ?? 0, 0) }} gram
                             @endif
-                        </td>
-                    </tr>
-                    <tr>
-                        <th>Poin Didapat</th>
-                        <td><span class="fs-5 fw-semibold text-success">+{{ number_format($transaksi->poin_didapat ?? 0) }} poin</span></td>
-                    </tr>
-                    <tr>
-                        <th>Koin Didapat</th>
-                        <td><span class="fs-5 fw-semibold text-info">🪙 {{ number_format($transaksi->koin_didapat ?? 0) }} koin</span></td>
-                    </tr>
-                </table>
+                        </span>
+                    </li>
+                </ul>
 
-                <hr>
+                <div class="section-title border-top pt-4">Distribusi Reward</div>
+                <ul class="list-group list-group-flush list-group-custom">
+                    <li class="list-group-item" style="background-color: #ecfdf5;">
+                        <span class="item-label" style="color: #047857;"><i class="bi bi-star-fill text-warning"></i> Poin Mahasiswa</span>
+                        <span class="item-value fs-5 text-success">+{{ number_format($transaksi->poin_didapat ?? 0) }} Pts</span>
+                    </li>
+                    <li class="list-group-item" style="background-color: #fffbeb;">
+                        <span class="item-label" style="color: #b45309;"><i class="bi bi-coin text-warning"></i> Koin Voucher</span>
+                        <span class="item-value fs-5" style="color: #d97706;">+{{ number_format($transaksi->koin_didapat ?? 0) }} Koin</span>
+                    </li>
+                </ul>
 
-                {{-- LOKASI --}}
-                <h6 class="fw-semibold mb-3"><i class="bi bi-geo-alt me-1"></i> Lokasi</h6>
-                <table class="table table-borderless">
-                    <tr>
-                        <th width="200">Bak Sampah</th>
-                        <td>{{ $transaksi->bakSampah->nama ?? '-' }}</td>
-                    </tr>
-                    <tr>
-                        <th>Lokasi</th>
-                        <td>{{ $transaksi->bakSampah->lokasi->nama_lokasi ?? '-' }}</td>
-                    </tr>
-                </table>
+                <div class="section-title border-top pt-4">Data Perangkat (Mesin)</div>
+                <ul class="list-group list-group-flush list-group-custom">
+                    <li class="list-group-item pb-4">
+                        <span class="item-label"><i class="bi bi-hdd-network text-muted"></i> Bak Sampah Terhubung</span>
+                        <div class="text-end">
+                            <span class="item-value d-block">{{ $transaksi->bakSampah->nama ?? '-' }}</span>
+                            <small class="text-muted d-block mt-1"><i class="bi bi-geo-alt me-1"></i>{{ $transaksi->bakSampah->lokasi->nama_lokasi ?? 'Lokasi tidak ditemukan' }}</small>
+                        </div>
+                    </li>
+                </ul>
 
             </div>
-        </div>
-
-        <div class="text-center">
-            <a href="{{ route('admin.transaksi.index') }}" class="btn btn-secondary">
-                <i class="bi bi-arrow-left me-1"></i> Kembali ke Daftar
-            </a>
         </div>
     </div>
 </div>
