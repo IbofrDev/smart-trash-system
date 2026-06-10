@@ -58,7 +58,17 @@ class TransaksiController extends Controller
      */
     public function show(Request $request, $id)
     {
-        $mahasiswa = $request->user();
+        $user = $request->user();
+
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Data mahasiswa tidak ditemukan.'], 404);
+        }
 
         $transaksi = TransaksiSampah::where('id', $id)
             ->where('mahasiswa_id', $mahasiswa->id)
