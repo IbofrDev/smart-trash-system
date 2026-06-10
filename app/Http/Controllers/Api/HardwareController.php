@@ -100,7 +100,7 @@ class HardwareController extends Controller
 
     /**
      * POST /api/hardware/submit-weight
-     * Kirim data berat dari load cell + validasi anti-cheat
+     * Kirim data berat dari load cell — DILAKUKAN SETELAH count
      */
     public function submitWeight(Request $request)
     {
@@ -117,9 +117,9 @@ class HardwareController extends Controller
             ], 422);
         }
 
-        // Cari session
+        // Cek status 'counting' — sudah dihitung, belum ditimbang
         $session = TransaksiSession::where('session_token', $request->session_token)
-            ->where('status', 'tapped')
+            ->where('status', 'counting')
             ->where('expired_at', '>', now())
             ->first();
 
@@ -131,40 +131,60 @@ class HardwareController extends Controller
             ], 404);
         }
 
-        // Ambil berat standar
+        // Ambil data count dari cache
+        $countData = cache()->get('session_count_' . $session->id);
+
+        if (!$countData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data hitungan tidak ditemukan. Ulangi proses.',
+            ], 422);
+        }
+
+        // Validasi berat berdasarkan jumlah_final (bukan input user)
         $botol = JenisSampah::find(1);
         $kaleng = JenisSampah::find(2);
 
-        $minExpected = ($session->jumlah_botol * $botol->berat_min_gram)
-            + ($session->jumlah_kaleng * $kaleng->berat_min_gram);
+        $jumlahFinal = $countData['jumlah_final'];
 
-        $maxExpected = ($session->jumlah_botol * $botol->berat_max_gram)
-            + ($session->jumlah_kaleng * $kaleng->berat_max_gram);
+        // Estimasi berat dari jumlah_final — pakai proporsi botol:kaleng dari input
+        $totalInput = $session->jumlah_botol + $session->jumlah_kaleng;
 
-        // Toleransi 10%
+        if ($totalInput > 0) {
+            $rasiBotol = $session->jumlah_botol / $totalInput;
+            $rasiKaleng = $session->jumlah_kaleng / $totalInput;
+        } else {
+            $rasiBotol = 1;
+            $rasiKaleng = 0;
+        }
+
+        $estimasiBotol = round($jumlahFinal * $rasiBotol);
+        $estimasiKaleng = round($jumlahFinal * $rasiKaleng);
+
+        $minExpected = ($estimasiBotol * $botol->berat_min_gram)
+            + ($estimasiKaleng * $kaleng->berat_min_gram);
+
+        $maxExpected = ($estimasiBotol * $botol->berat_max_gram)
+            + ($estimasiKaleng * $kaleng->berat_max_gram);
+
+        // Toleransi ±10%
         $minTolerance = $minExpected * 0.9;
         $maxTolerance = $maxExpected * 1.1;
 
-        // Validasi berat
         $isValid = $request->berat_gram >= $minTolerance
             && $request->berat_gram <= $maxTolerance;
 
         $statusValidasi = $isValid ? 'valid' : 'anomali';
-        $penalty = $isValid ? 0 : 1;
 
-        // Simpan berat di session (pakai completed_at sebagai temp storage tidak ideal,
-        // jadi kita simpan di cache session via DB update notes)
-        // Kita update status → weighing dan simpan berat sementara
+        // Update status → weighing
         $session->update(['status' => 'weighing']);
 
-        // Simpan berat sementara di request untuk dipakai complete()
-        // Karena tidak ada kolom temp, kita simpan di cache
+        // Simpan berat di cache
         cache()->put(
             'session_weight_' . $session->id,
             [
                 'berat_gram' => $request->berat_gram,
                 'status_validasi' => $statusValidasi,
-                'penalty' => $penalty,
             ],
             now()->addMinutes(15)
         );
@@ -174,17 +194,19 @@ class HardwareController extends Controller
             'data' => [
                 'berat_gram' => $request->berat_gram,
                 'status_validasi' => $statusValidasi,
-                'penalty' => $penalty,
-                'message' => $isValid
-                    ? 'Berat sesuai. Silakan masukkan botol/kaleng satu per satu.'
-                    : 'Berat tidak sesuai, akan dikurangi 1 unit sebagai penalti.',
+                'min_tolerance' => (int) $minTolerance,
+                'max_tolerance' => (int) $maxTolerance,
+                'pesan' => $isValid
+                    ? 'Berat sesuai. Siap menyelesaikan transaksi.'
+                    : 'Berat tidak sesuai, transaksi akan ditandai anomali.',
+                'ready_to_complete' => true,
             ],
         ]);
     }
 
     /**
      * POST /api/hardware/submit-count
-     * Kirim jumlah dari ultrasonik
+     * Kirim jumlah dari ultrasonik — DILAKUKAN DULU sebelum timbang
      */
     public function submitCount(Request $request)
     {
@@ -201,8 +223,9 @@ class HardwareController extends Controller
             ], 422);
         }
 
+        // Cek status 'tapped' — user sudah tap RFID, belum timbang
         $session = TransaksiSession::where('session_token', $request->session_token)
-            ->where('status', 'weighing')
+            ->where('status', 'tapped')
             ->where('expired_at', '>', now())
             ->first();
 
@@ -214,20 +237,18 @@ class HardwareController extends Controller
             ], 404);
         }
 
-        // Ambil data berat dari cache
-        $weightData = cache()->get('session_weight_' . $session->id);
-        $penalty = $weightData['penalty'] ?? 0;
+        // Anti-cheat: jika terhitung > input, pakai input sebagai batas atas
+        $totalInput = $session->jumlah_botol + $session->jumlah_kaleng;
+        $jumlahTerhitung = $request->jumlah_terhitung;
+        $jumlahFinal = min($jumlahTerhitung, $totalInput);
 
-        // Hitung jumlah final
-        $jumlahFinal = max(0, $request->jumlah_terhitung - $penalty);
-
-        // Update status → counting, simpan jumlah terhitung di cache
+        // Update status → counting
         $session->update(['status' => 'counting']);
 
         cache()->put(
             'session_count_' . $session->id,
             [
-                'jumlah_terhitung' => $request->jumlah_terhitung,
+                'jumlah_terhitung' => $jumlahTerhitung,
                 'jumlah_final' => $jumlahFinal,
             ],
             now()->addMinutes(15)
@@ -236,9 +257,10 @@ class HardwareController extends Controller
         return response()->json([
             'success' => true,
             'data' => [
-                'jumlah_terhitung' => $request->jumlah_terhitung,
+                'jumlah_terhitung' => $jumlahTerhitung,
                 'jumlah_final' => $jumlahFinal,
-                'ready_to_complete' => true,
+                'pesan' => 'Sampah terhitung. Silakan tunggu proses penimbangan.',
+                'ready_to_weigh' => true,
             ],
         ]);
     }
@@ -262,7 +284,7 @@ class HardwareController extends Controller
         }
 
         $session = TransaksiSession::where('session_token', $request->session_token)
-            ->where('status', 'counting')
+            ->where('status', 'weighing')
             ->where('expired_at', '>', now())
             ->with('mahasiswa')
             ->first();
@@ -276,10 +298,10 @@ class HardwareController extends Controller
         }
 
         // Ambil data dari cache
-        $weightData = cache()->get('session_weight_' . $session->id);
         $countData = cache()->get('session_count_' . $session->id);
+        $weightData = cache()->get('session_weight_' . $session->id);
 
-        if (!$weightData || !$countData) {
+        if (!$countData || !$weightData) {
             return response()->json([
                 'success' => false,
                 'message' => 'Data transaksi tidak lengkap. Ulangi proses.',
@@ -287,10 +309,10 @@ class HardwareController extends Controller
         }
 
         $mahasiswa = $session->mahasiswa;
-        $beratGram = $weightData['berat_gram'];
-        $statusValidasi = $weightData['status_validasi'];
         $jumlahTerhitung = $countData['jumlah_terhitung'];
         $jumlahFinal = $countData['jumlah_final'];
+        $beratGram = $weightData['berat_gram'];
+        $statusValidasi = $weightData['status_validasi'];
 
         // Reject jika jumlah final 0
         if ($jumlahFinal < 1) {
@@ -301,18 +323,18 @@ class HardwareController extends Controller
         }
 
         // Hitung poin: (berat_gram / 1000) × rata-rata poin_per_kg
-        // Karena campur botol & kaleng, pakai rata-rata weighted
         $botol = JenisSampah::find(1);
         $kaleng = JenisSampah::find(2);
 
         $totalInput = $session->jumlah_botol + $session->jumlah_kaleng;
         $rataRataPoin = $totalInput > 0
-            ? (($session->jumlah_botol * $botol->poin_per_kg) + ($session->jumlah_kaleng * $kaleng->poin_per_kg)) / $totalInput
+            ? (($session->jumlah_botol * $botol->poin_per_kg)
+                + ($session->jumlah_kaleng * $kaleng->poin_per_kg)) / $totalInput
             : $botol->poin_per_kg;
 
         $koinDidapat = $jumlahFinal;
 
-        // Anti-cheat: anomali tidak dapat poin
+        // Anomali = poin 0, koin tetap dapat
         $poinDidapat = $statusValidasi === 'anomali'
             ? 0
             : (int) round(($beratGram / 1000) * $rataRataPoin);
