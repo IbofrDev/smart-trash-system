@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\Achievement;
+use App\Models\Mahasiswa;
 
 class AchievementController extends Controller
 {
@@ -14,7 +15,12 @@ class AchievementController extends Controller
      */
     public function index(Request $request)
     {
-        $mahasiswa = $request->user();
+        $user = $request->user();
+        $mahasiswa = \App\Models\Mahasiswa::where('user_id', $user->id)->first();
+
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Data mahasiswa tidak ditemukan.'], 404);
+        }
 
         $unlockedIds = $mahasiswa->achievements()->pluck('achievement.id')->toArray();
 
@@ -43,7 +49,12 @@ class AchievementController extends Controller
      */
     public function myAchievements(Request $request)
     {
-        $mahasiswa = $request->user();
+        $user = $request->user();
+        $mahasiswa = \App\Models\Mahasiswa::where('user_id', $user->id)->first();
+
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Data mahasiswa tidak ditemukan.'], 404);
+        }
 
         $achievements = $mahasiswa->achievements()
             ->orderBy('mahasiswa_achievement.unlocked_at', 'desc')
