@@ -16,7 +16,11 @@ class AchievementController extends Controller
     public function index(Request $request)
     {
         $user = $request->user();
-        $mahasiswa = \App\Models\Mahasiswa::where('user_id', $user->id)->first();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
 
         if (!$mahasiswa) {
             return response()->json(['success' => false, 'message' => 'Data mahasiswa tidak ditemukan.'], 404);

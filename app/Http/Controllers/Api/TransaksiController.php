@@ -16,7 +16,15 @@ class TransaksiController extends Controller
      */
     public function index(Request $request)
     {
-        $mahasiswa = $request->user();
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
         $period = $request->query('period', 'all');
 
         $query = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
@@ -67,7 +75,7 @@ class TransaksiController extends Controller
         }
 
         if (!$mahasiswa) {
-            return response()->json(['success' => false, 'message' => 'Data mahasiswa tidak ditemukan.'], 404);
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
         }
 
         $transaksi = TransaksiSampah::where('id', $id)
@@ -119,7 +127,15 @@ class TransaksiController extends Controller
             'jumlah_kaleng' => 'required|integer|min:0',
         ]);
 
-        $mahasiswa = $request->user();
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
 
         // Validasi minimal 1 item
         if ($request->jumlah_botol + $request->jumlah_kaleng < 1) {
@@ -184,7 +200,15 @@ class TransaksiController extends Controller
      */
     public function checkSession(Request $request, $token)
     {
-        $mahasiswa = $request->user();
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
 
         $session = TransaksiSession::where('session_token', $token)
             ->where('mahasiswa_id', $mahasiswa->id)
