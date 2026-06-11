@@ -62,14 +62,17 @@ class AuthController extends Controller
                     'total_poin' => 0,
                 ]);
             } else {
-                // Update data jika sudah ada
-                $mahasiswa->update([
-                    'email' => $email,
-                    'name' => $name,
-                    'avatar' => $avatar,
-                ]);
-            }
+                // Hanya update email (sinkronisasi)
+                // name dan avatar TIDAK di-overwrite agar edit profil user tetap tersimpan
+                $updateData = ['email' => $email];
 
+                // Update avatar hanya jika user belum punya avatar sama sekali
+                if (empty($mahasiswa->avatar) && $avatar) {
+                    $updateData['avatar'] = $avatar;
+                }
+
+                $mahasiswa->update($updateData);
+            }
             // Create Sanctum token
             $token = $mahasiswa->createToken('mobile-app')->plainTextToken;
 
