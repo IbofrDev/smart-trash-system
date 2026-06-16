@@ -115,6 +115,7 @@ Route::middleware('auth:sanctum')->group(function () {
     // Transaksi Session (BARU)
     Route::post('/transaksi/session', [TransaksiController::class, 'createSession']);
     Route::get('/transaksi/session/{token}', [TransaksiController::class, 'checkSession']);
+    Route::delete('/transaksi/session/{token}', [TransaksiController::class, 'cancelSession']);
 
     // Transaksi History
     Route::get('/transaksi', [TransaksiController::class, 'index']);

@@ -195,6 +195,42 @@ class TransaksiController extends Controller
     }
 
     /**
+     * DELETE /api/transaksi/session/{token}
+     * Cancel session dari mobile (user keluar dari menu)
+     */
+    public function cancelSession(Request $request, $token)
+    {
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+
+        $session = TransaksiSession::where('session_token', $token)
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['pending', 'tapped', 'counting', 'weighing'])
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Session tidak ditemukan atau sudah tidak aktif.',
+            ]);
+        }
+
+        $session->update(['status' => 'expired']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Session berhasil dibatalkan.',
+        ]);
+    }
+
+    /**
      * GET /api/transaksi/session/{token}
      * Cek status session (polling dari mobile)
      */
