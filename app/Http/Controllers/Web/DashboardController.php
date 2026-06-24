@@ -45,7 +45,8 @@ class DashboardController extends Controller
         // Transaksi 7 Hari Terakhir (untuk chart)
         $perHari = TransaksiSampah::select(
             DB::raw('DATE(tanggal_transaksi) as tanggal'),
-            DB::raw('SUM(berat) as perHari'),
+            DB::raw('SUM(berat) as total_berat_gram'),
+
             DB::raw('SUM(jumlah_final) as total_botol'),
             DB::raw('COUNT(*) as total_transaksi')
         )
