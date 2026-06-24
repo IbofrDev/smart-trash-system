@@ -345,7 +345,8 @@
                 <i class="bi bi-exclamation-triangle-fill stat-icon"
                     style="{{ ($summary['total_anomali'] ?? 0) > 0 ? 'color: #fecaca;' : '' }}"></i>
                 <h3 style="{{ ($summary['total_anomali'] ?? 0) > 0 ? 'color: #dc2626;' : '' }}">
-                    {{ number_format($summary['total_anomali'] ?? 0) }}</h3>
+                    {{ number_format($summary['total_anomali'] ?? 0) }}
+                </h3>
                 <p>Anomali</p>
             </div>
         </div>
@@ -469,18 +470,18 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-clean">
-                           <thead>
-                    <tr>
-                        <th class="text-center">No</th>
-                        <th>Waktu & Pelaku</th>
-                        <th>Lokasi Mesin</th>
-                        <th>Jenis Sampah</th>
-                        <th>Setoran Masuk</th>
-                        <th>Reward</th>
-                        <th class="text-center">Status</th>
-                        <th class="text-center">Aksi</th>
-                    </tr>
-                </thead>
+                    <thead>
+                        <tr>
+                            <th class="text-center">No</th>
+                            <th>Waktu & Pelaku</th>
+                            <th>Lokasi Mesin</th>
+                            <th>Jenis Sampah</th>
+                            <th>Setoran Masuk</th>
+                            <th>Reward</th>
+                            <th class="text-center">Status</th>
+                            <th class="text-center">Aksi</th>
+                        </tr>
+                    </thead>
                     <tbody>
                         @forelse($transaksis as $index => $trx)
                             @php
@@ -507,68 +508,63 @@
                                 <td class="text-center text-muted fw-semibold">{{ $transaksis->firstItem() + $index }}</td>
 
                                 <td>
-                                    <div class="d-flex align-items-center gap-3">
+                                    <div class="d-flex align-items-center gap-2">
                                         <img src="https://ui-avatars.com/api/?name={{ urlencode($trx->mahasiswa->name ?? 'Unknown') }}&background=ecfdf5&color=047857&bold=true"
                                             alt="Avatar" class="avatar-square-soft flex-shrink-0">
-                                        <div>
-                                            <div class="fw-bold" style="color: #0f172a;">
-                                                {{ $trx->mahasiswa->name ?? 'Mahasiswa Dihapus' }}</div>
-                                            <div class="d-flex align-items-center gap-2 mt-1 flex-wrap">
-                                                <span class="badge"
-                                                    style="background: #f8fafc; color: #64748b; border: 1px solid #e2e8f0; font-family: monospace; border-radius: 4px;"><i
-                                                        class="bi bi-upc-scan me-1"></i>{{ $trx->mahasiswa->nim ?? '-' }}</span>
+                                        <div style="min-width: 0;">
+                                            <div class="fw-bold text-truncate" style="color: #0f172a; max-width: 140px;">
+                                                {{ $trx->mahasiswa->name ?? 'Mahasiswa Dihapus' }}
                                             </div>
-                                            <small class="text-muted d-block mt-1"
+                                            <div class="text-muted" style="font-family: monospace; font-size: 0.7rem;">
+                                                {{ $trx->mahasiswa->nim ?? '-' }}
+                                            </div>
+                                            <small class="text-muted d-block"
                                                 title="{{ \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('l, d F Y H:i:s') }}"
-                                                data-bs-toggle="tooltip" style="cursor: help;">
-                                                <i
-                                                    class="bi bi-clock me-1"></i>{{ \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('d M Y, H:i') }}
+                                                data-bs-toggle="tooltip" style="cursor: help; font-size: 0.7rem;">
+                                                <i class="bi bi-clock"></i>
+                                                {{ \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('d M Y, H:i') }}
                                             </small>
                                         </div>
                                     </div>
                                 </td>
 
                                 <td>
-                                    <span class="fw-medium d-block" style="color: #334155;"><i
-                                            class="bi bi-hdd-network text-muted me-1"></i>{{ $trx->bakSampah->nama ?? 'Bak Dihapus' }}</span>
+                                    <div class="fw-medium" style="color: #334155; white-space: nowrap;"><i
+                                            class="bi bi-hdd-network text-muted"></i>
+                                        {{ $trx->bakSampah->nama ?? 'Bak Dihapus' }}</div>
                                     @if($trx->bakSampah && isset($trx->bakSampah->lokasi))
-                                        <small class="text-muted"><i
-                                                class="bi bi-geo-alt me-1"></i>{{ Str::limit($trx->bakSampah->lokasi->nama_lokasi ?? '-', 25) }}</small>
+                                        <small class="text-muted text-truncate d-block" style="max-width: 130px; font-size: 0.7rem;"
+                                            title="{{ $trx->bakSampah->lokasi->nama_lokasi ?? '-' }}"><i class="bi bi-geo-alt"></i>
+                                            {{ $trx->bakSampah->lokasi->nama_lokasi ?? '-' }}</small>
                                     @endif
                                 </td>
 
                                 <td>
-                                    <div class="fw-bold text-dark d-flex align-items-center gap-2 mb-1">
-                                        <span class="badge px-2 py-1"
-                                            style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0; border-radius: 6px;"><i
-                                                class="bi bi-box-seam me-1 text-muted"></i>{{ $trx->jumlah_final ?? $trx->jumlah_botol ?? 0 }}
-                                            pcs</span>
-                                        <span class="badge px-2 py-1"
-                                            style="background: #f8fafc; color: #0f172a; border: 1px solid #e2e8f0; border-radius: 6px;"><i
-                                                class="bi bi-speedometer2 me-1 text-muted"></i>
-                                            @if(($trx->berat ?? 0) >= 1000)
-                                                {{ number_format($trx->berat / 1000, 2) }} kg
-                                            @else
-                                                {{ number_format($trx->berat ?? 0, 0) }} g
-                                            @endif
-                                        </span>
+                                    <span class="badge rounded-pill px-2 py-1"
+                                        style="background: {{ $jenisColor }}15; color: {{ $jenisColor }}; font-weight: 600; font-size: 0.75rem; white-space: nowrap;">
+                                        {{ $jenisIcon }} {{ $trx->jenisSampah->nama ?? 'Lainnya' }}
+                                    </span>
+                                </td>
+
+                                <td>
+                                    <div class="fw-bold" style="color: #0f172a; font-size: 0.85rem; white-space: nowrap;">
+                                        @if(($trx->berat ?? 0) >= 1000)
+                                            {{ number_format($trx->berat / 1000, 2) }} kg
+                                        @else
+                                            {{ number_format($trx->berat ?? 0, 0) }} g
+                                        @endif
                                     </div>
-                                    @if(($trx->jumlah_botol ?? 0) > 0 || ($trx->jumlah_kaleng ?? 0) > 0)
-                                        <small class="text-muted d-flex gap-2">
-                                            <span><i class="bi bi-cup-straw text-success opacity-75"></i>
-                                                {{ $trx->jumlah_botol ?? 0 }}</span>
-                                            <span><i class="bi bi-plugin text-warning opacity-75"></i>
-                                                {{ $trx->jumlah_kaleng ?? 0 }}</span>
-                                        </small>
-                                    @endif
+                                    <small class="text-muted" style="font-size: 0.7rem; white-space: nowrap;">
+                                        <i class="bi bi-box-seam"></i> {{ $trx->jumlah_final ?? $trx->jumlah_botol ?? 0 }} pcs
+                                    </small>
                                 </td>
 
                                 <td>
-                                    <div class="fw-bold mb-1" style="font-size: 0.95rem; color: #059669;"><i
-                                            class="bi bi-star-fill text-warning me-1"></i>+{{ number_format($trx->poin_didapat ?? 0) }}
-                                        Pts</div>
-                                    <div class="fw-bold" style="font-size: 0.85rem; color: #d97706;"><i
-                                            class="bi bi-coin text-warning me-1"></i>+{{ number_format($trx->koin_didapat ?? 0) }}
+                                    <div class="fw-bold" style="font-size: 0.85rem; color: #059669; white-space: nowrap;"><i
+                                            class="bi bi-star-fill text-warning"></i>
+                                        +{{ number_format($trx->poin_didapat ?? 0) }} Pts</div>
+                                    <div class="fw-bold" style="font-size: 0.75rem; color: #d97706; white-space: nowrap;"><i
+                                            class="bi bi-coin text-warning"></i> +{{ number_format($trx->koin_didapat ?? 0) }}
                                         Koin</div>
                                 </td>
 
@@ -590,7 +586,6 @@
                                     </a>
                                 </td>
                             </tr>
-
                         @empty
                             <tr>
                                 <td colspan="8" class="border-0">
