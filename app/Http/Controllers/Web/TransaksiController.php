@@ -60,6 +60,7 @@ class TransaksiController extends Controller
             'total_berat' => $summaryQuery->sum('berat'),
             'total_poin' => $summaryQuery->sum('poin_didapat'),
             'total_koin' => $summaryQuery->sum('koin_didapat'),
+            'total_anomali' => (clone $query)->where('status_validasi', 'anomali')->count(),
         ];
 
         $transaksis = $query->orderBy('tanggal_transaksi', 'desc')->paginate(20)->withQueryString();
