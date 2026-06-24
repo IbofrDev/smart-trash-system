@@ -43,17 +43,29 @@ class DashboardController extends Controller
         ];
 
         // Transaksi 7 Hari Terakhir (untuk chart)
-        $perHari = TransaksiSampah::select(
+        $rawPerHari = TransaksiSampah::select(
             DB::raw('DATE(tanggal_transaksi) as tanggal'),
             DB::raw('SUM(berat) as total_berat_gram'),
-
             DB::raw('SUM(jumlah_final) as total_botol'),
             DB::raw('COUNT(*) as total_transaksi')
         )
-            ->where('tanggal_transaksi', '>=', Carbon::now()->subDays(7))
+            ->where('tanggal_transaksi', '>=', Carbon::now()->subDays(6)->startOfDay())
             ->groupBy('tanggal')
             ->orderBy('tanggal')
-            ->get();
+            ->get()
+            ->keyBy('tanggal');
+
+        $perHari = collect();
+        for ($i = 6; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i)->format('Y-m-d');
+            $row = $rawPerHari->get($date);
+            $perHari->push((object) [
+                'tanggal' => $date,
+                'total_berat_gram' => $row->total_berat_gram ?? 0,
+                'total_botol' => $row->total_botol ?? 0,
+                'total_transaksi' => $row->total_transaksi ?? 0,
+            ]);
+        }
 
         // Top 5 Mahasiswa (by total poin)
         $topMahasiswa = Mahasiswa::with('level')
