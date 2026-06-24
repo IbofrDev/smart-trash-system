@@ -276,7 +276,7 @@
 
         // Fallback array untuk mencegah error
         const labelsData = {!! isset($perHari) && $perHari->count() > 0 ? json_encode($perHari->pluck('tanggal')->map(fn($t) => \Carbon\Carbon::parse($t)->format('d M'))) : '[]' !!};
-        const chartData = {!! isset($perHari) && $perHari->count() > 0 ? json_encode($perHari->pluck('total_berat_gram')) : '[]' !!};
+                const chartData = {!! isset($perHari) && $perHari->count() > 0 ? json_encode($perHari->pluck('total_berat_gram')->map(fn($v) => (float) $v)) : '[]' !!};
 
         new Chart(ctx, {
             type: 'line',
