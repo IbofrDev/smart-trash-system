@@ -12,6 +12,40 @@ use Illuminate\Support\Facades\DB;
 
 class DashboardController extends Controller
 {
+    public function chartData(\Illuminate\Http\Request $request)
+    {
+        $periode = (int) $request->input('periode', 7);
+        if (!in_array($periode, [3, 7, 30])) {
+            $periode = 7;
+        }
+
+        $rawPerHari = TransaksiSampah::select(
+            DB::raw('DATE(tanggal_transaksi) as tanggal'),
+            DB::raw('SUM(berat) as total_berat_gram')
+        )
+            ->where('tanggal_transaksi', '>=', Carbon::now()->subDays($periode - 1)->startOfDay())
+            ->groupBy('tanggal')
+            ->orderBy('tanggal')
+            ->get()
+            ->keyBy('tanggal');
+
+        $labels = [];
+        $data = [];
+        for ($i = $periode - 1; $i >= 0; $i--) {
+            $date = Carbon::now()->subDays($i);
+            $key = $date->format('Y-m-d');
+            $row = $rawPerHari->get($key);
+            $labels[] = $date->format('d M');
+            $data[] = (float) ($row->total_berat_gram ?? 0);
+        }
+
+        return response()->json([
+            'labels' => $labels,
+            'data' => $data,
+            'periode' => $periode,
+        ]);
+    }
+
     public function index()
     {
         $user = auth()->user();

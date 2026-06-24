@@ -43,6 +43,7 @@ Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(functi
 
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
 
     // User Management (Admin Only)
     Route::resource('users', UserController::class);
@@ -96,6 +97,7 @@ Route::prefix('pengelola')->name('pengelola.')->middleware(['role:admin,pengelol
 
     // Dashboard (sama dengan admin)
     Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
 
     // View Only - Mahasiswa
     Route::get('mahasiswa', [MahasiswaController::class, 'index'])->name('mahasiswa.index');
