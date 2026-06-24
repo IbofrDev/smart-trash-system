@@ -20,12 +20,12 @@ class DashboardController extends Controller
         $stats = [
             'total_mahasiswa' => Mahasiswa::count(),
             'total_transaksi' => TransaksiSampah::count(),
-            'total_berat_gram' => (int) TransaksiSampah::sum('berat'),
+            'total_berat' => (int) TransaksiSampah::sum('berat'),
             'total_botol' => (int) TransaksiSampah::sum('jumlah_final'),
-            'total_poin_distributed' => (int) TransaksiSampah::sum('poin_didapat'),
+            'total_poin' => (int) TransaksiSampah::sum('poin_didapat'),
             'total_koin_distributed' => (int) TransaksiSampah::sum('koin_didapat'),
-            'bak_sampah_aktif' => BakSampah::where('status', 'aktif')->count(),
-            'bak_sampah_total' => BakSampah::count(),
+            'bak_aktif' => BakSampah::where('status', 'aktif')->count(),
+            'total_bak' => BakSampah::count(),
             'voucher_aktif' => VoucherMahasiswa::where('status', 'aktif')
                 ->where('expired_at', '>', now())
                 ->count(),
@@ -43,9 +43,9 @@ class DashboardController extends Controller
         ];
 
         // Transaksi 7 Hari Terakhir (untuk chart)
-        $chartData = TransaksiSampah::select(
+        $perHari = TransaksiSampah::select(
             DB::raw('DATE(tanggal_transaksi) as tanggal'),
-            DB::raw('SUM(berat) as total_berat_gram'),
+            DB::raw('SUM(berat) as perHari'),
             DB::raw('SUM(jumlah_final) as total_botol'),
             DB::raw('COUNT(*) as total_transaksi')
         )
@@ -93,7 +93,7 @@ class DashboardController extends Controller
             'user',
             'stats',
             'statsToday',
-            'chartData',
+            'perHari',
             'topMahasiswa',
             'recentTransaksi',
             'recentVoucher',
