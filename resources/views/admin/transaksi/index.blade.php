@@ -33,7 +33,7 @@
             border-radius: 12px;
             border: 1px solid #e2e8f0;
             background-color: #ffffff;
-            padding: 1.5rem;
+            padding: 1.1rem 1.25rem;
             position: relative;
             overflow: hidden;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
@@ -51,7 +51,7 @@
 
         .stat-card-boxy h3 {
             font-weight: 800;
-            font-size: 2rem;
+            font-size: 1.6rem;
             color: #0f172a;
             margin-bottom: 0.2rem;
             z-index: 1;
@@ -59,7 +59,7 @@
 
         .stat-card-boxy p {
             margin: 0;
-            font-size: 0.85rem;
+            font-size: 0.72rem;
             color: #64748b;
             text-transform: uppercase;
             font-weight: 700;
@@ -70,9 +70,9 @@
         .stat-icon {
             position: absolute;
             top: 50%;
-            right: 1.5rem;
+            right: 1rem;
             transform: translateY(-50%);
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: #f1f5f9;
             z-index: 0;
         }
@@ -82,8 +82,8 @@
             background-color: #ffffff;
             border: 1px solid #e2e8f0;
             border-radius: 12px;
-            padding: 1.5rem;
-            margin-bottom: 1.5rem;
+            padding: 1.25rem;
+            margin-bottom: 1.25rem;
             position: relative;
             z-index: 50;
             box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01);
@@ -200,18 +200,19 @@
             color: #64748b;
             font-weight: 600;
             text-transform: uppercase;
-            font-size: 0.75rem;
-            letter-spacing: 0.5px;
-            padding: 1rem 1.5rem;
+            font-size: 0.7rem;
+            letter-spacing: 0.3px;
+            padding: 0.85rem 0.75rem;
             border-bottom: 2px solid #f1f5f9;
+            white-space: nowrap;
         }
 
         .table-clean td {
-            padding: 1rem 1.5rem;
+            padding: 0.85rem 0.75rem;
             vertical-align: middle;
             border-bottom: 1px solid #f8fafc;
             color: #334155;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
         }
 
         .table-clean tbody tr {
@@ -220,6 +221,16 @@
 
         .table-clean tbody tr:hover {
             background-color: #f8fafc;
+        }
+
+        .table-clean th:first-child,
+        .table-clean td:first-child {
+            padding-left: 1.25rem;
+        }
+
+        .table-clean th:last-child,
+        .table-clean td:last-child {
+            padding-right: 1.25rem;
         }
 
         /* Tombol Aksi */
@@ -276,8 +287,8 @@
 
         /* Avatar Kotak Halus */
         .avatar-square-soft {
-            width: 40px;
-            height: 40px;
+            width: 36px;
+            height: 36px;
             border-radius: 8px;
             object-fit: cover;
             border: 1px solid #e2e8f0;
@@ -458,18 +469,18 @@
         <div class="card-body p-0">
             <div class="table-responsive">
                 <table class="table table-clean">
-                    <thead>
-                        <tr>
-                            <th width="4%" class="text-center">No</th>
-                            <th width="22%">Waktu & Pelaku Transaksi</th>
-                            <th width="17%">Lokasi Mesin</th>
-                            <th width="12%">Jenis Sampah</th>
-                            <th width="18%">Setoran Masuk</th>
-                            <th width="13%">Distribusi Reward</th>
-                            <th width="9%" class="text-center">Validitas</th>
-                            <th width="5%" class="text-center">Detail</th>
-                        </tr>
-                    </thead>
+                           <thead>
+                    <tr>
+                        <th class="text-center">No</th>
+                        <th>Waktu & Pelaku</th>
+                        <th>Lokasi Mesin</th>
+                        <th>Jenis Sampah</th>
+                        <th>Setoran Masuk</th>
+                        <th>Reward</th>
+                        <th class="text-center">Status</th>
+                        <th class="text-center">Aksi</th>
+                    </tr>
+                </thead>
                     <tbody>
                         @forelse($transaksis as $index => $trx)
                             @php
