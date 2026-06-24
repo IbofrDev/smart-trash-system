@@ -108,9 +108,9 @@ class DashboardController extends Controller
             ->get();
 
         // Transaksi Terbaru
-        $recentTransaksi = TransaksiSampah::with(['mahasiswa', 'bakSampah'])
+        $recentTransaksi = TransaksiSampah::with(['mahasiswa', 'bakSampah', 'jenisSampah'])
             ->orderByDesc('tanggal_transaksi')
-            ->limit(10)
+            ->limit(8)
             ->get();
 
         // Voucher Terbaru

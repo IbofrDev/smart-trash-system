@@ -331,49 +331,108 @@
                             class="fw-bold text-decoration-none small px-3 py-1 rounded-pill"
                             style="background: #ecfdf5; color: #047857;">Lihat Semua</a>
                     </div>
-                    <div class="table-responsive">
-                        <table class="table table-clean mb-0">
+                                      <div class="table-responsive">
+                        <table class="table table-clean mb-0 align-middle">
                             <thead>
-                                <tr>
-                                    <th class="ps-4">Identitas Mahasiswa</th>
-                                    <th>Lokasi Bak Sampah</th>
-                                    <th>Volume (Berat)</th>
-                                    <th>Reward Poin</th>
-                                    <th>Waktu Terekam</th>
-                                    <th class="text-center pe-4">Status Sensor</th>
+                                <tr style="font-size: 0.75rem; letter-spacing: 0.5px;">
+                                    <th class="ps-4">MAHASISWA</th>
+                                    <th>LOKASI</th>
+                                    <th>JENIS SAMPAH</th>
+                                    <th>SETORAN</th>
+                                    <th class="text-end">POIN</th>
+                                    <th>WAKTU</th>
+                                    <th class="text-center pe-4">STATUS</th>
                                 </tr>
                             </thead>
                             <tbody>
                                 @forelse($recentTransaksi ?? [] as $trx)
-                                    <tr>
+                                    @php
+                                        $isAnomali = ($trx->status_validasi ?? 'valid') !== 'valid';
+                                        $jenisNama = strtolower($trx->jenisSampah->nama ?? '');
+                                        if (str_contains($jenisNama, 'botol') || str_contains($jenisNama, 'plastik')) {
+                                            $jenisIcon = '🥤';
+                                            $jenisColor = '#0ea5e9';
+                                        } elseif (str_contains($jenisNama, 'kaleng') || str_contains($jenisNama, 'logam')) {
+                                            $jenisIcon = '🥫';
+                                            $jenisColor = '#94a3b8';
+                                        } elseif (str_contains($jenisNama, 'kertas')) {
+                                            $jenisIcon = '📄';
+                                            $jenisColor = '#f59e0b';
+                                        } elseif (str_contains($jenisNama, 'organik')) {
+                                            $jenisIcon = '🍃';
+                                            $jenisColor = '#10b981';
+                                        } else {
+                                            $jenisIcon = '♻️';
+                                            $jenisColor = '#64748b';
+                                        }
+                                    @endphp
+                                    <tr style="{{ $isAnomali ? 'background: #fef2f2;' : '' }}">
                                         <td class="ps-4">
-                                            <div class="fw-bold" style="color: #0f172a;">{{ $trx->mahasiswa->name ?? '-' }}
+                                            <div class="d-flex align-items-center">
+                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($trx->mahasiswa->name ?? 'M') }}&background=ecfdf5&color=047857&bold=true&size=36"
+                                                    class="rounded-circle me-2" width="36" height="36">
+                                                <div>
+                                                    <div class="fw-bold" style="color: #0f172a; font-size: 0.875rem;">{{ Str::limit($trx->mahasiswa->name ?? '-', 18) }}</div>
+                                                    <small class="text-muted" style="font-family: monospace; font-size: 0.7rem;">{{ $trx->mahasiswa->nim ?? '' }}</small>
+                                                </div>
                                             </div>
-                                            <small class="text-muted"
-                                                style="font-family: monospace;">{{ $trx->mahasiswa->nim ?? '' }}</small>
                                         </td>
-                                        <td><span class="fw-medium">{{ $trx->bakSampah->nama ?? '-' }}</span></td>
-                                        <td class="fw-bold" style="color: #0f172a;">
-                                            @if(($trx->berat ?? 0) >= 1000)
-                                                {{ number_format($trx->berat / 1000, 1) }} kg
+                                        <td>
+                                            <span class="fw-medium" style="color: #334155; font-size: 0.875rem;">
+                                                <i class="bi bi-geo-alt-fill" style="color: #10b981; font-size: 0.75rem;"></i>
+                                                {{ $trx->bakSampah->nama ?? '-' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <span class="badge rounded-pill px-2 py-1" style="background: {{ $jenisColor }}15; color: {{ $jenisColor }}; font-weight: 600;">
+                                                {{ $jenisIcon }} {{ $trx->jenisSampah->nama ?? 'Lainnya' }}
+                                            </span>
+                                        </td>
+                                        <td>
+                                            <div class="fw-bold" style="color: #0f172a; font-size: 0.875rem;">
+                                                @if(($trx->berat ?? 0) >= 1000)
+                                                    {{ number_format($trx->berat / 1000, 2) }} kg
+                                                @else
+                                                    {{ number_format($trx->berat ?? 0, 0) }} g
+                                                @endif
+                                            </div>
+                                            <small class="text-muted" style="font-size: 0.7rem;">
+                                                <i class="bi bi-box-seam"></i> {{ $trx->jumlah_final ?? 0 }} item
+                                            </small>
+                                        </td>
+                                        <td class="text-end">
+                                            @if(($trx->poin_didapat ?? 0) > 0)
+                                                <span class="fw-bold" style="color: #059669; font-size: 0.95rem;">+{{ number_format($trx->poin_didapat) }}</span>
                                             @else
-                                                {{ $trx->berat ?? 0 }} g
+                                                <span class="fw-bold text-muted" style="font-size: 0.95rem;">0</span>
                                             @endif
                                         </td>
-                                        <td class="fw-bold" style="color: #059669;">
-                                            +{{ number_format($trx->poin_didapat ?? 0) }}</td>
-                                        <td class="text-muted small fw-medium">
-                                            {{ $trx->created_at ? $trx->created_at->diffForHumans() : '-' }}</td>
-                                        <td class="text-center pe-4">
-                                            <span
-                                                class="status-badge {{ ($trx->status_validasi ?? 'valid') == 'valid' ? 'status-online' : 'status-offline' }}">
-                                                {{ ucfirst($trx->status_validasi ?? 'valid') }}
+                                        <td>
+                                            <span class="text-muted small fw-medium"
+                                                title="{{ $trx->tanggal_transaksi ? $trx->tanggal_transaksi->format('d M Y, H:i') : '-' }}"
+                                                data-bs-toggle="tooltip" style="cursor: help;">
+                                                <i class="bi bi-clock" style="font-size: 0.7rem;"></i>
+                                                {{ $trx->tanggal_transaksi ? $trx->tanggal_transaksi->diffForHumans() : '-' }}
                                             </span>
+                                        </td>
+                                        <td class="text-center pe-4">
+                                            @if($isAnomali)
+                                                <span class="badge rounded-pill px-3 py-2" style="background: #fee2e2; color: #b91c1c; font-weight: 600;">
+                                                    <i class="bi bi-exclamation-triangle-fill"></i> {{ ucfirst($trx->status_validasi) }}
+                                                </span>
+                                            @else
+                                                <span class="badge rounded-pill px-3 py-2" style="background: #d1fae5; color: #047857; font-weight: 600;">
+                                                    <i class="bi bi-check-circle-fill"></i> Valid
+                                                </span>
+                                            @endif
                                         </td>
                                     </tr>
                                 @empty
                                     <tr>
-                                        <td colspan="6" class="text-center py-5 text-muted">Belum ada transaksi terekam.</td>
+                                        <td colspan="7" class="text-center py-5 text-muted">
+                                            <i class="bi bi-inbox fs-1 opacity-25 d-block mb-2"></i>
+                                            <small>Belum ada transaksi terekam</small>
+                                        </td>
                                     </tr>
                                 @endforelse
                             </tbody>
