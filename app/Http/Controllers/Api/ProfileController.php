@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Models\SettingPoin;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Validator;
 
@@ -15,6 +16,8 @@ class ProfileController extends Controller
     public function index(Request $request)
     {
         $mahasiswa = $request->user();
+        $koinPerVoucher = SettingPoin::where('nama_setting', 'koin_per_voucher')
+            ->value('value') ?? 20;
 
         return response()->json([
             'success' => true,
@@ -28,12 +31,13 @@ class ProfileController extends Controller
                 'rfid_uid' => $mahasiswa->rfid_uid,
                 'total_poin' => $mahasiswa->total_poin,
                 'total_koin_botol' => $mahasiswa->total_koin_botol,
-                'level' => [
+                'koin_per_voucher' => (int) $koinPerVoucher,
+                'level' => $mahasiswa->level ? [
                     'id' => $mahasiswa->level->id,
                     'nama' => $mahasiswa->level->nama_level,
                     'min_poin' => $mahasiswa->level->min_poin,
                     'max_poin' => $mahasiswa->level->max_poin,
-                ],
+                ] : null,
             ]
         ], 200);
     }
