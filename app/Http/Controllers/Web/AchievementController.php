@@ -35,7 +35,7 @@ class AchievementController extends Controller
 
         $this->logActivity('Menambahkan achievement baru: ' . $achievement->nama, 'achievement');
 
-        return redirect()->route('admin.achievement.index')
+        return redirect()->route($routePrefix . '.achievement.index')
             ->with('success', 'Achievement berhasil ditambahkan.');
     }
 
@@ -59,7 +59,7 @@ class AchievementController extends Controller
 
         $this->logActivity('Mengupdate achievement: ' . $achievement->nama, 'achievement');
 
-        return redirect()->route('admin.achievement.index')
+        return redirect()->route($routePrefix . '.achievement.index')
             ->with('success', 'Achievement berhasil diupdate.');
     }
 
@@ -74,7 +74,7 @@ class AchievementController extends Controller
 
         $this->logActivity('Menghapus achievement: ' . $name, 'achievement');
 
-        return redirect()->route('admin.achievement.index')
+        return redirect()->route($routePrefix . '.achievement.index')
             ->with('success', 'Achievement berhasil dihapus.');
     }
 

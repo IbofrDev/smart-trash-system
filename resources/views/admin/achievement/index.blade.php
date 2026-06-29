@@ -50,7 +50,7 @@
         <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Misi & Achievement</h4>
         <p class="text-muted mb-0 small">Desain tantangan dan pencapaian untuk memotivasi mahasiswa.</p>
     </div>
-    <a href="{{ route('admin.achievement.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background-color: #10b981; border: none;">
+    <a href="{{ route($routePrefix . '.achievement.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background-color: #10b981; border: none;">
         <i class="bi bi-award-fill"></i> Buat Achievement
     </a>
 </div>
@@ -138,10 +138,10 @@
                     
                     <td class="pe-4">
                         <div class="action-btns">
-                            <a href="{{ route('admin.achievement.edit', $achievement) }}" class="btn-icon btn-edit" title="Edit Pencapaian">
+                            <a href="{{ route($routePrefix . '.achievement.edit', $achievement) }}" class="btn-icon btn-edit" title="Edit Pencapaian">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" class="btn-icon btn-delete" title="Hapus Pencapaian" onclick="confirmDelete('{{ route('admin.achievement.destroy', $achievement) }}', '{{ $achievement->nama }}')">
+                            <button type="button" class="btn-icon btn-delete" title="Hapus Pencapaian" onclick="confirmDelete('{{ route($routePrefix . '.achievement.destroy', $achievement) }}', '{{ $achievement->nama }}')">
                                 <i class="bi bi-trash3"></i>
                             </button>
                         </div>
@@ -155,7 +155,7 @@
                             <i class="bi bi-trophy"></i>
                             <div class="fw-bold text-secondary mb-1">Belum Ada Achievement</div>
                             <small>Sistem gamifikasi belum memiliki daftar pencapaian untuk diraih mahasiswa.</small><br>
-                            <a href="{{ route('admin.achievement.create') }}" class="btn btn-sm btn-outline-success rounded-3 mt-3 px-4" style="color: #10b981; border-color: #10b981;">Buat Misi Pertama</a>
+                            <a href="{{ route($routePrefix . '.achievement.create') }}" class="btn btn-sm btn-outline-success rounded-3 mt-3 px-4" style="color: #10b981; border-color: #10b981;">Buat Misi Pertama</a>
                         </div>
                     </td>
                 </tr>

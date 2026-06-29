@@ -353,7 +353,7 @@
     </div>
 
     <div class="filter-wrapper animate-fade-up" style="animation-delay: 0.2s;">
-        <form action="{{ route('admin.transaksi.index') }}" method="GET" class="row g-3 align-items-end">
+        <form action="{{ route($routePrefix . '.transaksi.index') }}" method="GET" class="row g-3 align-items-end">
 
             <div class="col-lg-2 col-md-4">
                 <label class="filter-label"><i class="bi bi-calendar-event me-1 text-success"></i> Mulai Tgl</label>
@@ -456,7 +456,7 @@
                     <i class="bi bi-funnel-fill me-2"></i> Filter
                 </button>
                 @if(request()->hasAny(['tanggal_dari', 'tanggal_sampai', 'jenis_sampah_id', 'bak_sampah_id', 'status_validasi']))
-                    <a href="{{ route('admin.transaksi.index') }}"
+                    <a href="{{ route($routePrefix . '.transaksi.index') }}"
                         class="btn btn-light border text-danger w-100 rounded-3 shadow-sm d-flex justify-content-center align-items-center fw-bold"
                         style="height: 42px;" title="Reset Filter">
                         <i class="bi bi-x-lg"></i>
@@ -580,7 +580,7 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <a href="{{ route('admin.transaksi.show', $trx) }}" class="btn-icon btn-detail mx-auto"
+                                    <a href="{{ route($routePrefix . '.transaksi.show', $trx) }}" class="btn-icon btn-detail mx-auto"
                                         title="Lihat Detail Transaksi">
                                         <i class="bi bi-eye"></i>
                                     </a>

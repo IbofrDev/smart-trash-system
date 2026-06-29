@@ -79,7 +79,7 @@ class UserController extends Controller
         // Log aktivitas
         $this->logActivity('Menambahkan user baru: ' . $user->name, 'users');
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route($routePrefix . '.users.index')
             ->with('success', 'User berhasil ditambahkan.');
     }
 
@@ -124,7 +124,7 @@ class UserController extends Controller
         // Log aktivitas
         $this->logActivity('Mengupdate user: ' . $user->name, 'users');
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route($routePrefix . '.users.index')
             ->with('success', 'User berhasil diupdate.');
     }
 
@@ -144,7 +144,7 @@ class UserController extends Controller
         // Log aktivitas
         $this->logActivity('Menghapus user: ' . $userName, 'users');
 
-        return redirect()->route('admin.users.index')
+        return redirect()->route($routePrefix . '.users.index')
             ->with('success', 'User berhasil dihapus.');
     }
 

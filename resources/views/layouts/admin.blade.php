@@ -320,31 +320,31 @@
 
             @if(auth()->user()->role === 'admin')
                 <div class="nav-section">Master Data</div>
-                <a href="{{ route('admin.users.index') }}"
+                <a href="{{ route($routePrefix . '.users.index') }}"
                     class="nav-link {{ request()->routeIs('admin.users.*') ? 'active' : '' }}">
                     <i class="bi bi-people"></i><span>Users</span>
                 </a>
-                <a href="{{ route('admin.lokasi.index') }}"
+                <a href="{{ route($routePrefix . '.lokasi.index') }}"
                     class="nav-link {{ request()->routeIs('admin.lokasi.*') ? 'active' : '' }}">
                     <i class="bi bi-geo-alt"></i><span>Lokasi</span>
                 </a>
-                <a href="{{ route('admin.bak-sampah.index') }}"
+                <a href="{{ route($routePrefix . '.bak-sampah.index') }}"
                     class="nav-link {{ request()->routeIs('admin.bak-sampah.*') ? 'active' : '' }}">
                     <i class="bi bi-trash3"></i><span>Bak Sampah</span>
                 </a>
-                <a href="{{ route('admin.jenis-sampah.index') }}"
+                <a href="{{ route($routePrefix . '.jenis-sampah.index') }}"
                     class="nav-link {{ request()->routeIs('admin.jenis-sampah.*') ? 'active' : '' }}">
                     <i class="bi bi-tags"></i><span>Jenis Sampah</span>
                 </a>
-                <a href="{{ route('admin.level.index') }}"
+                <a href="{{ route($routePrefix . '.level.index') }}"
                     class="nav-link {{ request()->routeIs('admin.level.*') ? 'active' : '' }}">
                     <i class="bi bi-bar-chart-steps"></i><span>Level</span>
                 </a>
-                <a href="{{ route('admin.achievement.index') }}"
+                <a href="{{ route($routePrefix . '.achievement.index') }}"
                     class="nav-link {{ request()->routeIs('admin.achievement.*') ? 'active' : '' }}">
                     <i class="bi bi-trophy"></i><span>Achievement</span>
                 </a>
-                <a href="{{ route('admin.setting-poin.index') }}"
+                <a href="{{ route($routePrefix . '.setting-poin.index') }}"
                     class="nav-link {{ request()->routeIs('admin.setting-poin.*') ? 'active' : '' }}">
                     <i class="bi bi-gear"></i><span>Setting Poin</span>
                 </a>
@@ -379,7 +379,7 @@
             </a>
 
             @if(auth()->user()->role === 'admin')
-                <a href="{{ route('admin.log-aktivitas.index') }}"
+                <a href="{{ route($routePrefix . '.log-aktivitas.index') }}"
                     class="nav-link {{ request()->routeIs('admin.log-aktivitas.*') ? 'active' : '' }}">
                     <i class="bi bi-clock-history"></i><span>Log Aktivitas</span>
                 </a>

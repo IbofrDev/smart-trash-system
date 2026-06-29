@@ -103,7 +103,7 @@
 
 <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-up">
     <div class="d-flex align-items-center">
-        <a href="{{ route('admin.bak-sampah.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
+        <a href="{{ route($routePrefix . '.bak-sampah.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
             <i class="bi bi-arrow-left fs-5"></i>
         </a>
         <div>
@@ -111,7 +111,7 @@
             <p class="text-muted mb-0 small">Pemantauan perangkat keras bak sampah IoT.</p>
         </div>
     </div>
-    <a href="{{ route('admin.bak-sampah.edit', $bakSampah) }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
+    <a href="{{ route($routePrefix . '.bak-sampah.edit', $bakSampah) }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
         <i class="bi bi-pencil-square"></i> Edit Device
     </a>
 </div>
@@ -262,7 +262,7 @@
             </div>
             
             <div class="mt-auto border-top pt-4" style="border-color: #f1f5f9 !important;">
-                <form action="{{ route('admin.bak-sampah.regenerate-api-key', $bakSampah) }}" method="POST" class="m-0 text-center" onsubmit="return confirm('PERINGATAN! Regenerate API Key akan memutuskan koneksi hardware saat ini. Lanjutkan?')">
+                <form action="{{ route($routePrefix . '.bak-sampah.regenerate-api-key', $bakSampah) }}" method="POST" class="m-0 text-center" onsubmit="return confirm('PERINGATAN! Regenerate API Key akan memutuskan koneksi hardware saat ini. Lanjutkan?')">
                     @csrf
                     <button type="submit" class="btn rounded-3 px-4 py-2 fw-bold w-100 shadow-sm" style="background-color: #fff1f2; color: #dc2626; border: 1px solid #fecaca; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fecaca'" onmouseout="this.style.backgroundColor='#fff1f2'">
                         <i class="bi bi-arrow-repeat me-1"></i> Generate Ulang Token

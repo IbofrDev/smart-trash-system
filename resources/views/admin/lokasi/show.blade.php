@@ -49,7 +49,7 @@
 
 <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-up">
     <div class="d-flex align-items-center">
-        <a href="{{ route('admin.lokasi.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
+        <a href="{{ route($routePrefix . '.lokasi.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
             <i class="bi bi-arrow-left fs-5"></i>
         </a>
         <div>
@@ -57,7 +57,7 @@
             <p class="text-muted mb-0 small">Melihat informasi spesifik dan daftar alat yang terpasang di lokasi ini.</p>
         </div>
     </div>
-    <a href="{{ route('admin.lokasi.edit', $lokasi) }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
+    <a href="{{ route($routePrefix . '.lokasi.edit', $lokasi) }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
         <i class="bi bi-pencil-square"></i> Edit Lokasi
     </a>
 </div>
@@ -132,7 +132,7 @@
                                     @endif
                                 </td>
                                 <td class="text-end pe-4">
-                                    <a href="{{ route('admin.bak-sampah.show', $bak) }}" class="btn btn-sm bg-white border" title="Lihat Sensor" style="border-radius: 6px; color: #0f172a;">
+                                    <a href="{{ route($routePrefix . '.bak-sampah.show', $bak) }}" class="btn btn-sm bg-white border" title="Lihat Sensor" style="border-radius: 6px; color: #0f172a;">
                                         <i class="bi bi-arrow-right-short fs-5"></i>
                                     </a>
                                 </td>

@@ -24,7 +24,7 @@ use App\Http\Controllers\Web\VoucherController;
 Route::get('/', function () {
     // Jika sudah login, langsung ke dashboard
     if (Auth::check()) {
-        return redirect()->route('admin.dashboard'); 
+        return redirect()->route($routePrefix . '.dashboard'); 
     }
     return view('welcome');
 })->name('welcome');

@@ -45,7 +45,7 @@ class JenisSampahController extends Controller
 
         $this->logActivity('Menambahkan jenis sampah baru: ' . $jenisSampah->nama, 'jenis_sampah');
 
-        return redirect()->route('admin.jenis-sampah.index')
+        return redirect()->route($routePrefix . '.jenis-sampah.index')
             ->with('success', 'Jenis sampah berhasil ditambahkan.');
     }
 
@@ -68,7 +68,7 @@ class JenisSampahController extends Controller
 
         $this->logActivity('Mengupdate jenis sampah: ' . $jenisSampah->nama, 'jenis_sampah');
 
-        return redirect()->route('admin.jenis-sampah.index')
+        return redirect()->route($routePrefix . '.jenis-sampah.index')
             ->with('success', 'Jenis sampah berhasil diupdate.');
     }
 
@@ -83,7 +83,7 @@ class JenisSampahController extends Controller
 
         $this->logActivity('Menghapus jenis sampah: ' . $name, 'jenis_sampah');
 
-        return redirect()->route('admin.jenis-sampah.index')
+        return redirect()->route($routePrefix . '.jenis-sampah.index')
             ->with('success', 'Jenis sampah berhasil dihapus.');
     }
 

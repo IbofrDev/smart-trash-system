@@ -59,7 +59,7 @@
 </div>
 
 <div class="filter-wrapper animate-fade-up" style="animation-delay: 0.1s;">
-    <form action="{{ route('admin.log-aktivitas.index') }}" method="GET" class="row g-3 align-items-end">
+    <form action="{{ route($routePrefix . '.log-aktivitas.index') }}" method="GET" class="row g-3 align-items-end">
         
         <div class="col-lg-3 col-md-6">
             <label class="filter-label"><i class="bi bi-search text-success me-1"></i> Cari Log</label>
@@ -105,7 +105,7 @@
                 <i class="bi bi-funnel-fill me-2"></i> Filter Log
             </button>
             @if(request()->hasAny(['search', 'user_type', 'tanggal_dari', 'tanggal_sampai']) && (request('search') != '' || request('user_type') != '' || request('tanggal_dari') != '' || request('tanggal_sampai') != ''))
-                <a href="{{ route('admin.log-aktivitas.index') }}" class="btn btn-light border text-danger rounded-3 shadow-sm d-flex justify-content-center align-items-center fw-bold px-3" style="height: 42px;" title="Reset Filter">
+                <a href="{{ route($routePrefix . '.log-aktivitas.index') }}" class="btn btn-light border text-danger rounded-3 shadow-sm d-flex justify-content-center align-items-center fw-bold px-3" style="height: 42px;" title="Reset Filter">
                     <i class="bi bi-x-lg"></i>
                 </a>
             @endif

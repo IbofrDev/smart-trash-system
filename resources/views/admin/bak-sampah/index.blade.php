@@ -62,14 +62,14 @@
         <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Device Manager</h4>
         <p class="text-muted mb-0 small">Kelola dan pantau seluruh unit bak sampah pintar (IoT).</p>
     </div>
-    <a href="{{ route('admin.bak-sampah.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
+    <a href="{{ route($routePrefix . '.bak-sampah.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
         <i class="bi bi-plus-lg"></i> Tambah Perangkat
     </a>
 </div>
 
 <div class="custom-card animate-fade-up" style="animation-delay: 0.1s;">
     
-    <form action="{{ route('admin.bak-sampah.index') }}" method="GET" class="table-toolbar">
+    <form action="{{ route($routePrefix . '.bak-sampah.index') }}" method="GET" class="table-toolbar">
         
         <div class="search-box">
             <i class="bi bi-search"></i>
@@ -122,7 +122,7 @@
             </button>
 
             @if(request()->hasAny(['search', 'lokasi_id', 'status']))
-            <a href="{{ route('admin.bak-sampah.index') }}" class="btn btn-light border rounded-3 px-3 text-danger fw-medium" title="Reset Filter">
+            <a href="{{ route($routePrefix . '.bak-sampah.index') }}" class="btn btn-light border rounded-3 px-3 text-danger fw-medium" title="Reset Filter">
                 <i class="bi bi-x-lg"></i>
             </a>
             @endif
@@ -190,13 +190,13 @@
                     
                     <td class="pe-4">
                         <div class="action-btns justify-content-center">
-                            <a href="{{ route('admin.bak-sampah.show', $bak) }}" class="btn-icon btn-detail" title="Lihat Detail & Monitor">
+                            <a href="{{ route($routePrefix . '.bak-sampah.show', $bak) }}" class="btn-icon btn-detail" title="Lihat Detail & Monitor">
                                 <i class="bi bi-display"></i>
                             </a>
-                            <a href="{{ route('admin.bak-sampah.edit', $bak) }}" class="btn-icon btn-edit" title="Edit Perangkat">
+                            <a href="{{ route($routePrefix . '.bak-sampah.edit', $bak) }}" class="btn-icon btn-edit" title="Edit Perangkat">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" class="btn-icon btn-delete" title="Hapus Perangkat" onclick="confirmDelete('{{ route('admin.bak-sampah.destroy', $bak) }}', '{{ $bak->nama }}')">
+                            <button type="button" class="btn-icon btn-delete" title="Hapus Perangkat" onclick="confirmDelete('{{ route($routePrefix . '.bak-sampah.destroy', $bak) }}', '{{ $bak->nama }}')">
                                 <i class="bi bi-trash3"></i>
                             </button>
                         </div>

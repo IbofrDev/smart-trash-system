@@ -95,7 +95,7 @@
                     
                     <td class="pe-4">
                         <div class="d-flex justify-content-end pe-2">
-                            <a href="{{ route('admin.setting-poin.edit', $setting) }}" class="btn-icon btn-edit" title="Konfigurasi Parameter">
+                            <a href="{{ route($routePrefix . '.setting-poin.edit', $setting) }}" class="btn-icon btn-edit" title="Konfigurasi Parameter">
                                 <i class="bi bi-wrench-adjustable"></i>
                             </a>
                         </div>

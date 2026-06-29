@@ -77,7 +77,7 @@
 
 <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-up">
     <div class="d-flex align-items-center">
-        <a href="{{ route('admin.users.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
+        <a href="{{ route($routePrefix . '.users.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
             <i class="bi bi-arrow-left fs-5"></i>
         </a>
         <div>
@@ -87,7 +87,7 @@
     </div>
     
     <div class="d-none d-md-block">
-        <a href="{{ route('admin.users.edit', $user) }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
+        <a href="{{ route($routePrefix . '.users.edit', $user) }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
             <i class="bi bi-pencil-square"></i> Edit Profil
         </a>
     </div>
@@ -136,7 +136,7 @@
                 </div>
             </div>
             
-            <a href="{{ route('admin.users.edit', $user) }}" class="btn-outline-dark-custom w-100 mt-4 d-md-none">
+            <a href="{{ route($routePrefix . '.users.edit', $user) }}" class="btn-outline-dark-custom w-100 mt-4 d-md-none">
                 <i class="bi bi-pencil-square"></i> Edit Profil
             </a>
         </div>

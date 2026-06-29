@@ -48,7 +48,7 @@
         <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Katalog Jenis Sampah</h4>
         <p class="text-muted mb-0 small">Kelola kategori sampah beserta nilai konversi poinnya.</p>
     </div>
-    <a href="{{ route('admin.jenis-sampah.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
+    <a href="{{ route($routePrefix . '.jenis-sampah.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
         <i class="bi bi-plus-lg"></i> Tambah Kategori
     </a>
 </div>
@@ -114,10 +114,10 @@
                     
                     <td class="pe-4">
                         <div class="action-btns pe-2">
-                            <a href="{{ route('admin.jenis-sampah.edit', $jenis) }}" class="btn-icon btn-edit" title="Edit Kategori">
+                            <a href="{{ route($routePrefix . '.jenis-sampah.edit', $jenis) }}" class="btn-icon btn-edit" title="Edit Kategori">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" class="btn-icon btn-delete" title="Hapus Kategori" onclick="confirmDelete('{{ route('admin.jenis-sampah.destroy', $jenis) }}', '{{ $jenis->nama }}')">
+                            <button type="button" class="btn-icon btn-delete" title="Hapus Kategori" onclick="confirmDelete('{{ route($routePrefix . '.jenis-sampah.destroy', $jenis) }}', '{{ $jenis->nama }}')">
                                 <i class="bi bi-trash3"></i>
                             </button>
                         </div>
@@ -131,7 +131,7 @@
                             <i class="bi bi-tags"></i>
                             <div class="fw-bold text-secondary mb-1">Katalog Sampah Kosong</div>
                             <small>Sistem belum memiliki referensi harga dan jenis sampah.</small><br>
-                            <a href="{{ route('admin.jenis-sampah.create') }}" class="btn btn-sm btn-outline-success rounded-3 mt-3 px-3" style="color: #10b981; border-color: #10b981;">Tambah Kategori Baru</a>
+                            <a href="{{ route($routePrefix . '.jenis-sampah.create') }}" class="btn btn-sm btn-outline-success rounded-3 mt-3 px-3" style="color: #10b981; border-color: #10b981;">Tambah Kategori Baru</a>
                         </div>
                     </td>
                 </tr>

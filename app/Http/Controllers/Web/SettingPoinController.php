@@ -35,7 +35,7 @@ class SettingPoinController extends Controller
             'setting_poin'
         );
 
-        return redirect()->route('admin.setting-poin.index')
+        return redirect()->route($routePrefix . '.setting-poin.index')
             ->with('success', 'Setting poin berhasil diupdate.');
     }
 

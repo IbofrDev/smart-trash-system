@@ -50,7 +50,7 @@
         <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Leaderboard & Laporan Mahasiswa</h4>
         <p class="text-muted mb-0 small">Analisis performa dan peringkat mahasiswa dalam menjaga lingkungan.</p>
     </div>
-    <a href="{{ route('admin.laporan.mahasiswa.pdf') }}" target="_blank" class="btn rounded-3 px-4 fw-bold d-flex align-items-center gap-2" style="background-color: #fff1f2; color: #dc2626; border: 1px solid #fecaca;">
+    <a href="{{ route($routePrefix . '.laporan.mahasiswa.pdf') }}" target="_blank" class="btn rounded-3 px-4 fw-bold d-flex align-items-center gap-2" style="background-color: #fff1f2; color: #dc2626; border: 1px solid #fecaca;">
         <i class="bi bi-file-earmark-pdf-fill fs-5"></i> Cetak PDF Laporan
     </a>
 </div>
@@ -116,7 +116,7 @@
 
         <div class="sort-control">
             <span class="text-muted small fw-bold"><i class="bi bi-filter-circle me-1"></i> Urutkan:</span>
-            <form action="{{ route('admin.laporan.mahasiswa') }}" method="GET" class="d-flex gap-2 mb-0">
+            <form action="{{ route($routePrefix . '.laporan.mahasiswa') }}" method="GET" class="d-flex gap-2 mb-0">
                 <select name="sort" class="sort-select" onchange="this.form.submit()">
                     <option value="total_poin" {{ request('sort','total_poin') == 'total_poin' ? 'selected' : '' }}>🌟 Berdasarkan Poin</option>
                     <option value="total_koin" {{ request('sort') == 'total_koin' ? 'selected' : '' }}>🪙 Berdasarkan Koin</option>

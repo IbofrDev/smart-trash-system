@@ -12,12 +12,12 @@
     /* Card Utama & Umum */
     .custom-card { border: 1px solid #f1f5f9; border-radius: 12px; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.02); background-color: #ffffff; overflow: hidden; }
     
-    /* Stat Cards - Minimalist Boxy */
-    .stat-card-boxy { border-radius: 12px; border: 1px solid #e2e8f0; background-color: #ffffff; padding: 1.5rem; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01); height: 100%; display: flex; flex-direction: column; justify-content: center; transition: transform 0.2s; }
+      /* Stat Cards - Minimalist Boxy */
+    .stat-card-boxy { border-radius: 12px; border: 1px solid #e2e8f0; background-color: #ffffff; padding: 1.1rem 1.25rem; position: relative; overflow: hidden; box-shadow: 0 4px 12px rgba(0, 0, 0, 0.01); height: 100%; display: flex; flex-direction: column; justify-content: center; transition: transform 0.2s; }
     .stat-card-boxy:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0, 0, 0, 0.03); }
-    .stat-card-boxy h3 { font-weight: 800; font-size: 2rem; color: #0f172a; margin-bottom: 0.2rem; z-index: 1; }
-    .stat-card-boxy p { margin: 0; font-size: 0.85rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; z-index: 1; }
-    .stat-icon { position: absolute; top: 50%; right: 1.5rem; transform: translateY(-50%); font-size: 2.5rem; color: #f1f5f9; z-index: 0; }
+    .stat-card-boxy h3 { font-weight: 800; font-size: 1.6rem; color: #0f172a; margin-bottom: 0.2rem; z-index: 1; }
+    .stat-card-boxy p { margin: 0; font-size: 0.72rem; color: #64748b; text-transform: uppercase; font-weight: 700; letter-spacing: 0.5px; z-index: 1; }
+    .stat-icon { position: absolute; top: 50%; right: 1rem; transform: translateY(-50%); font-size: 2rem; color: #f1f5f9; z-index: 0; }
 
     /* Filter Area */
     .filter-wrapper { background-color: #ffffff; border: 1px solid #e2e8f0; border-radius: 12px; padding: 1.5rem; margin-bottom: 1.5rem; position: relative; z-index: 50; box-shadow: 0 4px 12px rgba(0,0,0,0.01); }
@@ -54,10 +54,12 @@
 
     /* Styling Tabel Clean */
     .table-clean { margin-bottom: 0; width: 100%; }
-    .table-clean th { background-color: #ffffff; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 0.5px; padding: 1rem 1.5rem; border-bottom: 2px solid #f1f5f9; }
-    .table-clean td { padding: 1rem 1.5rem; vertical-align: middle; border-bottom: 1px solid #f8fafc; color: #334155; font-size: 0.9rem; }
+    .table-clean th { background-color: #ffffff; color: #64748b; font-weight: 600; text-transform: uppercase; font-size: 0.7rem; letter-spacing: 0.3px; padding: 0.85rem 0.75rem; border-bottom: 2px solid #f1f5f9; white-space: nowrap; }
+    .table-clean td { padding: 0.85rem 0.75rem; vertical-align: middle; border-bottom: 1px solid #f8fafc; color: #334155; font-size: 0.85rem; }
     .table-clean tbody tr { transition: background-color 0.2s; }
     .table-clean tbody tr:hover { background-color: #f8fafc; }
+    .table-clean th:first-child, .table-clean td:first-child { padding-left: 1.25rem; }
+    .table-clean th:last-child, .table-clean td:last-child { padding-right: 1.25rem; }
 
     /* Empty State */
     .empty-state { padding: 4rem 1rem; text-align: center; color: #94a3b8; }
@@ -104,7 +106,7 @@
 </div>
 
 <div class="filter-wrapper animate-fade-up" style="animation-delay: 0.2s;">
-    <form action="{{ route('admin.voucher.index') }}" method="GET" class="row g-3 align-items-end">
+    <form action="{{ route($routePrefix . '.voucher.index') }}" method="GET" class="row g-3 align-items-end">
         
         <div class="col-lg-3 col-md-6">
             <label class="filter-label"><i class="bi bi-person text-success me-1"></i> Cari Mahasiswa</label>
@@ -152,7 +154,7 @@
                 <i class="bi bi-funnel-fill me-2"></i> Filter
             </button>
             @if(request()->hasAny(['search', 'status', 'dari', 'sampai']) && (request('search') != '' || request('status') != '' || request('dari') != '' || request('sampai') != ''))
-                <a href="{{ route('admin.voucher.index') }}" class="btn btn-light border text-danger rounded-3 shadow-sm d-flex justify-content-center align-items-center fw-bold px-3" style="height: 42px;" title="Reset Filter">
+                <a href="{{ route($routePrefix . '.voucher.index') }}" class="btn btn-light border text-danger rounded-3 shadow-sm d-flex justify-content-center align-items-center fw-bold px-3" style="height: 42px;" title="Reset Filter">
                     <i class="bi bi-x-lg"></i>
                 </a>
             @endif

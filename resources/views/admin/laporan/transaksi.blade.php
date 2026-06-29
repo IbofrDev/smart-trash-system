@@ -44,14 +44,14 @@
     </div>
     
     <div>
-        <a href="{{ route('admin.laporan.transaksi.pdf', ['tanggal_dari' => $tanggalDari, 'tanggal_sampai' => $tanggalSampai]) }}" class="btn rounded-3 fw-bold d-flex align-items-center gap-2" target="_blank" style="height: 40px; background-color: #fff1f2; color: #dc2626; border: 1px solid #fecaca; padding: 0 1.25rem; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fecaca'" onmouseout="this.style.backgroundColor='#fff1f2'">
+        <a href="{{ route($routePrefix . '.laporan.transaksi.pdf', ['tanggal_dari' => $tanggalDari, 'tanggal_sampai' => $tanggalSampai]) }}" class="btn rounded-3 fw-bold d-flex align-items-center gap-2" target="_blank" style="height: 40px; background-color: #fff1f2; color: #dc2626; border: 1px solid #fecaca; padding: 0 1.25rem; transition: all 0.2s;" onmouseover="this.style.backgroundColor='#fecaca'" onmouseout="this.style.backgroundColor='#fff1f2'">
             <i class="bi bi-file-earmark-pdf-fill"></i> Cetak PDF Laporan
         </a>
     </div>
 </div>
 
 <div class="mb-4 animate-fade-up" style="animation-delay: 0.05s;">
-    <form action="{{ route('admin.laporan.transaksi') }}" method="GET" class="filter-box m-0 p-3">
+    <form action="{{ route($routePrefix . '.laporan.transaksi') }}" method="GET" class="filter-box m-0 p-3">
         <div>
             <label class="filter-label"><i class="bi bi-calendar-event me-1 text-success"></i> Dari Tanggal</label>
             <input type="date" name="tanggal_dari" class="filter-input" value="{{ $tanggalDari }}">

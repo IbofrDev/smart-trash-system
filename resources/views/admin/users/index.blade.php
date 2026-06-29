@@ -59,14 +59,14 @@
         <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Kelola Users</h4>
         <p class="text-muted mb-0 small">Manajemen akun administrator dan pengelola sistem.</p>
     </div>
-    <a href="{{ route('admin.users.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
+    <a href="{{ route($routePrefix . '.users.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
         <i class="bi bi-plus-lg"></i> Tambah User
     </a>
 </div>
 
 <div class="custom-card animate-fade-up" style="animation-delay: 0.1s;">
     
-    <form action="{{ route('admin.users.index') }}" method="GET" class="table-toolbar">
+    <form action="{{ route($routePrefix . '.users.index') }}" method="GET" class="table-toolbar">
         
         <div class="search-box">
             <i class="bi bi-search"></i>
@@ -109,7 +109,7 @@
             </button>
 
             @if(request()->hasAny(['search', 'role', 'status']))
-            <a href="{{ route('admin.users.index') }}" class="btn btn-light border rounded-3 px-3 text-danger fw-medium" title="Reset Filter">
+            <a href="{{ route($routePrefix . '.users.index') }}" class="btn btn-light border rounded-3 px-3 text-danger fw-medium" title="Reset Filter">
                 <i class="bi bi-x-lg"></i>
             </a>
             @endif
@@ -170,15 +170,15 @@
                     </td>
                     <td class="pe-4">
                         <div class="action-btns justify-content-center">
-                            <a href="{{ route('admin.users.show', $user) }}" class="btn-icon" title="Detail">
+                            <a href="{{ route($routePrefix . '.users.show', $user) }}" class="btn-icon" title="Detail">
                                 <i class="bi bi-eye"></i>
                             </a>
-                            <a href="{{ route('admin.users.edit', $user) }}" class="btn-icon btn-edit" title="Edit">
+                            <a href="{{ route($routePrefix . '.users.edit', $user) }}" class="btn-icon btn-edit" title="Edit">
                                 <i class="bi bi-pencil"></i>
                             </a>
                             
                             @if($user->id !== auth()->id())
-                            <button type="button" class="btn-icon btn-delete" title="Hapus" onclick="confirmDelete('{{ route('admin.users.destroy', $user) }}', '{{ $user->name }}')">
+                            <button type="button" class="btn-icon btn-delete" title="Hapus" onclick="confirmDelete('{{ route($routePrefix . '.users.destroy', $user) }}', '{{ $user->name }}')">
                                 <i class="bi bi-trash"></i>
                             </button>
                             @endif

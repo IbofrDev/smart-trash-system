@@ -62,7 +62,7 @@
         <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Master Data Lokasi</h4>
         <p class="text-muted mb-0 small">Kelola titik penempatan bak sampah pintar di area kampus.</p>
     </div>
-    <a href="{{ route('admin.lokasi.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
+    <a href="{{ route($routePrefix . '.lokasi.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">
         <i class="bi bi-geo-alt-fill"></i> Tambah Lokasi
     </a>
 </div>
@@ -70,7 +70,7 @@
 <div class="custom-card animate-fade-up" style="animation-delay: 0.1s;">
     
     <div class="table-toolbar">
-        <form action="{{ route('admin.lokasi.index') }}" method="GET" class="d-flex flex-wrap flex-grow-1 gap-2 align-items-center">
+        <form action="{{ route($routePrefix . '.lokasi.index') }}" method="GET" class="d-flex flex-wrap flex-grow-1 gap-2 align-items-center">
             <div class="search-box">
                 <i class="bi bi-search"></i>
                 <input type="text" name="search" placeholder="Cari berdasarkan nama lokasi atau alamat..." value="{{ request('search') }}">
@@ -80,7 +80,7 @@
             </button>
             
             @if(request()->has('search') && request('search') != '')
-                <a href="{{ route('admin.lokasi.index') }}" class="btn btn-light border rounded-3 px-3 text-danger fw-medium" title="Reset Pencarian">
+                <a href="{{ route($routePrefix . '.lokasi.index') }}" class="btn btn-light border rounded-3 px-3 text-danger fw-medium" title="Reset Pencarian">
                     <i class="bi bi-x-lg"></i>
                 </a>
             @endif
@@ -139,13 +139,13 @@
                     
                     <td class="pe-4">
                         <div class="action-btns pe-2">
-                            <a href="{{ route('admin.lokasi.show', $lokasi) }}" class="btn-icon btn-detail" title="Lihat Detail Area">
+                            <a href="{{ route($routePrefix . '.lokasi.show', $lokasi) }}" class="btn-icon btn-detail" title="Lihat Detail Area">
                                 <i class="bi bi-eye-fill"></i>
                             </a>
-                            <a href="{{ route('admin.lokasi.edit', $lokasi) }}" class="btn-icon btn-edit" title="Edit Lokasi">
+                            <a href="{{ route($routePrefix . '.lokasi.edit', $lokasi) }}" class="btn-icon btn-edit" title="Edit Lokasi">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" class="btn-icon btn-delete" title="Hapus Lokasi" onclick="confirmDelete('{{ route('admin.lokasi.destroy', $lokasi) }}', '{{ $lokasi->nama_lokasi }}')">
+                            <button type="button" class="btn-icon btn-delete" title="Hapus Lokasi" onclick="confirmDelete('{{ route($routePrefix . '.lokasi.destroy', $lokasi) }}', '{{ $lokasi->nama_lokasi }}')">
                                 <i class="bi bi-trash3-fill"></i>
                             </button>
                         </div>
@@ -159,7 +159,7 @@
                             <i class="bi bi-map"></i>
                             <div class="fw-bold text-secondary mb-1">Peta Lokasi Masih Kosong</div>
                             <small>Sistem belum mendeteksi adanya titik penempatan bak sampah.</small><br>
-                            <a href="{{ route('admin.lokasi.create') }}" class="btn btn-sm btn-outline-success rounded-3 mt-3 px-3" style="color: #10b981; border-color: #10b981;">Daftarkan Lokasi Pertama</a>
+                            <a href="{{ route($routePrefix . '.lokasi.create') }}" class="btn btn-sm btn-outline-success rounded-3 mt-3 px-3" style="color: #10b981; border-color: #10b981;">Daftarkan Lokasi Pertama</a>
                         </div>
                     </td>
                 </tr>

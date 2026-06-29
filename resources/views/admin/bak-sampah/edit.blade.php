@@ -51,7 +51,7 @@
 
 <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-up">
     <div class="d-flex align-items-center">
-        <a href="{{ route('admin.bak-sampah.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
+        <a href="{{ route($routePrefix . '.bak-sampah.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
             <i class="bi bi-arrow-left fs-5"></i>
         </a>
         <div>
@@ -102,7 +102,7 @@
             </div>
             
             <div class="card-body p-4 p-md-5">
-                <form action="{{ route('admin.bak-sampah.update', $bakSampah) }}" method="POST">
+                <form action="{{ route($routePrefix . '.bak-sampah.update', $bakSampah) }}" method="POST">
                     @csrf
                     @method('PUT')
                     
@@ -167,7 +167,7 @@
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-5 pt-4 border-top" style="border-color: #f1f5f9 !important;">
-                        <a href="{{ route('admin.bak-sampah.index') }}" class="btn bg-white border rounded-3 px-4 fw-bold" style="color: #64748b;">
+                        <a href="{{ route($routePrefix . '.bak-sampah.index') }}" class="btn bg-white border rounded-3 px-4 fw-bold" style="color: #64748b;">
                             Batal
                         </a>
                         <button type="submit" class="btn btn-success rounded-3 px-5 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none; transition: transform 0.2s;" onmouseover="this.style.transform='translateY(-2px)'" onmouseout="this.style.transform='translateY(0)'">

@@ -41,7 +41,7 @@
 </style>
 
 <div class="d-flex align-items-center mb-4 animate-fade-up">
-    <a href="{{ route('admin.users.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
+    <a href="{{ route($routePrefix . '.users.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
         <i class="bi bi-arrow-left fs-5"></i>
     </a>
     <div>
@@ -86,7 +86,7 @@
                 <h5 class="m-0 fw-bold" style="color: #0f172a;"><i class="bi bi-person-lines-fill text-success me-2"></i>Formulir Perubahan Identitas</h5>
             </div>
             <div class="card-body p-4 p-md-5">
-                <form id="editUserForm" action="{{ route('admin.users.update', $user->id) }}" method="POST">
+                <form id="editUserForm" action="{{ route($routePrefix . '.users.update', $user->id) }}" method="POST">
                     @csrf
                     @method('PUT')
                     
@@ -155,7 +155,7 @@
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-5">
-                        <a href="{{ route('admin.users.index') }}" class="btn bg-white border rounded-3 px-4 fw-bold" style="color: #64748b;">
+                        <a href="{{ route($routePrefix . '.users.index') }}" class="btn bg-white border rounded-3 px-4 fw-bold" style="color: #64748b;">
                             Batal
                         </a>
                         <button type="submit" class="btn btn-success rounded-3 px-5 fw-bold shadow-sm d-flex align-items-center gap-2" style="background: #10b981; border: none;">

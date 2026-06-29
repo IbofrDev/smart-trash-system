@@ -24,7 +24,7 @@
 
 <div class="d-flex align-items-center justify-content-between mb-4 animate-fade-up">
     <div class="d-flex align-items-center">
-        <a href="{{ route('admin.transaksi.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
+        <a href="{{ route($routePrefix . '.transaksi.index') }}" class="btn btn-light rounded-3 shadow-sm me-3 bg-white border" style="width: 40px; height: 40px; display: inline-flex; align-items: center; justify-content: center; color: #0f172a;">
             <i class="bi bi-arrow-left fs-5"></i>
         </a>
         <div>
@@ -63,7 +63,7 @@
                         <span class="item-value">
                             {{ $transaksi->mahasiswa->name ?? 'Tidak Diketahui' }}
                             @if($transaksi->mahasiswa)
-                                <a href="{{ route('admin.mahasiswa.show', $transaksi->mahasiswa) }}" class="ms-2 text-success" title="Lihat Profil">
+                                <a href="{{ route($routePrefix . '.mahasiswa.show', $transaksi->mahasiswa) }}" class="ms-2 text-success" title="Lihat Profil">
                                     <i class="bi bi-box-arrow-up-right"></i>
                                 </a>
                             @endif

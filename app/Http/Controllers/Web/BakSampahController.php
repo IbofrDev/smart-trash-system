@@ -58,7 +58,7 @@ class BakSampahController extends Controller
 
         $this->logActivity('Menambahkan bak sampah baru: ' . $bakSampah->nama, 'bak_sampah');
 
-        return redirect()->route('admin.bak-sampah.index')
+        return redirect()->route($routePrefix . '.bak-sampah.index')
             ->with('success', 'Bak sampah berhasil ditambahkan.');
     }
 
@@ -99,7 +99,7 @@ class BakSampahController extends Controller
 
         $this->logActivity('Mengupdate bak sampah: ' . $bakSampah->nama, 'bak_sampah');
 
-        return redirect()->route('admin.bak-sampah.index')
+        return redirect()->route($routePrefix . '.bak-sampah.index')
             ->with('success', 'Bak sampah berhasil diupdate.');
     }
 
@@ -126,7 +126,7 @@ class BakSampahController extends Controller
 
         $this->logActivity('Menghapus bak sampah: ' . $name, 'bak_sampah');
 
-        return redirect()->route('admin.bak-sampah.index')
+        return redirect()->route($routePrefix . '.bak-sampah.index')
             ->with('success', 'Bak sampah berhasil dihapus.');
     }
 

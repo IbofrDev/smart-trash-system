@@ -54,7 +54,7 @@
         <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Tier & Level Gamifikasi</h4>
         <p class="text-muted mb-0 small">Tentukan jenjang peringkat mahasiswa berdasarkan akumulasi poin.</p>
     </div>
-    <a href="{{ route('admin.level.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background-color: #10b981; border: none;">
+    <a href="{{ route($routePrefix . '.level.create') }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm d-flex align-items-center gap-2" style="background-color: #10b981; border: none;">
         <i class="bi bi-plus-lg"></i> Tambah Peringkat
     </a>
 </div>
@@ -125,10 +125,10 @@
                     
                     <td class="pe-4">
                         <div class="action-btns">
-                            <a href="{{ route('admin.level.edit', $level) }}" class="btn-icon btn-edit" title="Edit Level">
+                            <a href="{{ route($routePrefix . '.level.edit', $level) }}" class="btn-icon btn-edit" title="Edit Level">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" class="btn-icon btn-delete" title="Hapus Level" onclick="confirmDelete('{{ route('admin.level.destroy', $level) }}', '{{ $level->nama_level }}')">
+                            <button type="button" class="btn-icon btn-delete" title="Hapus Level" onclick="confirmDelete('{{ route($routePrefix . '.level.destroy', $level) }}', '{{ $level->nama_level }}')">
                                 <i class="bi bi-trash3"></i>
                             </button>
                         </div>
@@ -142,7 +142,7 @@
                             <i class="bi bi-trophy"></i>
                             <div class="fw-bold text-secondary mb-1">Data Level Kosong</div>
                             <small>Sistem belum memiliki referensi peringkat gamifikasi mahasiswa.</small><br>
-                            <a href="{{ route('admin.level.create') }}" class="btn btn-sm rounded-3 mt-3 px-3 text-white" style="background-color: #10b981;">Buat Peringkat Pertama</a>
+                            <a href="{{ route($routePrefix . '.level.create') }}" class="btn btn-sm rounded-3 mt-3 px-3 text-white" style="background-color: #10b981;">Buat Peringkat Pertama</a>
                         </div>
                     </td>
                 </tr>

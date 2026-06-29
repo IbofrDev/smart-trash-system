@@ -79,7 +79,7 @@ class MahasiswaController extends Controller
 
         $this->logActivity('Mengupdate data mahasiswa: ' . $mahasiswa->name, 'mahasiswa');
 
-        return redirect()->route('admin.mahasiswa.index')
+        return redirect()->route($routePrefix . '.mahasiswa.index')
             ->with('success', 'Data mahasiswa berhasil diupdate.');
     }
 
@@ -90,7 +90,7 @@ class MahasiswaController extends Controller
 
         $this->logActivity('Menghapus mahasiswa: ' . $name, 'mahasiswa');
 
-        return redirect()->route('admin.mahasiswa.index')
+        return redirect()->route($routePrefix . '.mahasiswa.index')
             ->with('success', 'Mahasiswa berhasil dihapus.');
     }
 

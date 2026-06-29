@@ -62,7 +62,7 @@
 
 <div class="custom-card animate-fade-up" style="animation-delay: 0.1s;">
     
-    <form action="{{ route('admin.mahasiswa.index') }}" method="GET" class="table-toolbar">
+    <form action="{{ route($routePrefix . '.mahasiswa.index') }}" method="GET" class="table-toolbar">
         
         <div class="search-box">
             <i class="bi bi-search"></i>
@@ -100,7 +100,7 @@
             </button>
 
             @if(request()->hasAny(['search', 'level_id']) && (request('search') != '' || request('level_id') != ''))
-            <a href="{{ route('admin.mahasiswa.index') }}" class="btn btn-light border rounded-3 px-3 text-danger fw-medium" title="Reset Filter">
+            <a href="{{ route($routePrefix . '.mahasiswa.index') }}" class="btn btn-light border rounded-3 px-3 text-danger fw-medium" title="Reset Filter">
                 <i class="bi bi-x-lg"></i>
             </a>
             @endif
@@ -165,13 +165,13 @@
                     
                     <td class="pe-4">
                         <div class="action-btns">
-                            <a href="{{ route('admin.mahasiswa.show', $mhs) }}" class="btn-icon btn-detail" title="Detail Riwayat">
+                            <a href="{{ route($routePrefix . '.mahasiswa.show', $mhs) }}" class="btn-icon btn-detail" title="Detail Riwayat">
                                 <i class="bi bi-person-vcard"></i>
                             </a>
-                            <a href="{{ route('admin.mahasiswa.edit', $mhs) }}" class="btn-icon btn-edit" title="Edit Data">
+                            <a href="{{ route($routePrefix . '.mahasiswa.edit', $mhs) }}" class="btn-icon btn-edit" title="Edit Data">
                                 <i class="bi bi-pencil-square"></i>
                             </a>
-                            <button type="button" class="btn-icon btn-delete" title="Hapus Akun" onclick="confirmDelete('{{ route('admin.mahasiswa.destroy', $mhs) }}', '{{ $mhs->name }}')">
+                            <button type="button" class="btn-icon btn-delete" title="Hapus Akun" onclick="confirmDelete('{{ route($routePrefix . '.mahasiswa.destroy', $mhs) }}', '{{ $mhs->name }}')">
                                 <i class="bi bi-trash3"></i>
                             </button>
                         </div>

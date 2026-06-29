@@ -39,7 +39,7 @@ class LokasiController extends Controller
 
         $this->logActivity('Menambahkan lokasi baru: ' . $lokasi->nama_lokasi, 'lokasi');
 
-        return redirect()->route('admin.lokasi.index')
+        return redirect()->route($routePrefix . '.lokasi.index')
             ->with('success', 'Lokasi berhasil ditambahkan.');
     }
 
@@ -66,7 +66,7 @@ class LokasiController extends Controller
 
         $this->logActivity('Mengupdate lokasi: ' . $lokasi->nama_lokasi, 'lokasi');
 
-        return redirect()->route('admin.lokasi.index')
+        return redirect()->route($routePrefix . '.lokasi.index')
             ->with('success', 'Lokasi berhasil diupdate.');
     }
 
@@ -81,7 +81,7 @@ class LokasiController extends Controller
 
         $this->logActivity('Menghapus lokasi: ' . $name, 'lokasi');
 
-        return redirect()->route('admin.lokasi.index')
+        return redirect()->route($routePrefix . '.lokasi.index')
             ->with('success', 'Lokasi berhasil dihapus.');
     }
 
