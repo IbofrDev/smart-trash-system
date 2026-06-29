@@ -310,7 +310,7 @@
                             </div>
                         @endforelse
                     </div>
-                    <a href="{{ route('admin.laporan.mahasiswa') }}"
+                    <a href="{{ route(auth()->user()->role . '.laporan.mahasiswa') }}"
                         class="btn btn-light w-100 rounded-pill fw-bold py-2 mt-2"
                         style="color: #047857; background: #f8fafc; border: 1px solid #e2e8f0;">
                         Lihat Leaderboard Detail
@@ -327,11 +327,11 @@
                         <div class="section-title mb-0">
                             <i class="bi bi-clock-history"></i> Transaksi Terakhir
                         </div>
-                        <a href="{{ route('admin.transaksi.index') }}"
+                        <a href="{{ route(auth()->user()->role . '.transaksi.index') }}"
                             class="fw-bold text-decoration-none small px-3 py-1 rounded-pill"
                             style="background: #ecfdf5; color: #047857;">Lihat Semua</a>
                     </div>
-                                      <div class="table-responsive">
+                    <div class="table-responsive">
                         <table class="table table-clean mb-0 align-middle">
                             <thead>
                                 <tr style="font-size: 0.75rem; letter-spacing: 0.5px;">
@@ -372,8 +372,10 @@
                                                 <img src="https://ui-avatars.com/api/?name={{ urlencode($trx->mahasiswa->name ?? 'M') }}&background=ecfdf5&color=047857&bold=true&size=36"
                                                     class="rounded-circle me-2" width="36" height="36">
                                                 <div>
-                                                    <div class="fw-bold" style="color: #0f172a; font-size: 0.875rem;">{{ Str::limit($trx->mahasiswa->name ?? '-', 18) }}</div>
-                                                    <small class="text-muted" style="font-family: monospace; font-size: 0.7rem;">{{ $trx->mahasiswa->nim ?? '' }}</small>
+                                                    <div class="fw-bold" style="color: #0f172a; font-size: 0.875rem;">
+                                                        {{ Str::limit($trx->mahasiswa->name ?? '-', 18) }}</div>
+                                                    <small class="text-muted"
+                                                        style="font-family: monospace; font-size: 0.7rem;">{{ $trx->mahasiswa->nim ?? '' }}</small>
                                                 </div>
                                             </div>
                                         </td>
@@ -384,7 +386,8 @@
                                             </span>
                                         </td>
                                         <td>
-                                            <span class="badge rounded-pill px-2 py-1" style="background: {{ $jenisColor }}15; color: {{ $jenisColor }}; font-weight: 600;">
+                                            <span class="badge rounded-pill px-2 py-1"
+                                                style="background: {{ $jenisColor }}15; color: {{ $jenisColor }}; font-weight: 600;">
                                                 {{ $jenisIcon }} {{ $trx->jenisSampah->nama ?? 'Lainnya' }}
                                             </span>
                                         </td>
@@ -402,7 +405,8 @@
                                         </td>
                                         <td class="text-end">
                                             @if(($trx->poin_didapat ?? 0) > 0)
-                                                <span class="fw-bold" style="color: #059669; font-size: 0.95rem;">+{{ number_format($trx->poin_didapat) }}</span>
+                                                <span class="fw-bold"
+                                                    style="color: #059669; font-size: 0.95rem;">+{{ number_format($trx->poin_didapat) }}</span>
                                             @else
                                                 <span class="fw-bold text-muted" style="font-size: 0.95rem;">0</span>
                                             @endif
@@ -417,11 +421,14 @@
                                         </td>
                                         <td class="text-center pe-4">
                                             @if($isAnomali)
-                                                <span class="badge rounded-pill px-3 py-2" style="background: #fee2e2; color: #b91c1c; font-weight: 600;">
-                                                    <i class="bi bi-exclamation-triangle-fill"></i> {{ ucfirst($trx->status_validasi) }}
+                                                <span class="badge rounded-pill px-3 py-2"
+                                                    style="background: #fee2e2; color: #b91c1c; font-weight: 600;">
+                                                    <i class="bi bi-exclamation-triangle-fill"></i>
+                                                    {{ ucfirst($trx->status_validasi) }}
                                                 </span>
                                             @else
-                                                <span class="badge rounded-pill px-3 py-2" style="background: #d1fae5; color: #047857; font-weight: 600;">
+                                                <span class="badge rounded-pill px-3 py-2"
+                                                    style="background: #d1fae5; color: #047857; font-weight: 600;">
                                                     <i class="bi bi-check-circle-fill"></i> Valid
                                                 </span>
                                             @endif
@@ -453,7 +460,7 @@
             Chart.defaults.font.family = "'Inter', sans-serif";
             Chart.defaults.color = '#64748b';
 
-              const ctx = document.getElementById('activityChart').getContext('2d');
+            const ctx = document.getElementById('activityChart').getContext('2d');
 
             // Gradient Aksen Hijau untuk Area Bawah Grafik
             const gradient = ctx.createLinearGradient(0, 0, 0, 300);
