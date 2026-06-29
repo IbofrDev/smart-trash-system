@@ -34,7 +34,7 @@ class ProfileController extends Controller
                 'koin_per_voucher' => (int) $koinPerVoucher,
                 'level' => $mahasiswa->level ? [
                     'id' => $mahasiswa->level->id,
-                    'nama' => $mahasiswa->level->nama_level,
+                    'nama_level' => $mahasiswa->level->nama_level,
                     'min_poin' => $mahasiswa->level->min_poin,
                     'max_poin' => $mahasiswa->level->max_poin,
                 ] : null,
