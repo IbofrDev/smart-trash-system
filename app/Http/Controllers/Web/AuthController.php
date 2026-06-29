@@ -15,10 +15,15 @@ class AuthController extends Controller
     public function showLogin()
     {
         if (Auth::check()) {
-            return redirect()->route('admin.dashboard');
+            $user = Auth::user();
+            $redirectRoute = match($user->role) {
+                'admin' => 'admin.dashboard',
+                'pengelola' => 'pengelola.dashboard',
+                default => 'admin.dashboard',
+            };
+            return redirect()->route($redirectRoute);
         }
 
-        // Arahkan ke welcome karena form login sekarang ada di landing page
         return view('welcome'); 
     }
 
@@ -60,7 +65,13 @@ class AuthController extends Controller
                 'ip_address' => $request->ip(),
             ]);
 
-            return redirect()->intended(route('admin.dashboard'))
+            $redirectRoute = match($user->role) {
+                'admin' => 'admin.dashboard',
+                'pengelola' => 'pengelola.dashboard',
+                default => 'admin.dashboard',
+            };
+
+            return redirect()->intended(route($redirectRoute))
                 ->with('success', "Selamat datang, {$user->name}!");
         }
 
