@@ -131,12 +131,19 @@ class GamifikasiService
      */
     private function checkStreak(Mahasiswa $mahasiswa, int $targetStreak): bool
     {
+        $today = now()->format('Y-m-d');
+
         $dates = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
             ->orderBy('tanggal_transaksi', 'desc')
             ->pluck('tanggal_transaksi')
             ->map(fn($d) => $d->format('Y-m-d'))
             ->unique()
             ->values();
+
+        // Streak harus dimulai dari hari ini
+        if ($dates->isEmpty() || $dates->first() !== $today) {
+            return false;
+        }
 
         if ($dates->count() < $targetStreak) {
             return false;
@@ -153,11 +160,11 @@ class GamifikasiService
                     return true;
                 }
             } else {
-                $streak = 1;
+                break; // streak sudah putus, tidak perlu lanjut
             }
         }
 
-        return false;
+        return $streak >= $targetStreak;
     }
 
     /**

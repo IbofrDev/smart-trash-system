@@ -7,7 +7,7 @@ use App\Services\GamifikasiService;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
-class ProcessGamifikasi
+class ProcessGamifikasi implements ShouldQueue
 {
     protected GamifikasiService $gamifikasiService;
 

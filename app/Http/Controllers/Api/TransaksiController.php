@@ -123,8 +123,8 @@ class TransaksiController extends Controller
     public function createSession(Request $request)
     {
         $request->validate([
-            'jumlah_botol' => 'required|integer|min:0',
-            'jumlah_kaleng' => 'required|integer|min:0',
+            'jumlah_botol' => 'required|integer|min:0|max:50',
+            'jumlah_kaleng' => 'required|integer|min:0|max:50',
         ]);
 
         $user = $request->user();
@@ -217,9 +217,9 @@ class TransaksiController extends Controller
 
         if (!$session) {
             return response()->json([
-                'success' => true,
+                'success' => false,
                 'message' => 'Session tidak ditemukan atau sudah tidak aktif.',
-            ]);
+            ], 404);
         }
 
         $session->update(['status' => 'expired']);

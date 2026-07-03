@@ -332,12 +332,14 @@ class HardwareController extends Controller
                 + ($session->jumlah_kaleng * $kaleng->poin_per_kg)) / $totalInput
             : $botol->poin_per_kg;
 
-        $koinDidapat = $jumlahFinal;
-
-        // Anomali = poin 0, koin tetap dapat
-        $poinDidapat = $statusValidasi === 'anomali'
-            ? 0
-            : (int) round(($beratGram / 1000) * $rataRataPoin);
+        // Anomali = poin 0 DAN koin 0
+        if ($statusValidasi === 'anomali') {
+            $poinDidapat = 0;
+            $koinDidapat = 0;
+        } else {
+            $poinDidapat = (int) round(($beratGram / 1000) * $rataRataPoin);
+            $koinDidapat = $jumlahFinal;
+        }
 
         DB::beginTransaction();
         try {
@@ -368,18 +370,26 @@ class HardwareController extends Controller
                 'completed_at' => now(),
             ]);
 
-            // Trigger gamifikasi
-            event(new TransaksiCreated($transaksi));
+            // Update session → completed
+            $session->update([
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]);
 
-            // Bersihkan cache
+            DB::commit(); // ← commit dulu sebelum apapun
+
+            // Bersihkan cache setelah commit
             cache()->forget('session_weight_' . $session->id);
             cache()->forget('session_count_' . $session->id);
 
+            // Refresh data mahasiswa terbaru
             $mahasiswa->refresh();
-            $levelUp = false;
-            $levelNama = $mahasiswa->level->nama_level ?? 'Eco Starter';
 
-            DB::commit();
+            $levelNama = $mahasiswa->level->nama_level ?? 'Eco Starter';
+            $levelUp = false;
+
+            // Trigger gamifikasi setelah commit
+            event(new TransaksiCreated($transaksi));
 
             return response()->json([
                 'success' => true,
