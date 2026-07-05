@@ -218,13 +218,7 @@ class TransaksiController extends Controller
             ], 404);
         }
 
-        // Tolak cancel kalau proses fisik sudah mulai
-        if (in_array($session->status, ['counting', 'weighing'])) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Session tidak dapat dibatalkan karena sampah sudah mulai diproses mesin.',
-            ], 422);
-        }
+ 
 
         $session->update(['status' => 'expired']);
 
@@ -261,8 +255,8 @@ class TransaksiController extends Controller
             ], 404);
         }
 
-        // Auto expire — jangan expire kalau proses fisik sedang berjalan
-        if ($session->isExpired() && !in_array($session->status, ['completed', 'expired', 'counting', 'weighing'])) {
+        // Auto expire
+        if ($session->isExpired() && !in_array($session->status, ['completed', 'expired'])) {
             $session->update(['status' => 'expired']);
         }
         $data = [
