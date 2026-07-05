@@ -28,7 +28,7 @@ class KasirController extends Controller
             ],
         ]);
     }
-    /**
+/**
      * Validasi & gunakan voucher berdasarkan kode
      * POST /api/kasir/voucher/validate
      */

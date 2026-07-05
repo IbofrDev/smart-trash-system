@@ -268,9 +268,9 @@ class HardwareController extends Controller
             ], 422);
         }
 
-        // Cek status 'tapped' — user sudah tap RFID, belum timbang
+        // Cek status 'tapped' — user sudah tap RFID, belum counting
         $session = TransaksiSession::where('session_token', $request->session_token)
-            ->where('status', 'counting')
+            ->whereIn('status', ['tapped', 'counting'])
             ->where('expired_at', '>', now())
             ->first();
 
@@ -286,7 +286,12 @@ class HardwareController extends Controller
         $totalInput = $session->jumlah_botol;
         $jumlahTerhitung = $request->jumlah_terhitung;
         $jumlahFinal = min($jumlahTerhitung, $totalInput);
-        // Status sudah "counting" sejak objek pertama terdeteksi
+        // Update status ke counting
+        $session->update([
+            'status' => 'counting',
+            'expired_at' => now()->addMinutes(15),
+        ]);
+
         cache()->put(
             'session_count_' . $session->id,
             [
@@ -382,7 +387,7 @@ class HardwareController extends Controller
             // Simpan transaksi
             $transaksi = TransaksiSampah::create([
                 'mahasiswa_id' => $mahasiswa->id,
-                'bak_sampah_id' => $request->bak_sampah->id,
+                               'bak_sampah_id' => $request->bak_sampah['id'] ?? 1,
                 'session_id' => $session->id,
                 'jenis_sampah_id' => 1, // Botol Plastik
                 'berat' => $beratGram,
@@ -399,11 +404,6 @@ class HardwareController extends Controller
             $mahasiswa->increment('total_poin', $poinDidapat);
             $mahasiswa->increment('total_koin_botol', $koinDidapat);
 
-            // Update session → completed
-            $session->update([
-                'status' => 'completed',
-                'completed_at' => now(),
-            ]);
 
             // Update session → completed
             $session->update([
@@ -513,9 +513,9 @@ class HardwareController extends Controller
             'success' => true,
             'message' => 'Hardware terhubung',
             'data' => [
-                'bak_sampah_id' => $bakSampah->id,
-                'nama' => $bakSampah->nama,
-                'status' => $bakSampah->status,
+                'bak_sampah_id' => $bakSampah['id'] ?? null,
+                'nama' => $bakSampah['nama'] ?? null,
+                'status' => $bakSampah['status'] ?? null,
                 'server_time' => now()->toDateTimeString(),
             ],
         ]);
