@@ -143,10 +143,17 @@ class TransaksiController extends Controller
             ], 422);
         }
 
-        // Expire session lama yang masih pending
+        // Expire session lama yang sudah lewat expired_at
         TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
             ->whereIn('status', ['pending', 'tapped', 'weighing', 'counting'])
             ->where('expired_at', '<', now())
+            ->update(['status' => 'expired']);
+
+        // Force expire session tapped/counting/weighing yang stuck
+        // (hardware gagal menyelesaikan proses, lebih dari 15 menit)
+        TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['tapped', 'counting', 'weighing'])
+            ->where('created_at', '<', now()->subMinutes(15))
             ->update(['status' => 'expired']);
 
         // Cek apakah ada session aktif
