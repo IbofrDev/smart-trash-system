@@ -66,8 +66,11 @@ class HardwareController extends Controller
 
         $minExpected = $session->jumlah_botol * $botol->berat_min_gram;
         $maxExpected = $session->jumlah_botol * $botol->berat_max_gram;
-        // Update status session → tapped
-        $session->update(['status' => 'tapped']);
+        // Update status session -> tapped dan refresh waktu aktif
+        $session->update([
+            'status' => 'tapped',
+            'expired_at' => now()->addMinutes(10),
+        ]);
 
         return response()->json([
             'success' => true,
@@ -93,8 +96,74 @@ class HardwareController extends Controller
     }
 
     /**
+     * POST /api/hardware/start-counting
+     * Dipanggil Arduino saat objek pertama terdeteksi
+     */
+    public function startCounting(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'session_token' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $session = TransaksiSession::where('session_token', $request->session_token)->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak ditemukan.',
+            ], 404);
+        }
+
+        if ($session->status === 'expired' || $session->isExpired()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session sudah dibatalkan atau expired.',
+            ], 422);
+        }
+
+        // Idempotent: kalau sudah mulai proses, anggap sukses
+        if (in_array($session->status, ['counting', 'weighing', 'completed'])) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Session sudah mulai diproses.',
+                'data' => [
+                    'status' => $session->status,
+                ],
+            ]);
+        }
+
+        if ($session->status !== 'tapped') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Status session tidak valid untuk mulai counting.',
+            ], 422);
+        }
+
+        $session->update([
+            'status' => 'counting',
+            'expired_at' => now()->addMinutes(10),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Counting dimulai.',
+            'data' => [
+                'status' => 'counting',
+            ],
+        ]);
+    }
+
+    /**
      * POST /api/hardware/submit-weight
-     * Kirim data berat dari load cell — DILAKUKAN SETELAH count
+     * Kirim data berat dari load cell ΓÇö DILAKUKAN SETELAH count
      */
     public function submitWeight(Request $request)
     {
@@ -201,7 +270,7 @@ class HardwareController extends Controller
 
         // Cek status 'tapped' — user sudah tap RFID, belum timbang
         $session = TransaksiSession::where('session_token', $request->session_token)
-            ->where('status', 'tapped')
+            ->where('status', 'counting')
             ->where('expired_at', '>', now())
             ->first();
 
@@ -217,10 +286,7 @@ class HardwareController extends Controller
         $totalInput = $session->jumlah_botol;
         $jumlahTerhitung = $request->jumlah_terhitung;
         $jumlahFinal = min($jumlahTerhitung, $totalInput);
-
-        // Update status → counting
-        $session->update(['status' => 'counting']);
-
+        // Status sudah "counting" sejak objek pertama terdeteksi
         cache()->put(
             'session_count_' . $session->id,
             [
@@ -403,6 +469,40 @@ class HardwareController extends Controller
     }
 
     /**
+     * GET /api/hardware/session-status/{token}
+     * Dipolling Arduino sebelum objek pertama masuk
+     */
+    public function sessionStatus(Request $request, $token)
+    {
+        $session = TransaksiSession::where('session_token', $token)->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak ditemukan.',
+                'should_stop' => true,
+                'status' => 'not_found',
+            ], 404);
+        }
+
+        if ($session->status === 'expired' || $session->isExpired()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Session dibatalkan atau expired.',
+                'should_stop' => true,
+                'status' => 'expired',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Session aktif.',
+            'should_stop' => false,
+            'status' => $session->status,
+        ]);
+    }
+
+    /**
      * POST /api/hardware/heartbeat
      */
     public function heartbeat(Request $request)
@@ -421,3 +521,4 @@ class HardwareController extends Controller
         ]);
     }
 }
+

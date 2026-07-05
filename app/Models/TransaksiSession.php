@@ -41,6 +41,11 @@ class TransaksiSession extends Model
         return now()->greaterThan($this->expired_at);
     }
 
+    public function isLocked()
+    {
+        return $this->status === 'locked';
+    }
+
     public function getTotalInputAttribute()
     {
         return $this->jumlah_botol;

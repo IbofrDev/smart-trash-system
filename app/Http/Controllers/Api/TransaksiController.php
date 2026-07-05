@@ -206,7 +206,6 @@ class TransaksiController extends Controller
         if (!$mahasiswa) {
             return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
         }
-
         $session = TransaksiSession::where('session_token', $token)
             ->where('mahasiswa_id', $mahasiswa->id)
             ->whereIn('status', ['pending', 'tapped', 'counting', 'weighing'])
@@ -217,6 +216,14 @@ class TransaksiController extends Controller
                 'success' => false,
                 'message' => 'Session tidak ditemukan atau sudah tidak aktif.',
             ], 404);
+        }
+
+        // Tolak cancel kalau proses fisik sudah mulai
+        if (in_array($session->status, ['counting', 'weighing'])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak dapat dibatalkan karena sampah sudah mulai diproses mesin.',
+            ], 422);
         }
 
         $session->update(['status' => 'expired']);
@@ -254,11 +261,10 @@ class TransaksiController extends Controller
             ], 404);
         }
 
-        // Auto expire
-        if ($session->isExpired() && !in_array($session->status, ['completed', 'expired'])) {
+        // Auto expire — jangan expire kalau proses fisik sedang berjalan
+        if ($session->isExpired() && !in_array($session->status, ['completed', 'expired', 'counting', 'weighing'])) {
             $session->update(['status' => 'expired']);
         }
-
         $data = [
             'session_token' => $session->session_token,
             'jumlah_botol' => $session->jumlah_botol,

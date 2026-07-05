@@ -19,6 +19,8 @@ use App\Http\Controllers\Api\KasirController;
 */
 Route::prefix('hardware')->middleware('hardware.apikey')->group(function () {
     Route::post('/verify-rfid', [HardwareController::class, 'verifyRfid']);
+    Route::post('/start-counting', [HardwareController::class, 'startCounting']);
+    Route::get('/session-status/{token}', [HardwareController::class, 'sessionStatus']);
     Route::post('/submit-weight', [HardwareController::class, 'submitWeight']);
     Route::post('/submit-count', [HardwareController::class, 'submitCount']);
     Route::post('/complete', [HardwareController::class, 'complete']);
