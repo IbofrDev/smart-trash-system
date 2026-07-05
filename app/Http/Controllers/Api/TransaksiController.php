@@ -96,7 +96,6 @@ class TransaksiController extends Controller
                 'id' => $transaksi->id,
                 'berat_gram' => $transaksi->berat,
                 'jumlah_botol' => $transaksi->jumlah_input_botol,
-                'jumlah_kaleng' => $transaksi->jumlah_input_kaleng,
                 'jumlah_terhitung' => $transaksi->jumlah_terhitung,
                 'jumlah_final' => $transaksi->jumlah_final,
                 'status_validasi' => $transaksi->status_validasi,
@@ -123,8 +122,7 @@ class TransaksiController extends Controller
     public function createSession(Request $request)
     {
         $request->validate([
-            'jumlah_botol' => 'required|integer|min:0|max:50',
-            'jumlah_kaleng' => 'required|integer|min:0|max:50',
+            'jumlah_botol' => 'required|integer|min:1|max:50',
         ]);
 
         $user = $request->user();
@@ -137,11 +135,11 @@ class TransaksiController extends Controller
             return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
         }
 
-        // Validasi minimal 1 item
-        if ($request->jumlah_botol + $request->jumlah_kaleng < 1) {
+        // Validasi minimal 1 botol
+        if ($request->jumlah_botol < 1) {
             return response()->json([
                 'success' => false,
-                'message' => 'Jumlah botol dan kaleng tidak boleh keduanya 0.',
+                'message' => 'Jumlah botol tidak boleh 0.',
             ], 422);
         }
 
@@ -174,7 +172,7 @@ class TransaksiController extends Controller
             'mahasiswa_id' => $mahasiswa->id,
             'session_token' => Str::random(64),
             'jumlah_botol' => $request->jumlah_botol,
-            'jumlah_kaleng' => $request->jumlah_kaleng,
+            'jumlah_kaleng' => 0,
             'status' => 'pending',
             'created_at' => now(),
             'expired_at' => now()->addMinutes(10),
@@ -185,8 +183,7 @@ class TransaksiController extends Controller
             'data' => [
                 'session_token' => $session->session_token,
                 'jumlah_botol' => $session->jumlah_botol,
-                'jumlah_kaleng' => $session->jumlah_kaleng,
-                'total_input' => $session->jumlah_botol + $session->jumlah_kaleng,
+                'total_input' => $session->jumlah_botol,
                 'status' => $session->status,
                 'expired_at' => $session->expired_at,
             ],
@@ -265,8 +262,7 @@ class TransaksiController extends Controller
         $data = [
             'session_token' => $session->session_token,
             'jumlah_botol' => $session->jumlah_botol,
-            'jumlah_kaleng' => $session->jumlah_kaleng,
-            'total_input' => $session->jumlah_botol + $session->jumlah_kaleng,
+            'total_input' => $session->jumlah_botol,
             'status' => $session->status,
             'expired_at' => $session->expired_at,
             'completed_at' => $session->completed_at,

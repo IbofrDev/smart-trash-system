@@ -9,10 +9,9 @@ class JenisSampahSeeder extends Seeder
 {
     public function run(): void
     {
-        DB::statement('SET FOREIGN_KEY_CHECKS=0;');
-        DB::table('jenis_sampah')->truncate();
-        DB::statement('SET FOREIGN_KEY_CHECKS=1;');
-        DB::table('jenis_sampah')->insert([
+        // Hanya update/insert Botol Plastik, tidak truncate supaya data lama aman
+        DB::table('jenis_sampah')->updateOrInsert(
+            ['id' => 1],
             [
                 'nama' => 'Botol Plastik',
                 'deskripsi' => 'Botol plastik bekas minuman yang sudah dikosongkan',
@@ -21,20 +20,11 @@ class JenisSampahSeeder extends Seeder
                 'berat_max_gram' => 35,
                 'satuan' => 'pcs',
                 'is_active' => 1,
-                'created_at' => now(),
                 'updated_at' => now(),
-            ],
-            [
-                'nama' => 'Kaleng Aluminium',
-                'deskripsi' => 'Kaleng aluminium bekas minuman yang sudah dikosongkan',
-                'poin_per_kg' => 120,
-                'berat_min_gram' => 10,
-                'berat_max_gram' => 25,
-                'satuan' => 'pcs',
-                'is_active' => 1,
-                'created_at' => now(),
-                'updated_at' => now(),
-            ],
-        ]);
+            ]
+        );
+
+        // Nonaktifkan kaleng
+        DB::table('jenis_sampah')->where('id', 2)->update(['is_active' => 0]);
     }
 }

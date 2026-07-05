@@ -14,7 +14,6 @@ class TransaksiSession extends Model
         'mahasiswa_id',
         'session_token',
         'jumlah_botol',
-        'jumlah_kaleng',
         'status',
         'created_at',
         'expired_at',
@@ -44,6 +43,6 @@ class TransaksiSession extends Model
 
     public function getTotalInputAttribute()
     {
-        return $this->jumlah_botol + $this->jumlah_kaleng;
+        return $this->jumlah_botol;
     }
 }

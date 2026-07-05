@@ -61,16 +61,11 @@ class HardwareController extends Controller
             ], 404);
         }
 
-        // Hitung expected weight range
+        // Hitung expected weight range (hanya botol plastik)
         $botol = JenisSampah::find(1); // Botol Plastik
-        $kaleng = JenisSampah::find(2); // Kaleng Aluminium
 
-        $minExpected = ($session->jumlah_botol * $botol->berat_min_gram)
-            + ($session->jumlah_kaleng * $kaleng->berat_min_gram);
-
-        $maxExpected = ($session->jumlah_botol * $botol->berat_max_gram)
-            + ($session->jumlah_kaleng * $kaleng->berat_max_gram);
-
+        $minExpected = $session->jumlah_botol * $botol->berat_min_gram;
+        $maxExpected = $session->jumlah_botol * $botol->berat_max_gram;
         // Update status session → tapped
         $session->update(['status' => 'tapped']);
 
@@ -86,15 +81,14 @@ class HardwareController extends Controller
                     'id' => $session->id,
                     'token' => $session->session_token,
                     'jumlah_botol' => $session->jumlah_botol,
-                    'jumlah_kaleng' => $session->jumlah_kaleng,
-                    'total_input' => $session->jumlah_botol + $session->jumlah_kaleng,
+                    'total_input' => $session->jumlah_botol,
                 ],
                 'expected_weight' => [
                     'min_gram' => (int) ($minExpected * 0.9),
                     'max_gram' => (int) ($maxExpected * 1.1),
                 ],
             ],
-            'message' => 'Halo ' . $mahasiswa->name . '! Silakan timbang ' . ($session->jumlah_botol + $session->jumlah_kaleng) . ' botol/kaleng.',
+            'message' => 'Halo ' . $mahasiswa->name . '! Silakan timbang ' . $session->jumlah_botol . ' botol plastik.',
         ]);
     }
 
@@ -141,31 +135,13 @@ class HardwareController extends Controller
             ], 422);
         }
 
-        // Validasi berat berdasarkan jumlah_final (bukan input user)
+        // Validasi berat berdasarkan jumlah_final (hanya botol plastik)
         $botol = JenisSampah::find(1);
-        $kaleng = JenisSampah::find(2);
 
         $jumlahFinal = $countData['jumlah_final'];
 
-        // Estimasi berat dari jumlah_final — pakai proporsi botol:kaleng dari input
-        $totalInput = $session->jumlah_botol + $session->jumlah_kaleng;
-
-        if ($totalInput > 0) {
-            $rasiBotol = $session->jumlah_botol / $totalInput;
-            $rasiKaleng = $session->jumlah_kaleng / $totalInput;
-        } else {
-            $rasiBotol = 1;
-            $rasiKaleng = 0;
-        }
-
-        $estimasiBotol = round($jumlahFinal * $rasiBotol);
-        $estimasiKaleng = round($jumlahFinal * $rasiKaleng);
-
-        $minExpected = ($estimasiBotol * $botol->berat_min_gram)
-            + ($estimasiKaleng * $kaleng->berat_min_gram);
-
-        $maxExpected = ($estimasiBotol * $botol->berat_max_gram)
-            + ($estimasiKaleng * $kaleng->berat_max_gram);
+        $minExpected = $jumlahFinal * $botol->berat_min_gram;
+        $maxExpected = $jumlahFinal * $botol->berat_max_gram;
 
         // Toleransi ±10%
         $minTolerance = $minExpected * 0.9;
@@ -238,7 +214,7 @@ class HardwareController extends Controller
         }
 
         // Anti-cheat: jika terhitung > input, pakai input sebagai batas atas
-        $totalInput = $session->jumlah_botol + $session->jumlah_kaleng;
+        $totalInput = $session->jumlah_botol;
         $jumlahTerhitung = $request->jumlah_terhitung;
         $jumlahFinal = min($jumlahTerhitung, $totalInput);
 
@@ -322,15 +298,9 @@ class HardwareController extends Controller
             ], 422);
         }
 
-        // Hitung poin: (berat_gram / 1000) × rata-rata poin_per_kg
+        // Hitung poin: (berat_gram / 1000) x poin_per_kg botol plastik
         $botol = JenisSampah::find(1);
-        $kaleng = JenisSampah::find(2);
-
-        $totalInput = $session->jumlah_botol + $session->jumlah_kaleng;
-        $rataRataPoin = $totalInput > 0
-            ? (($session->jumlah_botol * $botol->poin_per_kg)
-                + ($session->jumlah_kaleng * $kaleng->poin_per_kg)) / $totalInput
-            : $botol->poin_per_kg;
+        $rataRataPoin = $botol->poin_per_kg;
 
         // Anomali = poin 0 DAN koin 0
         if ($statusValidasi === 'anomali') {
@@ -348,10 +318,9 @@ class HardwareController extends Controller
                 'mahasiswa_id' => $mahasiswa->id,
                 'bak_sampah_id' => $request->bak_sampah->id,
                 'session_id' => $session->id,
-                'jenis_sampah_id' => 1, // default botol (mixed)
+                'jenis_sampah_id' => 1, // Botol Plastik
                 'berat' => $beratGram,
                 'jumlah_input_botol' => $session->jumlah_botol,
-                'jumlah_input_kaleng' => $session->jumlah_kaleng,
                 'jumlah_terhitung' => $jumlahTerhitung,
                 'jumlah_final' => $jumlahFinal,
                 'status_validasi' => $statusValidasi,
