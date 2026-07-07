@@ -75,9 +75,11 @@ class MahasiswaController extends Controller
             'level_id' => 'required|exists:level,id',
         ]);
 
-        $mahasiswa->update($validated);
+             $mahasiswa->update($validated);
 
         $this->logActivity('Mengupdate data mahasiswa: ' . $mahasiswa->name, 'mahasiswa');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
 
         return redirect()->route($routePrefix . '.mahasiswa.index')
             ->with('success', 'Data mahasiswa berhasil diupdate.');
@@ -89,6 +91,8 @@ class MahasiswaController extends Controller
         $mahasiswa->delete();
 
         $this->logActivity('Menghapus mahasiswa: ' . $name, 'mahasiswa');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
 
         return redirect()->route($routePrefix . '.mahasiswa.index')
             ->with('success', 'Mahasiswa berhasil dihapus.');
