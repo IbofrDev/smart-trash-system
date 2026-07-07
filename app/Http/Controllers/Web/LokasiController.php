@@ -39,10 +39,10 @@ class LokasiController extends Controller
 
         $this->logActivity('Menambahkan lokasi baru: ' . $lokasi->nama_lokasi, 'lokasi');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.lokasi.index')
             ->with('success', 'Lokasi berhasil ditambahkan.');
     }
-
     public function show(Lokasi $lokasi)
     {
         $lokasi->load('bakSampahs');
@@ -66,6 +66,7 @@ class LokasiController extends Controller
 
         $this->logActivity('Mengupdate lokasi: ' . $lokasi->nama_lokasi, 'lokasi');
 
+          $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.lokasi.index')
             ->with('success', 'Lokasi berhasil diupdate.');
     }
@@ -81,6 +82,7 @@ class LokasiController extends Controller
 
         $this->logActivity('Menghapus lokasi: ' . $name, 'lokasi');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.lokasi.index')
             ->with('success', 'Lokasi berhasil dihapus.');
     }

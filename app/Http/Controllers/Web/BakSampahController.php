@@ -58,17 +58,21 @@ class BakSampahController extends Controller
 
         $this->logActivity('Menambahkan bak sampah baru: ' . $bakSampah->nama, 'bak_sampah');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.bak-sampah.index')
             ->with('success', 'Bak sampah berhasil ditambahkan.');
     }
 
     public function show(BakSampah $bakSampah)
     {
-        $bakSampah->load(['lokasi', 'transaksiSampah' => function ($q) {
-            $q->with(['mahasiswa', 'jenisSampah'])
-              ->orderBy('tanggal_transaksi', 'desc')
-              ->limit(20);
-        }]);
+        $bakSampah->load([
+            'lokasi',
+            'transaksiSampah' => function ($q) {
+                $q->with(['mahasiswa', 'jenisSampah'])
+                    ->orderBy('tanggal_transaksi', 'desc')
+                    ->limit(20);
+            }
+        ]);
 
         // Statistik
         $stats = [
@@ -99,6 +103,7 @@ class BakSampahController extends Controller
 
         $this->logActivity('Mengupdate bak sampah: ' . $bakSampah->nama, 'bak_sampah');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.bak-sampah.index')
             ->with('success', 'Bak sampah berhasil diupdate.');
     }
@@ -126,6 +131,7 @@ class BakSampahController extends Controller
 
         $this->logActivity('Menghapus bak sampah: ' . $name, 'bak_sampah');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.bak-sampah.index')
             ->with('success', 'Bak sampah berhasil dihapus.');
     }

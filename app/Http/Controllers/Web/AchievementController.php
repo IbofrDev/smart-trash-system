@@ -35,6 +35,7 @@ class AchievementController extends Controller
 
         $this->logActivity('Menambahkan achievement baru: ' . $achievement->nama, 'achievement');
 
+          $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.achievement.index')
             ->with('success', 'Achievement berhasil ditambahkan.');
     }
@@ -59,6 +60,7 @@ class AchievementController extends Controller
 
         $this->logActivity('Mengupdate achievement: ' . $achievement->nama, 'achievement');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.achievement.index')
             ->with('success', 'Achievement berhasil diupdate.');
     }
@@ -73,7 +75,7 @@ class AchievementController extends Controller
         $achievement->delete();
 
         $this->logActivity('Menghapus achievement: ' . $name, 'achievement');
-
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.achievement.index')
             ->with('success', 'Achievement berhasil dihapus.');
     }

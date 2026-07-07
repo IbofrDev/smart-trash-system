@@ -79,10 +79,10 @@ class UserController extends Controller
         // Log aktivitas
         $this->logActivity('Menambahkan user baru: ' . $user->name, 'users');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.users.index')
             ->with('success', 'User berhasil ditambahkan.');
     }
-
     /**
      * Display the specified resource.
      */
@@ -124,10 +124,10 @@ class UserController extends Controller
         // Log aktivitas
         $this->logActivity('Mengupdate user: ' . $user->name, 'users');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.users.index')
             ->with('success', 'User berhasil diupdate.');
     }
-
     /**
      * Remove the specified resource from storage.
      */
@@ -144,6 +144,7 @@ class UserController extends Controller
         // Log aktivitas
         $this->logActivity('Menghapus user: ' . $userName, 'users');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.users.index')
             ->with('success', 'User berhasil dihapus.');
     }

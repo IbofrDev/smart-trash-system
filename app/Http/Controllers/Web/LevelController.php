@@ -37,6 +37,7 @@ class LevelController extends Controller
 
         $this->logActivity('Menambahkan level baru: ' . $level->nama_level, 'level');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.level.index')
             ->with('success', 'Level berhasil ditambahkan.');
     }
@@ -59,6 +60,7 @@ class LevelController extends Controller
 
         $this->logActivity('Mengupdate level: ' . $level->nama_level, 'level');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.level.index')
             ->with('success', 'Level berhasil diupdate.');
     }
@@ -74,6 +76,7 @@ class LevelController extends Controller
 
         $this->logActivity('Menghapus level: ' . $name, 'level');
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.level.index')
             ->with('success', 'Level berhasil dihapus.');
     }

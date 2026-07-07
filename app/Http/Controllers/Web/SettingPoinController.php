@@ -35,6 +35,7 @@ class SettingPoinController extends Controller
             'setting_poin'
         );
 
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
         return redirect()->route($routePrefix . '.setting-poin.index')
             ->with('success', 'Setting poin berhasil diupdate.');
     }
