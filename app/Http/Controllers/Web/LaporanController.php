@@ -115,12 +115,8 @@ class LaporanController extends Controller
     }
 
     /**
-     * Export PDF Laporan Mahasiswa
-
-
-        /**
-         * Laporan Mahasiswa
-         */
+     * Laporan Mahasiswa
+     */
     public function mahasiswa(Request $request)
     {
         $query = Mahasiswa::with('level')

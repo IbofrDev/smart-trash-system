@@ -35,7 +35,8 @@ Route::prefix('hardware')->middleware('hardware.apikey')->group(function () {
 */
 Route::post('/auth/google', [AuthController::class, 'loginGoogle']);
 
-// TEMPORARY: Mock Login untuk testing Flutter - HAPUS sebelum production!
+// Mock Login — hanya aktif di environment local/development
+if (app()->environment(['local', 'development'])) {
 Route::post('/auth/mock-login', function (\Illuminate\Http\Request $request) {
     $mahasiswa = $request->mahasiswa_id
         ? \App\Models\Mahasiswa::find($request->mahasiswa_id)
@@ -71,6 +72,7 @@ Route::post('/auth/mock-login', function (\Illuminate\Http\Request $request) {
         ]
     ]);
 });
+} // end mock-login env check
 
 
 /*
