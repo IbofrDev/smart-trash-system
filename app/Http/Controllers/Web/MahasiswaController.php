@@ -88,6 +88,10 @@ class MahasiswaController extends Controller
     public function destroy(Mahasiswa $mahasiswa)
     {
         $name = $mahasiswa->name;
+
+        $mahasiswa->transaksiSession()->delete();
+        $mahasiswa->vouchers()->delete();
+
         $mahasiswa->delete();
 
         $this->logActivity('Menghapus mahasiswa: ' . $name, 'mahasiswa');
