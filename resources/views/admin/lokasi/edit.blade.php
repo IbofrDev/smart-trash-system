@@ -68,7 +68,7 @@
     </a>
     <div>
         <h4 class="fw-bold text-dark mb-1" style="color: #0f172a;">Perbarui Data Lokasi</h4>
-        <p class="text-muted mb-0 small">Ubah informasi nama gedung, patokan, atau titik koordinat GPS.</p>
+      <p class="text-muted mb-0 small">Ubah informasi nama gedung atau patokan lokasi.</p>
     </div>
 </div>
 
@@ -88,10 +88,7 @@
             
             <p>Anda sedang mengubah data referensi fisik untuk titik penempatan alat IoT.</p>
             
-            <div class="warning-box">
-                <strong><i class="bi bi-exclamation-triangle-fill me-2"></i>Perhatian</strong>
-                <span class="small">Mengubah titik koordinat tidak akan mereset alat secara otomatis, namun akan mengubah visual titik peta. Pastikan koordinat yang dimasukkan akurat.</span>
-            </div>
+           
         </div>
     </div>
 
@@ -131,17 +128,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-12">
-                            <label class="form-label">Titik Koordinat (Latitude, Longitude)</label>
-                            <div class="input-group-custom">
-                                <input type="text" name="koordinat" class="form-control-modern @error('koordinat') is-invalid @enderror" 
-                                    value="{{ old('koordinat', $lokasi->koordinat) }}" placeholder="-3.316694, 114.590111">
-                                <i class="bi bi-crosshair"></i>
-                                @error('koordinat') 
-                                    <div class="invalid-feedback d-block mt-1">{{ $message }}</div> 
-                                @enderror
-                            </div>
-                        </div>
+                     
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-4 pt-4 border-top" style="border-color: #f1f5f9 !important;">

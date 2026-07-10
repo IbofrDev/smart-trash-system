@@ -32,7 +32,7 @@
     .location-details small { color: #64748b; font-size: 0.8rem; display: block; margin-top: 2px; }
 
     /* Badge Koordinat & Bak Sampah */
-    .coord-badge { background-color: #f8fafc; color: #475569; font-family: 'Courier New', monospace; font-size: 0.75rem; padding: 4px 8px; border-radius: 6px; border: 1px solid #e2e8f0; }
+   
     .unit-badge { background-color: #ecfdf5; color: #059669; font-weight: 600; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; border: 1px solid #a7f3d0; }
     .unit-badge-zero { background-color: #fef2f2; color: #dc2626; font-weight: 600; padding: 5px 12px; border-radius: 6px; font-size: 0.8rem; border: 1px solid #fecaca; }
 
@@ -93,7 +93,7 @@
                 <tr>
                     <th width="5%" class="ps-4">No</th>
                     <th width="35%">Informasi Lokasi</th>
-                    <th width="25%">Titik Koordinat (IoT)</th>
+
                     <th width="20%" class="text-center">Kapasitas Alat</th>
                     <th width="15%" class="text-end pe-4">Aksi</th>
                 </tr>
@@ -114,16 +114,7 @@
                             </div>
                         </div>
                     </td>
-                    
-                    <td>
-                        @if($lokasi->koordinat)
-                            <div class="coord-badge" title="Latitude & Longitude">
-                                <i class="bi bi-crosshair me-1"></i>{{ $lokasi->koordinat }}
-                            </div>
-                        @else
-                            <span class="text-muted small fst-italic">Belum di-mapping</span>
-                        @endif
-                    </td>
+                
                     
                     <td class="text-center">
                         @if($lokasi->bak_sampahs_count > 0)

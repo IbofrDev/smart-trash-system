@@ -55,11 +55,7 @@
             <h4>Mapping Area</h4>
             <p>Data lokasi ini akan digunakan sebagai titik referensi fisik di mana alat (Bak Sampah IoT) ditempatkan di lingkungan kampus.</p>
             
-            <div class="coord-example">
-                <div class="fw-bold mb-1" style="color: #0f172a;"><i class="bi bi-crosshair me-2 text-success"></i>Format Koordinat</div>
-                <small class="text-muted">Gunakan format Latitude dan Longitude yang dipisahkan oleh koma. Anda bisa mendapatkannya melalui Google Maps.</small>
-                <code>-3.316694, 114.590111</code>
-            </div>
+            
         </div>
     </div>
 
@@ -98,17 +94,7 @@
                             </div>
                         </div>
 
-                        <div class="col-md-12">
-                            <label class="form-label">Titik Koordinat (Opsional)</label>
-                            <div class="input-group-custom">
-                                <input type="text" name="koordinat" class="form-control-modern @error('koordinat') is-invalid @enderror" 
-                                    value="{{ old('koordinat') }}" placeholder="-3.316694, 114.590111">
-                                <i class="bi bi-crosshair"></i>
-                                @error('koordinat') 
-                                    <div class="invalid-feedback d-block mt-1">{{ $message }}</div> 
-                                @enderror
-                            </div>
-                        </div>
+                        
                     </div>
 
                     <div class="d-flex justify-content-end gap-3 mt-4 pt-3 border-top" style="border-color: #f1f5f9 !important;">
