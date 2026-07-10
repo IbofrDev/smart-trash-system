@@ -49,9 +49,11 @@
         <a href="{{ route($routePrefix . '.mahasiswa.index') }}" class="btn bg-white border rounded-3 px-4 fw-bold me-2" style="color: #64748b;">
             <i class="bi bi-arrow-left me-1"></i> Kembali
         </a>
+             @if($routePrefix === 'admin')
         <a href="{{ route($routePrefix . '.mahasiswa.edit', $mahasiswa) }}" class="btn btn-success rounded-3 px-4 fw-bold shadow-sm" style="background: #10b981; border: none;">
             <i class="bi bi-pencil-square me-1"></i> Edit Data
         </a>
+        @endif
     </div>
 </div>
 

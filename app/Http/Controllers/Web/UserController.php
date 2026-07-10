@@ -61,7 +61,7 @@ class UserController extends Controller
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'nullable|string|max:15',
             'role' => 'required|in:admin,pengelola',
-            'is_active' => 'required|boolean',
+                      'is_active' => 'boolean',
         ], [
             'name.required' => 'Nama wajib diisi.',
             'email.required' => 'Email wajib diisi.',
@@ -72,7 +72,8 @@ class UserController extends Controller
             'role.required' => 'Role wajib dipilih.',
         ]);
 
-        $validated['password'] = Hash::make($validated['password']);
+          $validated['password'] = Hash::make($validated['password']);
+        $validated['is_active'] = true;
 
         $user = User::create($validated);
 
