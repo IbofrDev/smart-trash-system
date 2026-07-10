@@ -64,6 +64,13 @@ class HardwareController extends Controller
         // Hitung expected weight range (hanya botol plastik)
         $botol = JenisSampah::find(1); // Botol Plastik
 
+        if (!$botol) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Konfigurasi jenis sampah tidak ditemukan.',
+            ], 500);
+        }
+
         $minExpected = $session->jumlah_botol * $botol->berat_min_gram;
         $maxExpected = $session->jumlah_botol * $botol->berat_max_gram;
         // Update status session -> tapped dan refresh waktu aktif
@@ -101,7 +108,7 @@ class HardwareController extends Controller
      */
     public function startCounting(Request $request)
     {
-        $validator = Validator::make($request->all(), [
+               $validator = Validator::make($request->all(), [
             'session_token' => 'required|string',
             'bak_sampah_id' => 'nullable|integer',
         ]);
@@ -207,10 +214,19 @@ class HardwareController extends Controller
 
         // Validasi berat berdasarkan jumlah input botol dari user
         $botol = JenisSampah::find(1);
+
+        if (!$botol) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Konfigurasi jenis sampah tidak ditemukan.',
+            ], 500);
+        }
+
+        $jumlahInput = $session->jumlah_botol;
         $jumlahFinal = $countData['jumlah_final'];
 
-        $minExpected = $jumlahFinal * $botol->berat_min_gram;
-        $maxExpected = $jumlahFinal * $botol->berat_max_gram;
+        $minExpected = $jumlahInput * $botol->berat_min_gram;
+        $maxExpected = $jumlahInput * $botol->berat_max_gram;
 
         // Toleransi ±15%
         $minTolerance = $minExpected * 0.85;
@@ -285,23 +301,7 @@ class HardwareController extends Controller
         // Anti-cheat: jika terhitung > input, pakai input sebagai batas atas
         $totalInput = $session->jumlah_botol;
         $jumlahTerhitung = $request->jumlah_terhitung;
-              $jumlahFinal = min($jumlahTerhitung, $totalInput);
-
-        if ($jumlahFinal < 1) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Tidak ada sampah terdeteksi.',
-            ], 422);
-        }
-
-        $existingCount = cache()->get('session_count_' . $session->id);
-        if ($existingCount) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Count sudah disubmit.',
-            ], 422);
-        }
-
+        $jumlahFinal = min($jumlahTerhitung, $totalInput);
         // Update status ke counting
         $session->update([
             'status' => 'counting',
@@ -387,6 +387,14 @@ class HardwareController extends Controller
 
         // Hitung poin: (berat_gram / 1000) x poin_per_kg botol plastik
         $botol = JenisSampah::find(1);
+
+        if (!$botol) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Konfigurasi jenis sampah tidak ditemukan.',
+            ], 500);
+        }
+
         $rataRataPoin = $botol->poin_per_kg;
 
         // Anomali = poin 0 DAN koin 0
@@ -403,7 +411,7 @@ class HardwareController extends Controller
             // Simpan transaksi
             $transaksi = TransaksiSampah::create([
                 'mahasiswa_id' => $mahasiswa->id,
-                'bak_sampah_id' => $request->bak_sampah_id ?? 1,
+                                              'bak_sampah_id' => $request->bak_sampah_id ?? 1,
                 'session_id' => $session->id,
                 'jenis_sampah_id' => 1, // Botol Plastik
                 'berat' => $beratGram,
