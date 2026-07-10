@@ -22,13 +22,17 @@ class AchievementController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+              $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'icon' => 'nullable|string|max:255',
             'syarat_type' => 'required|in:total_kg,streak,transaksi_count,first_time',
             'syarat_value' => 'required|integer|min:0',
             'poin_bonus' => 'required|integer|min:0',
+        ], [
+            'syarat_type.in' => 'Tipe syarat tidak valid.',
+            'syarat_value.min' => 'Nilai syarat tidak boleh negatif.',
+            'poin_bonus.min' => 'Poin bonus tidak boleh negatif.',
         ]);
 
         $achievement = Achievement::create($validated);
@@ -47,13 +51,17 @@ class AchievementController extends Controller
 
     public function update(Request $request, Achievement $achievement)
     {
-        $validated = $request->validate([
+              $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'icon' => 'nullable|string|max:255',
             'syarat_type' => 'required|in:total_kg,streak,transaksi_count,first_time',
             'syarat_value' => 'required|integer|min:0',
             'poin_bonus' => 'required|integer|min:0',
+        ], [
+            'syarat_type.in' => 'Tipe syarat tidak valid.',
+            'syarat_value.min' => 'Nilai syarat tidak boleh negatif.',
+            'poin_bonus.min' => 'Poin bonus tidak boleh negatif.',
         ]);
 
         $achievement->update($validated);

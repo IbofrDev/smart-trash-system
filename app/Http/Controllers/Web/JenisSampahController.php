@@ -33,12 +33,15 @@ class JenisSampahController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+              $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'poin_per_kg' => 'required|integer|min:0',
             'satuan' => 'required|string|max:10',
             'is_active' => 'required|boolean',
+        ], [
+            'poin_per_kg.min' => 'Poin per kg tidak boleh negatif.',
+            'is_active.boolean' => 'Status aktif tidak valid.',
         ]);
 
         $jenisSampah = JenisSampah::create($validated);
@@ -57,12 +60,15 @@ class JenisSampahController extends Controller
 
     public function update(Request $request, JenisSampah $jenisSampah)
     {
-        $validated = $request->validate([
+           $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'deskripsi' => 'nullable|string',
             'poin_per_kg' => 'required|integer|min:0',
             'satuan' => 'required|string|max:10',
             'is_active' => 'required|boolean',
+        ], [
+            'poin_per_kg.min' => 'Poin per kg tidak boleh negatif.',
+            'is_active.boolean' => 'Status aktif tidak valid.',
         ]);
 
         $jenisSampah->update($validated);

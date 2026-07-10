@@ -85,8 +85,13 @@ class ProfileController extends Controller
     {
         $mahasiswa = $request->user();
 
-        $validator = Validator::make($request->all(), [
+              $validator = Validator::make($request->all(), [
             'rfid_uid' => 'required|string|max:20|unique:mahasiswa,rfid_uid,' . $mahasiswa->id,
+        ], [
+            'rfid_uid.required' => 'RFID wajib diisi.',
+            'rfid_uid.string' => 'RFID harus berupa teks.',
+            'rfid_uid.max' => 'RFID maksimal 20 karakter.',
+            'rfid_uid.unique' => 'RFID sudah terdaftar di akun lain.',
         ]);
 
         if ($validator->fails()) {

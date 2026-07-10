@@ -66,13 +66,16 @@ class MahasiswaController extends Controller
 
     public function update(Request $request, Mahasiswa $mahasiswa)
     {
-        $validated = $request->validate([
+             $validated = $request->validate([
             'name' => 'required|string|max:100',
             'nim' => 'nullable|string|max:20',
             'prodi' => 'nullable|string|max:30',
             'rfid_uid' => ['nullable', 'string', 'max:20', Rule::unique('mahasiswa')->ignore($mahasiswa->id)],
             'total_poin' => 'required|integer|min:0',
             'level_id' => 'required|exists:level,id',
+        ], [
+            'rfid_uid.unique' => 'RFID sudah terdaftar di mahasiswa lain.',
+            'level_id.exists' => 'Level yang dipilih tidak valid.',
         ]);
 
              $mahasiswa->update($validated);

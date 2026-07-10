@@ -121,8 +121,13 @@ class TransaksiController extends Controller
      */
     public function createSession(Request $request)
     {
-        $request->validate([
+               $request->validate([
             'jumlah_botol' => 'required|integer|min:1|max:50',
+        ], [
+            'jumlah_botol.required' => 'Jumlah botol wajib diisi.',
+            'jumlah_botol.integer' => 'Jumlah botol harus berupa angka bulat.',
+            'jumlah_botol.min' => 'Jumlah botol minimal 1.',
+            'jumlah_botol.max' => 'Jumlah botol maksimal 50.',
         ]);
 
         $user = $request->user();
@@ -175,16 +180,14 @@ class TransaksiController extends Controller
         }
 
         // Buat session baru
-        $session = TransaksiSession::create([
+            $session = TransaksiSession::create([
             'mahasiswa_id' => $mahasiswa->id,
             'session_token' => Str::random(64),
             'jumlah_botol' => $request->jumlah_botol,
-            'jumlah_kaleng' => 0,
             'status' => 'pending',
             'created_at' => now(),
             'expired_at' => now()->addMinutes(10),
         ]);
-
         return response()->json([
             'success' => true,
             'data' => [

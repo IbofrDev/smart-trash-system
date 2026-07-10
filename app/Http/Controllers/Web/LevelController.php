@@ -49,11 +49,14 @@ class LevelController extends Controller
 
     public function update(Request $request, Level $level)
     {
-        $validated = $request->validate([
+               $validated = $request->validate([
             'nama_level' => 'required|string|max:50',
             'min_poin' => 'required|integer|min:0',
             'max_poin' => 'required|integer|min:0|gt:min_poin',
             'urutan' => 'required|integer|min:1|unique:level,urutan,' . $level->id,
+        ], [
+            'max_poin.gt' => 'Poin maksimum harus lebih besar dari poin minimum.',
+            'urutan.unique' => 'Urutan level sudah digunakan.',
         ]);
 
         $level->update($validated);

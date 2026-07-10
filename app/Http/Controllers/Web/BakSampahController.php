@@ -44,11 +44,14 @@ class BakSampahController extends Controller
 
     public function store(Request $request)
     {
-        $validated = $request->validate([
+         $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'lokasi_id' => 'required|exists:lokasi,id',
             'status' => 'required|in:aktif,nonaktif,maintenance',
             'kapasitas_max' => 'nullable|numeric|min:0',
+        ], [
+            'lokasi_id.exists' => 'Lokasi yang dipilih tidak valid.',
+            'status.in' => 'Status harus salah satu dari: aktif, nonaktif, atau maintenance.',
         ]);
 
         // Generate API key unik
@@ -92,11 +95,14 @@ class BakSampahController extends Controller
 
     public function update(Request $request, BakSampah $bakSampah)
     {
-        $validated = $request->validate([
+          $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'lokasi_id' => 'required|exists:lokasi,id',
             'status' => 'required|in:aktif,nonaktif,maintenance',
             'kapasitas_max' => 'nullable|numeric|min:0',
+        ], [
+            'lokasi_id.exists' => 'Lokasi yang dipilih tidak valid.',
+            'status.in' => 'Status harus salah satu dari: aktif, nonaktif, atau maintenance.',
         ]);
 
         $bakSampah->update($validated);
