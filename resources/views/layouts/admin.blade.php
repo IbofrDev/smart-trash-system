@@ -386,17 +386,7 @@
             @endif
         </nav>
 
-        <div class="sidebar-footer">
-            <div class="help-card">
-                <h6>Butuh Bantuan?</h6>
-                <p>Panduan lengkap sistem admin.</p>
-                <a href="javascript:void(0)"
-                    onclick="alert('Buku Panduan sedang dalam tahap penyusunan. Akan tersedia pada rilis final Tugas Akhir.')"
-                    class="btn-help">
-                    Buka Panduan
-                </a>
-            </div>
-        </div>
+   
     </aside>
 
     <main class="main-content">
