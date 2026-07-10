@@ -133,7 +133,8 @@ class GamifikasiService
     {
         $today = now()->format('Y-m-d');
 
-        $dates = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            $dates = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status_validasi', 'valid')
             ->orderBy('tanggal_transaksi', 'desc')
             ->pluck('tanggal_transaksi')
             ->map(fn($d) => $d->format('Y-m-d'))

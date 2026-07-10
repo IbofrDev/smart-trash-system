@@ -103,6 +103,7 @@ class HardwareController extends Controller
     {
         $validator = Validator::make($request->all(), [
             'session_token' => 'required|string',
+            'bak_sampah_id' => 'nullable|integer',
         ]);
 
         if ($validator->fails()) {
@@ -204,17 +205,16 @@ class HardwareController extends Controller
             ], 422);
         }
 
-        // Validasi berat berdasarkan jumlah_final (hanya botol plastik)
+        // Validasi berat berdasarkan jumlah input botol dari user
         $botol = JenisSampah::find(1);
-
         $jumlahFinal = $countData['jumlah_final'];
 
         $minExpected = $jumlahFinal * $botol->berat_min_gram;
         $maxExpected = $jumlahFinal * $botol->berat_max_gram;
 
-        // Toleransi ±10%
-        $minTolerance = $minExpected * 0.9;
-        $maxTolerance = $maxExpected * 1.1;
+        // Toleransi ±15%
+        $minTolerance = $minExpected * 0.85;
+        $maxTolerance = $maxExpected * 1.15;
 
         $isValid = $request->berat_gram >= $minTolerance
             && $request->berat_gram <= $maxTolerance;
@@ -285,7 +285,23 @@ class HardwareController extends Controller
         // Anti-cheat: jika terhitung > input, pakai input sebagai batas atas
         $totalInput = $session->jumlah_botol;
         $jumlahTerhitung = $request->jumlah_terhitung;
-        $jumlahFinal = min($jumlahTerhitung, $totalInput);
+              $jumlahFinal = min($jumlahTerhitung, $totalInput);
+
+        if ($jumlahFinal < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Tidak ada sampah terdeteksi.',
+            ], 422);
+        }
+
+        $existingCount = cache()->get('session_count_' . $session->id);
+        if ($existingCount) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Count sudah disubmit.',
+            ], 422);
+        }
+
         // Update status ke counting
         $session->update([
             'status' => 'counting',
@@ -387,7 +403,7 @@ class HardwareController extends Controller
             // Simpan transaksi
             $transaksi = TransaksiSampah::create([
                 'mahasiswa_id' => $mahasiswa->id,
-                               'bak_sampah_id' => $request->bak_sampah['id'] ?? 1,
+                'bak_sampah_id' => $request->bak_sampah_id ?? 1,
                 'session_id' => $session->id,
                 'jenis_sampah_id' => 1, // Botol Plastik
                 'berat' => $beratGram,

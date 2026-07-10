@@ -33,5 +33,7 @@ class ProcessGamifikasi implements ShouldQueue
         // 2. Check Level Up (setelah achievement karena bisa dapat bonus poin)
         $mahasiswa->refresh(); // Refresh untuk dapat total_poin terbaru
         $this->gamifikasiService->checkLevelUp($mahasiswa);
+        $mahasiswa->refresh();
+        $this->gamifikasiService->updateLeaderboard($mahasiswa);
     }
 }
