@@ -372,8 +372,8 @@
 
                             <button type="submit" class="btn btn-login w-100 py-2">MASUK SISTEM</button>
                             
-                            <div class="text-center mt-3">
-                                <a href="#" class="text-secondary small text-decoration-underline">Lupa Password?</a>
+                                                     <div class="text-center mt-3">
+                                <a href="{{ route('password.request') }}" class="text-secondary small text-decoration-underline">Lupa Password?</a>
                             </div>
                         </form>
                     </div>
