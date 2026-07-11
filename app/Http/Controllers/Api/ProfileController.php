@@ -52,8 +52,16 @@ class ProfileController extends Controller
 
         $validator = Validator::make($request->all(), [
             'name' => 'sometimes|string|max:100',
-            'nim' => 'sometimes|string|max:20',
+            'nim' => 'sometimes|string|max:20|unique:mahasiswa,nim,' . $mahasiswa->id,
             'prodi' => 'sometimes|string|max:30',
+        ], [
+            'name.string' => 'Nama harus berupa teks.',
+            'name.max' => 'Nama maksimal 100 karakter.',
+            'nim.string' => 'NIM harus berupa teks.',
+            'nim.max' => 'NIM maksimal 20 karakter.',
+            'nim.unique' => 'NIM sudah terdaftar di akun lain.',
+            'prodi.string' => 'Prodi harus berupa teks.',
+            'prodi.max' => 'Prodi maksimal 30 karakter.',
         ]);
 
         if ($validator->fails()) {
