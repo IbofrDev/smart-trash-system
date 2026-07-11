@@ -117,11 +117,12 @@
                     </div>
                 </div>
                 
-                <div class="mb-4">
+                           <div class="mb-4 d-flex justify-content-between align-items-center">
                     <div class="form-check">
                         <input type="checkbox" name="remember" class="form-check-input" id="remember">
                         <label class="form-check-label" for="remember">Ingat saya</label>
                     </div>
+                    <a href="{{ route('password.request') }}" class="text-decoration-none small">Lupa Password?</a>
                 </div>
                 
                 <button type="submit" class="btn btn-primary w-100">
