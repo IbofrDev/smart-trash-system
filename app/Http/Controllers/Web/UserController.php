@@ -33,7 +33,7 @@ class UserController extends Controller
             $search = $request->search;
             $query->where(function ($q) use ($search) {
                 $q->where('name', 'like', "%{$search}%")
-                  ->orWhere('email', 'like', "%{$search}%");
+                    ->orWhere('email', 'like', "%{$search}%");
             });
         }
 
@@ -60,8 +60,8 @@ class UserController extends Controller
             'email' => 'required|email|max:75|unique:users,email',
             'password' => 'required|string|min:6|confirmed',
             'phone' => 'nullable|string|max:15',
-            'role' => 'required|in:admin,pengelola',
-                      'is_active' => 'boolean',
+            'role' => 'required|in:admin,pengelola,kasir',
+            'is_active' => 'boolean',
         ], [
             'name.required' => 'Nama wajib diisi.',
             'email.required' => 'Email wajib diisi.',
@@ -72,7 +72,7 @@ class UserController extends Controller
             'role.required' => 'Role wajib dipilih.',
         ]);
 
-          $validated['password'] = Hash::make($validated['password']);
+        $validated['password'] = Hash::make($validated['password']);
         $validated['is_active'] = true;
 
         $user = User::create($validated);
@@ -110,7 +110,7 @@ class UserController extends Controller
             'email' => ['required', 'email', 'max:75', Rule::unique('users')->ignore($user->id)],
             'password' => 'nullable|string|min:6|confirmed',
             'phone' => 'nullable|string|max:15',
-            'role' => 'required|in:admin,pengelola',
+            'role' => 'required|in:admin,pengelola,kasir',
             'is_active' => 'required|boolean',
         ]);
 
