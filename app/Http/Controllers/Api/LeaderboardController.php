@@ -29,13 +29,15 @@ class LeaderboardController extends Controller
             ->limit(100)
             ->get()
             ->map(function ($item) use ($rankingField) {
-                return [
+                              return [
                     'mahasiswa_id' => $item->mahasiswa_id,
                     'ranking' => $item->{$rankingField},
                     'nama' => $item->mahasiswa->name,
                     'avatar' => $item->mahasiswa->avatar,
                     'nama_level' => $item->mahasiswa->level->nama_level ?? 'Eco Starter',
                     'total_poin' => $item->mahasiswa->total_poin,
+                    'total_koin' => $item->mahasiswa->total_koin_botol,
+                    'total_botol' => $item->total_botol,
                     'total_berat_kg' => (float) $item->total_berat_gram / 1000,
                 ];
             });
@@ -67,9 +69,11 @@ class LeaderboardController extends Controller
         if (!$myLeaderboard) {
             return response()->json([
                 'success' => true,
-                'data' => [
+                              'data' => [
                     'ranking' => null,
                     'total_poin' => $mahasiswa->total_poin,
+                    'total_koin' => $mahasiswa->total_koin_botol,
+                    'total_botol' => 0,
                     'total_berat_kg' => 0,
                 ]
             ], 200);
@@ -77,9 +81,11 @@ class LeaderboardController extends Controller
 
         return response()->json([
             'success' => true,
-            'data' => [
+                     'data' => [
                 'ranking' => $myLeaderboard->{$rankingField},
                 'total_poin' => $mahasiswa->total_poin,
+                'total_koin' => $mahasiswa->total_koin_botol,
+                'total_botol' => $myLeaderboard->total_botol,
                 'total_berat_kg' => (float) $myLeaderboard->total_berat_gram / 1000,
             ]
         ], 200);

@@ -193,11 +193,11 @@ class GamifikasiService
             ]);
         }
 
-        // Recalculate semua periode ranking
-        $this->recalculateRanking('ranking_alltime', 'total_poin');
-        $this->recalculateRanking('ranking_mingguan', 'total_poin');
-        $this->recalculateRanking('ranking_bulanan', 'total_poin');
-        $this->recalculateRanking('ranking_harian', 'total_poin');
+              // Recalculate semua periode ranking berdasarkan total koin
+        $this->recalculateRanking('ranking_alltime', 'total_koin_botol');
+        $this->recalculateRanking('ranking_mingguan', 'total_koin_botol');
+        $this->recalculateRanking('ranking_bulanan', 'total_koin_botol');
+        $this->recalculateRanking('ranking_harian', 'total_koin_botol');
     }
 
     /**
