@@ -133,7 +133,7 @@ class GamifikasiService
     {
         $today = now()->format('Y-m-d');
 
-            $dates = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+        $dates = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
             ->where('status_validasi', 'valid')
             ->orderBy('tanggal_transaksi', 'desc')
             ->pluck('tanggal_transaksi')
@@ -173,8 +173,16 @@ class GamifikasiService
      */
     public function updateLeaderboard(Mahasiswa $mahasiswa): void
     {
-        $totalBeratGram = (int) TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('berat');
-        $totalBotol = (int) TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)->sum('jumlah_final');
+        // Hanya hitung transaksi VALID
+        $validQuery = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status_validasi', 'valid');
+
+        $totalBeratGram = (int) (clone $validQuery)->sum('berat');
+        $totalBotol = (int) (clone $validQuery)->sum('jumlah_final');
+        $totalKoin = (int) (clone $validQuery)->sum('koin_didapat');
+
+        // Sync total_koin_botol di mahasiswa dari sumber kebenaran
+        $mahasiswa->update(['total_koin_botol' => $totalKoin]);
 
         $leaderboard = Leaderboard::where('mahasiswa_id', $mahasiswa->id)->first();
 
@@ -193,7 +201,7 @@ class GamifikasiService
             ]);
         }
 
-              // Recalculate semua periode ranking berdasarkan total koin
+        // Recalculate semua periode ranking berdasarkan total koin
         $this->recalculateRanking('ranking_alltime', 'total_koin_botol');
         $this->recalculateRanking('ranking_mingguan', 'total_koin_botol');
         $this->recalculateRanking('ranking_bulanan', 'total_koin_botol');
