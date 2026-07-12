@@ -126,6 +126,7 @@ Route::middleware('auth:sanctum')->group(function () {
 
     // Transaksi History
     Route::get('/transaksi', [TransaksiController::class, 'index']);
+    Route::get('/transaksi/session-detail/{id}', [TransaksiController::class, 'sessionDetail']);
     Route::get('/transaksi/{id}', [TransaksiController::class, 'show']);
 
     // Voucher (BARU)

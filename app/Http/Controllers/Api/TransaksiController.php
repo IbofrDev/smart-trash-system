@@ -267,6 +267,80 @@ class TransaksiController extends Controller
         ]);
     }
 
+        /**
+     * GET /api/transaksi/session-detail/{id}
+     * Detail transaksi per session (untuk dashboard recent transactions)
+     */
+    public function sessionDetail(Request $request, $id)
+    {
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+
+        $session = TransaksiSession::where('id', $id)
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'completed')
+            ->with(['transaksiItems.jenisSampah', 'transaksiItems.bakSampah.lokasi'])
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak ditemukan.',
+            ], 404);
+        }
+
+        $items = $session->transaksiItems;
+        $firstItem = $items->first();
+
+        $itemDetails = $items->map(function ($item) {
+            return [
+                'id' => $item->id,
+                'jenis_sampah' => $item->jenisSampah ? [
+                    'id' => $item->jenisSampah->id,
+                    'nama' => $item->jenisSampah->nama,
+                    'poin_per_kg' => $item->jenisSampah->poin_per_kg,
+                ] : null,
+                'berat_gram' => (int) $item->berat,
+                'jumlah_input_botol' => $item->jumlah_input_botol,
+                'jumlah_terhitung' => $item->jumlah_terhitung,
+                'jumlah_final' => $item->jumlah_final,
+                'status_validasi' => $item->status_validasi,
+                'poin_didapat' => $item->poin_didapat,
+                'koin_didapat' => $item->koin_didapat,
+            ];
+        })->values()->all();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'session_id' => $session->id,
+                'status' => $session->status,
+                'completed_at' => $session->completed_at?->toDateTimeString(),
+                'created_at' => $session->created_at?->toDateTimeString(),
+                'bak_sampah' => [
+                    'nama' => $firstItem?->bakSampah->nama ?? '-',
+                    'lokasi' => $firstItem?->bakSampah->lokasi->nama_lokasi ?? '-',
+                ],
+                'summary' => [
+                    'total_jenis' => $items->count(),
+                    'total_berat' => (int) $items->sum('berat'),
+                    'total_jumlah_final' => (int) $items->sum('jumlah_final'),
+                    'total_poin' => (int) $items->sum('poin_didapat'),
+                    'total_koin' => (int) $items->sum('koin_didapat'),
+                    'has_anomali' => $items->contains('status_validasi', 'anomali'),
+                ],
+                'items' => $itemDetails,
+            ],
+        ]);
+    }
+
     /**
      * GET /api/transaksi/session/{token}
      * Cek status session (polling dari mobile)
