@@ -145,6 +145,26 @@
                             </div>
                         </div>
 
+                                                <!-- BERAT MIN & MAX -->
+                        <div class="col-md-6 mt-2">
+                            <label class="form-label">Berat Min (gram) <span class="text-danger">*</span></label>
+                            <div class="input-group-custom">
+                                <input type="number" name="berat_min_gram" class="form-control-modern @error('berat_min_gram') is-invalid @enderror"
+                                    value="{{ old('berat_min_gram', 6) }}" min="1" required>
+                                <i class="bi bi-arrow-down-circle input-icon"></i>
+                                @error('berat_min_gram') <div class="invalid-feedback d-block mt-1">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mt-2">
+                            <label class="form-label">Berat Max (gram) <span class="text-danger">*</span></label>
+                            <div class="input-group-custom">
+                                <input type="number" name="berat_max_gram" class="form-control-modern @error('berat_max_gram') is-invalid @enderror"
+                                    value="{{ old('berat_max_gram', 26) }}" min="1" required>
+                                <i class="bi bi-arrow-up-circle input-icon"></i>
+                                @error('berat_max_gram') <div class="invalid-feedback d-block mt-1">{{ $message }}</div> @enderror
+                            </div>
+                        </div>
                         <!-- POIN PER KG -->
                         <div class="col-md-4 mt-2">
                             <label class="form-label">Nilai Konversi <span class="text-danger">*</span></label>
