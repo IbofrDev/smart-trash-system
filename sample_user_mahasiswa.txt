@@ -1,0 +1,7 @@
+
+Warning: require(C:\tugasakhir\smart-trash-system/vendor/autoload.php): Failed to open stream: No such file or directory in C:\tugasakhir\smart-trash-system\artisan on line 10
+
+Fatal error: Uncaught Error: Failed opening required 'C:\tugasakhir\smart-trash-system/vendor/autoload.php' (include_path='.;C:\php\pear') in C:\tugasakhir\smart-trash-system\artisan:10
+Stack trace:
+#0 {main}
+  thrown in C:\tugasakhir\smart-trash-system\artisan on line 10

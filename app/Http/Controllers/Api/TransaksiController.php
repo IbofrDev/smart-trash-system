@@ -119,16 +119,51 @@ class TransaksiController extends Controller
      * POST /api/transaksi/session
      * Buat session baru (input jumlah botol & kaleng dari mobile)
      */
-    public function createSession(Request $request)
+       public function createSession(Request $request)
     {
-               $request->validate([
-            'jumlah_botol' => 'required|integer|min:1|max:50',
+        // Range berat per ukuran (gram)
+        $sizeRanges = [
+            '220' => ['min' => 6,  'max' => 12],
+            '250' => ['min' => 7,  'max' => 13],
+            '330' => ['min' => 9,  'max' => 15],
+            '350' => ['min' => 10, 'max' => 16],
+            '390' => ['min' => 12, 'max' => 18],
+            '500' => ['min' => 14, 'max' => 22],
+            '600' => ['min' => 16, 'max' => 26],
+        ];
+
+        $request->validate([
+            'botol_breakdown'         => 'required|array',
+            'botol_breakdown.*'       => 'integer|min:0|max:50',
         ], [
-            'jumlah_botol.required' => 'Jumlah botol wajib diisi.',
-            'jumlah_botol.integer' => 'Jumlah botol harus berupa angka bulat.',
-            'jumlah_botol.min' => 'Jumlah botol minimal 1.',
-            'jumlah_botol.max' => 'Jumlah botol maksimal 50.',
+            'botol_breakdown.required' => 'Breakdown botol wajib diisi.',
+            'botol_breakdown.array'    => 'Format breakdown tidak valid.',
         ]);
+
+        // Filter hanya ukuran valid
+        $breakdown = [];
+        $totalBotol = 0;
+        foreach ($sizeRanges as $size => $range) {
+            $count = (int) ($request->botol_breakdown[$size] ?? 0);
+            if ($count > 0) {
+                $breakdown[$size] = $count;
+                $totalBotol += $count;
+            }
+        }
+
+        if ($totalBotol < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Total botol minimal 1.',
+            ], 422);
+        }
+
+        if ($totalBotol > 50) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Total botol maksimal 50.',
+            ], 422);
+        }
 
         $user = $request->user();
         if ($user instanceof \App\Models\Mahasiswa) {
@@ -140,28 +175,17 @@ class TransaksiController extends Controller
             return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
         }
 
-        // Validasi minimal 1 botol
-        if ($request->jumlah_botol < 1) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Jumlah botol tidak boleh 0.',
-            ], 422);
-        }
-
-        // Expire session lama yang sudah lewat expired_at
+        // Expire session lama
         TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
             ->whereIn('status', ['pending', 'tapped', 'weighing', 'counting'])
             ->where('expired_at', '<', now())
             ->update(['status' => 'expired']);
 
-        // Force expire session tapped/counting/weighing yang stuck
-        // (hardware gagal menyelesaikan proses, lebih dari 15 menit)
         TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
             ->whereIn('status', ['tapped', 'counting', 'weighing'])
             ->where('created_at', '<', now()->subMinutes(15))
             ->update(['status' => 'expired']);
 
-        // Cek apakah ada session aktif
         $activeSession = TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
             ->whereIn('status', ['pending', 'tapped', 'weighing', 'counting'])
             ->where('expired_at', '>', now())
@@ -179,23 +203,25 @@ class TransaksiController extends Controller
             ], 422);
         }
 
-        // Buat session baru
-            $session = TransaksiSession::create([
-            'mahasiswa_id' => $mahasiswa->id,
-            'session_token' => Str::random(64),
-            'jumlah_botol' => $request->jumlah_botol,
-            'status' => 'pending',
-            'created_at' => now(),
-            'expired_at' => now()->addMinutes(10),
+        $session = TransaksiSession::create([
+            'mahasiswa_id'    => $mahasiswa->id,
+            'session_token'   => Str::random(64),
+            'jumlah_botol'    => $totalBotol,
+            'botol_breakdown' => $breakdown,
+            'status'          => 'pending',
+            'created_at'      => now(),
+            'expired_at'      => now()->addMinutes(10),
         ]);
+
         return response()->json([
             'success' => true,
             'data' => [
-                'session_token' => $session->session_token,
-                'jumlah_botol' => $session->jumlah_botol,
-                'total_input' => $session->jumlah_botol,
-                'status' => $session->status,
-                'expired_at' => $session->expired_at,
+                'session_token'   => $session->session_token,
+                'jumlah_botol'    => $session->jumlah_botol,
+                'botol_breakdown' => $session->botol_breakdown,
+                'total_input'     => $session->jumlah_botol,
+                'status'          => $session->status,
+                'expired_at'      => $session->expired_at,
             ],
             'message' => 'Session berhasil dibuat. Silakan tap KTM ke mesin.',
         ]);

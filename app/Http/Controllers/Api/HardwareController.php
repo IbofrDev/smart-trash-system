@@ -71,8 +71,9 @@ class HardwareController extends Controller
             ], 500);
         }
 
-        $minExpected = $session->jumlah_botol * $botol->berat_min_gram;
-        $maxExpected = $session->jumlah_botol * $botol->berat_max_gram;
+        $expected = $this->calculateExpectedWeight($session->botol_breakdown, $session->jumlah_botol);
+        $minExpected = $expected['min'];
+        $maxExpected = $expected['max'];
         // Update status session -> tapped dan refresh waktu aktif
         $session->update([
             'status' => 'tapped',
@@ -108,7 +109,7 @@ class HardwareController extends Controller
      */
     public function startCounting(Request $request)
     {
-               $validator = Validator::make($request->all(), [
+        $validator = Validator::make($request->all(), [
             'session_token' => 'required|string',
             'bak_sampah_id' => 'nullable|integer',
         ]);
@@ -225,10 +226,11 @@ class HardwareController extends Controller
         $jumlahInput = $session->jumlah_botol;
         $jumlahFinal = $countData['jumlah_final'];
 
-        $minExpected = $jumlahInput * $botol->berat_min_gram;
-        $maxExpected = $jumlahInput * $botol->berat_max_gram;
+        $expected = $this->calculateExpectedWeight($session->botol_breakdown, $jumlahInput);
+        $minExpected = $expected['min'];
+        $maxExpected = $expected['max'];
 
-        // Toleransi ±15%
+        // Toleransi ┬▒15%
         $minTolerance = $minExpected * 0.85;
         $maxTolerance = $maxExpected * 1.15;
 
@@ -411,7 +413,7 @@ class HardwareController extends Controller
             // Simpan transaksi
             $transaksi = TransaksiSampah::create([
                 'mahasiswa_id' => $mahasiswa->id,
-                                              'bak_sampah_id' => $request->bak_sampah_id ?? 1,
+                'bak_sampah_id' => $request->bak_sampah_id ?? 1,
                 'session_id' => $session->id,
                 'jenis_sampah_id' => 1, // Botol Plastik
                 'berat' => $beratGram,
@@ -543,6 +545,41 @@ class HardwareController extends Controller
                 'server_time' => now()->toDateTimeString(),
             ],
         ]);
+    }
+
+    /**
+     * Hitung range berat expected dari breakdown botol
+     */
+    private function calculateExpectedWeight(?array $breakdown, int $totalBotol): array
+    {
+        $sizeRanges = [
+            '220' => ['min' => 6, 'max' => 12],
+            '250' => ['min' => 7, 'max' => 13],
+            '330' => ['min' => 9, 'max' => 15],
+            '350' => ['min' => 10, 'max' => 16],
+            '390' => ['min' => 12, 'max' => 18],
+            '500' => ['min' => 14, 'max' => 22],
+            '600' => ['min' => 16, 'max' => 26],
+        ];
+
+        if (empty($breakdown)) {
+            $botol = JenisSampah::find(1);
+            return [
+                'min' => $totalBotol * ($botol->berat_min_gram ?? 6),
+                'max' => $totalBotol * ($botol->berat_max_gram ?? 26),
+            ];
+        }
+
+        $min = 0;
+        $max = 0;
+        foreach ($breakdown as $size => $count) {
+            if (isset($sizeRanges[$size])) {
+                $min += $sizeRanges[$size]['min'] * $count;
+                $max += $sizeRanges[$size]['max'] * $count;
+            }
+        }
+
+        return ['min' => $min, 'max' => $max];
     }
 }
 

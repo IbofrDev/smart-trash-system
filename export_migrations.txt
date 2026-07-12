@@ -1,0 +1,858 @@
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+use Illuminate\Support\Facades\DB;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        // Nonaktifkan kaleng di jenis_sampah (tidak delete, jaga FK data lama)
+        DB::table('jenis_sampah')->where('id', 2)->update(['is_active' => 0]);
+
+        // Hapus kolom jumlah_kaleng dari transaksi_session
+        Schema::table('transaksi_session', function (Blueprint $table) {
+            $table->dropColumn('jumlah_kaleng');
+        });
+
+        // Hapus kolom jumlah_input_kaleng dari transaksi_sampah
+        Schema::table('transaksi_sampah', function (Blueprint $table) {
+            $table->dropColumn('jumlah_input_kaleng');
+        });
+    }
+
+    public function down(): void
+    {
+        DB::table('jenis_sampah')->where('id', 2)->update(['is_active' => 1]);
+
+        Schema::table('transaksi_session', function (Blueprint $table) {
+            $table->integer('jumlah_kaleng')->default(0)->after('jumlah_botol');
+        });
+
+        Schema::table('transaksi_sampah', function (Blueprint $table) {
+            $table->integer('jumlah_input_kaleng')->nullable()->after('jumlah_input_botol');
+        });
+    }
+};  
+=========================================  
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('transaksi_session', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswa');
+            $table->string('session_token', 64)->unique();
+            $table->integer('jumlah_botol')->default(0);
+            $table->integer('jumlah_kaleng')->default(0);
+            $table->enum('status', [
+                'pending',
+                'tapped',
+                'weighing',
+                'counting',
+                'completed',
+                'expired'
+            ])->default('pending');
+            $table->timestamp('created_at')->useCurrent();
+            $table->timestamp('expired_at');
+            $table->timestamp('completed_at')->nullable();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('transaksi_session');
+    }
+};  
+=========================================  
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::create('transaksi_sampah', function (Blueprint $table) {
+            $table->id();
+            $table->foreignId('mahasiswa_id')->constrained('mahasiswa')->onDelete('cascade');
+            $table->foreignId('bak_sampah_id')->constrained('bak_sampah')->onDelete('cascade');
+            $table->foreignId('jenis_sampah_id')->constrained('jenis_sampah')->onDelete('cascade');
+            $table->decimal('berat', 10, 2);
+            $table->integer('poin_didapat')->default(0);
+            $table->timestamp('tanggal_transaksi')->useCurrent();
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::dropIfExists('transaksi_sampah');
+    }
+};  
+=========================================  
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('transaksi_sampah', function (Blueprint $table) {
+            $table->integer('jumlah_input_botol')->default(0);
+            $table->integer('jumlah_input_kaleng')->default(0)->after('jumlah_input_botol');
+            $table->integer('jumlah_terhitung')->default(0)->after('jumlah_input_kaleng');
+            $table->integer('jumlah_final')->default(0)->after('jumlah_terhitung');
+            $table->enum('status_validasi', ['valid', 'anomali'])->default('valid')->after('jumlah_final');
+            $table->integer('koin_didapat')->default(0)->after('poin_didapat');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('transaksi_sampah', function (Blueprint $table) {
+            $table->dropColumn([
+                'jumlah_input_botol',
+                'jumlah_input_kaleng',
+                'jumlah_terhitung',
+                'jumlah_final',
+                'status_validasi',
+                'koin_didapat',
+            ]);
+        });
+    }
+};  
+=========================================  
+<?php
+
+use Illuminate\Database\Migrations\Migration;
+use Illuminate\Database\Schema\Blueprint;
+use Illuminate\Support\Facades\Schema;
+
+return new class extends Migration
+{
+    public function up(): void
+    {
+        Schema::table('leaderboard', function (Blueprint $table) {
+            $table->renameColumn('total_berat_kg', 'total_berat_gram');
+        });
+    }
+
+    public function down(): void
+    {
+        Schema::table('leaderboard', function (Blueprint $table) {
+            $table->renameColumn('total_berat_gram', 'total_berat_kg');
+        });
+    }
+};  
+=========================================  
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\TransaksiController;
+use App\Http\Controllers\Api\LeaderboardController;
+use App\Http\Controllers\Api\AchievementController;
+use App\Http\Controllers\Api\NotifikasiController;
+use App\Http\Controllers\Api\HardwareController;
+use App\Http\Controllers\Api\VoucherController;
+use App\Http\Controllers\Api\KasirController;
+
+/*
+|--------------------------------------------------------------------------
+| Hardware Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('hardware')->middleware('hardware.apikey')->group(function () {
+    Route::post('/verify-rfid', [HardwareController::class, 'verifyRfid']);
+    Route::post('/start-counting', [HardwareController::class, 'startCounting']);
+    Route::get('/session-status/{token}', [HardwareController::class, 'sessionStatus']);
+    Route::post('/submit-weight', [HardwareController::class, 'submitWeight']);
+    Route::post('/submit-count', [HardwareController::class, 'submitCount']);
+    Route::post('/complete', [HardwareController::class, 'complete']);
+    Route::get('/jenis-sampah', [HardwareController::class, 'getJenisSampah']);
+    Route::post('/heartbeat', [HardwareController::class, 'heartbeat']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Auth Routes (PUBLIC)
+|--------------------------------------------------------------------------
+*/
+Route::post('/auth/google', [AuthController::class, 'loginGoogle']);
+
+// TEMPORARY: Mock Login untuk testing Flutter - HAPUS sebelum production!
+Route::post('/auth/mock-login', function (\Illuminate\Http\Request $request) {
+    $mahasiswa = $request->mahasiswa_id
+        ? \App\Models\Mahasiswa::find($request->mahasiswa_id)
+        : \App\Models\Mahasiswa::first();
+
+    if (!$mahasiswa) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Tidak ada data mahasiswa di database'
+        ], 404);
+    }
+
+    $token = $mahasiswa->createToken('mobile-app')->plainTextToken;
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Mock login berhasil',
+        'data' => [
+            'token' => $token,
+            'mahasiswa' => [
+                'id' => $mahasiswa->id,
+                'name' => $mahasiswa->name,
+                'email' => $mahasiswa->email,
+                'avatar' => $mahasiswa->avatar,
+                'nim' => $mahasiswa->nim,
+                'prodi' => $mahasiswa->prodi,
+                'rfid_uid' => $mahasiswa->rfid_uid,
+                'total_poin' => $mahasiswa->total_poin,
+                'total_koin_botol' => $mahasiswa->total_koin_botol,
+                'level_id' => $mahasiswa->level_id,
+                'level' => $mahasiswa->level,
+            ]
+        ]
+    ]);
+});
+
+
+/*
+|--------------------------------------------------------------------------
+| Kasir Auth Routes (PUBLIC)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('auth/kasir')->group(function () {
+    Route::post('/login', [AuthController::class, 'loginKasir']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Kasir Protected Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('kasir')
+    ->middleware(['auth:sanctum', 'role:kasir'])
+    ->group(function () {
+        Route::get('/me', [KasirController::class, 'me']);
+        Route::post('/logout', [AuthController::class, 'logoutKasir']);
+        Route::post('/voucher/validate', [KasirController::class, 'validateVoucher']);
+        Route::get('/voucher/check/{kode}', [KasirController::class, 'checkVoucher']);
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Protected Routes (Mahasiswa - Sanctum)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:sanctum')->group(function () {
+    // Auth
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'index']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::post('/profile/rfid', [ProfileController::class, 'updateRfid']);
+    Route::post('/profile/fcm-token', [ProfileController::class, 'updateFcmToken']);
+
+    // Transaksi Session (BARU)
+    Route::post('/transaksi/session', [TransaksiController::class, 'createSession']);
+    Route::get('/transaksi/session/{token}', [TransaksiController::class, 'checkSession']);
+    Route::delete('/transaksi/session/{token}', [TransaksiController::class, 'cancelSession']);
+
+    // Transaksi History
+    Route::get('/transaksi', [TransaksiController::class, 'index']);
+    Route::get('/transaksi/{id}', [TransaksiController::class, 'show']);
+
+    // Voucher (BARU)
+    Route::get('/vouchers', [VoucherController::class, 'index']);
+    Route::post('/vouchers/redeem', [VoucherController::class, 'redeem']);
+    Route::post('/vouchers/{id}/use', [VoucherController::class, 'useVoucher']);
+
+    // Leaderboard
+    Route::get('/leaderboard', [LeaderboardController::class, 'index']);
+    Route::get('/leaderboard/my-rank', [LeaderboardController::class, 'myRank']);
+
+    // Achievement
+    Route::get('/achievements', [AchievementController::class, 'index']);
+    Route::get('/achievements/my', [AchievementController::class, 'myAchievements']);
+
+    // Notifikasi
+    Route::get('/notifikasi', [NotifikasiController::class, 'index']);
+    Route::put('/notifikasi/{id}/read', [NotifikasiController::class, 'markAsRead']);
+    Route::put('/notifikasi/read-all', [NotifikasiController::class, 'markAllAsRead']);
+    Route::get('/notifikasi/unread-count', [NotifikasiController::class, 'unreadCount']);
+});  
+=========================================  
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\TransaksiSampah;
+use App\Models\TransaksiSession;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+class TransaksiController extends Controller
+{
+    /**
+     * GET /api/transaksi
+     * List riwayat transaksi
+     */
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+        $period = $request->query('period', 'all');
+
+        $query = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->with(['bakSampah.lokasi', 'jenisSampah']);
+
+        if ($period === '7days') {
+            $query->where('tanggal_transaksi', '>=', now()->subDays(7));
+        } elseif ($period === '30days') {
+            $query->where('tanggal_transaksi', '>=', now()->subDays(30));
+        }
+
+        $transaksi = $query->orderByDesc('tanggal_transaksi')
+            ->paginate(10)
+            ->through(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'berat_gram' => $item->berat,
+                    'jumlah_final' => $item->jumlah_final,
+                    'status_validasi' => $item->status_validasi,
+                    'poin_didapat' => $item->poin_didapat,
+                    'koin_didapat' => $item->koin_didapat,
+                    'bak_sampah' => $item->bakSampah->nama ?? '-',
+                    'lokasi' => $item->bakSampah->lokasi->nama_lokasi ?? '-',
+                    'tanggal' => $item->tanggal_transaksi,
+                    'jenis_sampah' => $item->jenisSampah->nama ?? '-',
+                    'poin_per_kg' => $item->jenisSampah->poin_per_kg ?? 0,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $transaksi,
+        ]);
+    }
+
+    /**
+     * GET /api/transaksi/{id}
+     * Detail transaksi
+     */
+    public function show(Request $request, $id)
+    {
+        $user = $request->user();
+
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+
+        $transaksi = TransaksiSampah::where('id', $id)
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->with(['bakSampah.lokasi', 'session', 'jenisSampah'])
+            ->first();
+
+        if (!$transaksi) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaksi tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $transaksi->id,
+                'berat_gram' => $transaksi->berat,
+                'jumlah_botol' => $transaksi->jumlah_input_botol,
+                'jumlah_terhitung' => $transaksi->jumlah_terhitung,
+                'jumlah_final' => $transaksi->jumlah_final,
+                'status_validasi' => $transaksi->status_validasi,
+                'poin_didapat' => $transaksi->poin_didapat,
+                'koin_didapat' => $transaksi->koin_didapat,
+                'jenis_sampah' => $transaksi->jenisSampah ? [
+                    'id' => $transaksi->jenisSampah->id,
+                    'nama' => $transaksi->jenisSampah->nama,
+                    'poin_per_kg' => $transaksi->jenisSampah->poin_per_kg,
+                    'satuan' => $transaksi->jenisSampah->satuan,
+                ] : null,
+                'bak_sampah' => [
+                    'nama' => $transaksi->bakSampah->nama ?? '-',
+                    'lokasi' => $transaksi->bakSampah->lokasi->nama_lokasi ?? '-',
+                ],
+                'tanggal_transaksi' => $transaksi->tanggal_transaksi,
+            ],
+        ]);
+    }
+    /**
+     * POST /api/transaksi/session
+     * Buat session baru (input jumlah botol & kaleng dari mobile)
+     */
+    public function createSession(Request $request)
+    {
+        $request->validate([
+            'jumlah_botol' => 'required|integer|min:1|max:50',
+        ]);
+
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+
+        // Validasi minimal 1 botol
+        if ($request->jumlah_botol < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jumlah botol tidak boleh 0.',
+            ], 422);
+        }
+
+        // Expire session lama yang sudah lewat expired_at
+        TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['pending', 'tapped', 'weighing', 'counting'])
+            ->where('expired_at', '<', now())
+            ->update(['status' => 'expired']);
+
+        // Force expire session tapped/counting/weighing yang stuck
+        // (hardware gagal menyelesaikan proses, lebih dari 15 menit)
+        TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['tapped', 'counting', 'weighing'])
+            ->where('created_at', '<', now()->subMinutes(15))
+            ->update(['status' => 'expired']);
+
+        // Cek apakah ada session aktif
+        $activeSession = TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['pending', 'tapped', 'weighing', 'counting'])
+            ->where('expired_at', '>', now())
+            ->first();
+
+        if ($activeSession) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kamu masih memiliki session aktif. Selesaikan atau tunggu hingga expired.',
+                'data' => [
+                    'session_token' => $activeSession->session_token,
+                    'status' => $activeSession->status,
+                    'expired_at' => $activeSession->expired_at,
+                ],
+            ], 422);
+        }
+
+        // Buat session baru
+        $session = TransaksiSession::create([
+            'mahasiswa_id' => $mahasiswa->id,
+            'session_token' => Str::random(64),
+            'jumlah_botol' => $request->jumlah_botol,
+            'jumlah_kaleng' => 0,
+            'status' => 'pending',
+            'created_at' => now(),
+            'expired_at' => now()->addMinutes(10),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'session_token' => $session->session_token,
+                'jumlah_botol' => $session->jumlah_botol,
+                'total_input' => $session->jumlah_botol,
+                'status' => $session->status,
+                'expired_at' => $session->expired_at,
+            ],
+            'message' => 'Session berhasil dibuat. Silakan tap KTM ke mesin.',
+        ]);
+    }
+
+    /**
+     * DELETE /api/transaksi/session/{token}
+     * Cancel session dari mobile (user keluar dari menu)
+     */
+    public function cancelSession(Request $request, $token)
+    {
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+        $session = TransaksiSession::where('session_token', $token)
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['pending', 'tapped', 'counting', 'weighing'])
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak ditemukan atau sudah tidak aktif.',
+            ], 404);
+        }
+
+ 
+
+        $session->update(['status' => 'expired']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Session berhasil dibatalkan.',
+        ]);
+    }
+
+    /**
+     * GET /api/transaksi/session/{token}
+     * Cek status session (polling dari mobile)
+     */
+    public function checkSession(Request $request, $token)
+    {
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+
+        $session = TransaksiSession::where('session_token', $token)
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak ditemukan.',
+            ], 404);
+        }
+
+        // Auto expire
+        if ($session->isExpired() && !in_array($session->status, ['completed', 'expired'])) {
+            $session->update(['status' => 'expired']);
+        }
+        $data = [
+            'session_token' => $session->session_token,
+            'jumlah_botol' => $session->jumlah_botol,
+            'total_input' => $session->jumlah_botol,
+            'status' => $session->status,
+            'expired_at' => $session->expired_at,
+            'completed_at' => $session->completed_at,
+        ];
+
+        // Jika sudah completed, sertakan hasil transaksi
+        if ($session->status === 'completed') {
+            $transaksi = TransaksiSampah::where('session_id', $session->id)->first();
+            if ($transaksi) {
+                $data['transaksi'] = [
+                    'id' => $transaksi->id,
+                    'berat_gram' => $transaksi->berat,
+                    'jumlah_final' => $transaksi->jumlah_final,
+                    'status_validasi' => $transaksi->status_validasi,
+                    'poin_didapat' => $transaksi->poin_didapat,
+                    'koin_didapat' => $transaksi->koin_didapat,
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+}  
+=========================================  
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\VoucherMahasiswa;
+use App\Models\SettingPoin;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+class VoucherController extends Controller
+{
+    /**
+     * List voucher milik user
+     */
+    public function index(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        // Auto-expire voucher yang sudah lewat
+        VoucherMahasiswa::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'aktif')
+            ->where('expired_at', '<', now())
+            ->update(['status' => 'expired']);
+
+        $vouchers = VoucherMahasiswa::where('mahasiswa_id', $mahasiswa->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total_koin' => $mahasiswa->total_koin_botol,
+                'koin_per_voucher' => (int) SettingPoin::where('nama_setting', 'koin_per_voucher')->value('value'),
+                'vouchers' => $vouchers,
+            ],
+        ]);
+    }
+
+    /**
+     * Tukar koin jadi voucher
+     */
+    public function redeem(Request $request)
+    {
+        $mahasiswa = $request->user();
+        $koinPerVoucher = (int) SettingPoin::where('nama_setting', 'koin_per_voucher')->value('value');
+        $expiredDays = (int) SettingPoin::where('nama_setting', 'voucher_expired_days')->value('value');
+
+        // Validasi koin cukup
+        if ($mahasiswa->total_koin_botol < $koinPerVoucher) {
+            return response()->json([
+                'success' => false,
+                'message' => "Koin tidak cukup. Butuh {$koinPerVoucher} koin, kamu punya {$mahasiswa->total_koin_botol} koin.",
+            ], 422);
+        }
+
+        // Generate kode voucher unik
+        do {
+            $kode = 'VCH-' . strtoupper(Str::random(6));
+        } while (VoucherMahasiswa::where('kode_voucher', $kode)->exists());
+
+        // Buat voucher
+        $voucher = VoucherMahasiswa::create([
+            'mahasiswa_id'  => $mahasiswa->id,
+            'kode_voucher'  => $kode,
+            'status'        => 'aktif',
+            'koin_digunakan' => $koinPerVoucher,
+            'created_at'    => now(),
+            'expired_at'    => now()->addDays($expiredDays),
+        ]);
+
+        // Kurangi koin
+        $mahasiswa->decrement('total_koin_botol', $koinPerVoucher);
+
+        return response()->json([
+            'success' => true,
+            'data' => $voucher,
+            'message' => "Voucher berhasil dibuat! Kode: {$kode}",
+        ]);
+    }
+
+    /**
+     * Endpoint lama - sekarang voucher hanya bisa divalidasi oleh kasir
+     */
+    public function useVoucher(Request $request, $id)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Voucher hanya bisa divalidasi oleh kasir. Tunjukkan kode voucher ke kasir untuk digunakan.',
+        ], 403);
+    }
+}  
+=========================================  
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\VoucherMahasiswa;
+use Illuminate\Http\Request;
+
+class KasirController extends Controller
+{
+
+    /**
+     * Ambil data kasir yang sedang login
+     * GET /api/kasir/me
+     */
+    public function me(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'is_active' => (bool) $user->is_active,
+            ],
+        ]);
+    }
+/**
+     * Validasi & gunakan voucher berdasarkan kode
+     * POST /api/kasir/voucher/validate
+     */
+    public function validateVoucher(Request $request)
+    {
+        $request->validate([
+            'kode_voucher' => 'required|string',
+        ], [
+            'kode_voucher.required' => 'Kode voucher wajib diisi.',
+        ]);
+
+        $kode = strtoupper(trim($request->kode_voucher));
+
+        // Cari voucher berdasarkan kode
+        $voucher = VoucherMahasiswa::with('mahasiswa')
+            ->where('kode_voucher', $kode)
+            ->first();
+
+        // Voucher tidak ditemukan
+        if (!$voucher) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode voucher tidak ditemukan.',
+            ], 404);
+        }
+
+        // Cek expired
+        if ($voucher->isExpired()) {
+            $voucher->update(['status' => 'expired']);
+            return response()->json([
+                'success' => false,
+                'message' => 'Voucher sudah expired.',
+                'data' => [
+                    'kode_voucher' => $voucher->kode_voucher,
+                    'status' => 'expired',
+                    'expired_at' => $voucher->expired_at,
+                ],
+            ], 422);
+        }
+
+        // Cek status
+        if ($voucher->status === 'terpakai') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Voucher sudah pernah digunakan.',
+                'data' => [
+                    'kode_voucher' => $voucher->kode_voucher,
+                    'status' => 'terpakai',
+                    'used_at' => $voucher->used_at,
+                    'mahasiswa' => [
+                        'name' => $voucher->mahasiswa->name,
+                        'nim' => $voucher->mahasiswa->nim,
+                    ],
+                ],
+            ], 422);
+        }
+
+        if ($voucher->status !== 'aktif') {
+            return response()->json([
+                'success' => false,
+                'message' => "Voucher tidak valid. Status: {$voucher->status}",
+            ], 422);
+        }
+
+        // Semua valid — tandai sebagai terpakai
+        $voucher->update([
+            'status' => 'terpakai',
+            'used_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Voucher berhasil divalidasi!',
+            'data' => [
+                'kode_voucher' => $voucher->kode_voucher,
+                'status' => 'terpakai',
+                'koin_digunakan' => $voucher->koin_digunakan,
+                'used_at' => $voucher->used_at,
+                'mahasiswa' => [
+                    'name' => $voucher->mahasiswa->name,
+                    'nim' => $voucher->mahasiswa->nim,
+                    'avatar' => $voucher->mahasiswa->avatar,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Cek info voucher tanpa menggunakannya (preview)
+     * GET /api/kasir/voucher/check/{kode}
+     */
+    public function checkVoucher(string $kode)
+    {
+        $kode = strtoupper(trim($kode));
+
+        $voucher = VoucherMahasiswa::with('mahasiswa')
+            ->where('kode_voucher', $kode)
+            ->first();
+
+        if (!$voucher) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode voucher tidak ditemukan.',
+            ], 404);
+        }
+
+        // Auto update jika expired
+        if ($voucher->isExpired() && $voucher->status === 'aktif') {
+            $voucher->update(['status' => 'expired']);
+            $voucher->refresh();
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'kode_voucher' => $voucher->kode_voucher,
+                'status' => $voucher->status,
+                'koin_digunakan' => $voucher->koin_digunakan,
+                'created_at' => $voucher->created_at,
+                'expired_at' => $voucher->expired_at,
+                'used_at' => $voucher->used_at,
+                'mahasiswa' => [
+                    'name' => $voucher->mahasiswa->name,
+                    'nim' => $voucher->mahasiswa->nim,
+                    'avatar' => $voucher->mahasiswa->avatar,
+                ],
+            ],
+        ]);
+    }
+}

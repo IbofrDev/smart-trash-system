@@ -1,0 +1,3666 @@
+===== BASIC =====
+Laravel Framework 13.1.1
+
+===== ROUTE LIST =====
+
+  GET|HEAD        / ...................................................................... welcome › routes/web.php:24
+  GET|HEAD        admin/achievement ........................ admin.achievement.index › Web\AchievementController@index
+  POST            admin/achievement ........................ admin.achievement.store › Web\AchievementController@store
+  GET|HEAD        admin/achievement/create ............... admin.achievement.create › Web\AchievementController@create
+  GET|HEAD        admin/achievement/{achievement} ............ admin.achievement.show › Web\AchievementController@show
+  PUT|PATCH       admin/achievement/{achievement} ........ admin.achievement.update › Web\AchievementController@update
+  DELETE          admin/achievement/{achievement} ...... admin.achievement.destroy › Web\AchievementController@destroy
+  GET|HEAD        admin/achievement/{achievement}/edit ....... admin.achievement.edit › Web\AchievementController@edit
+  GET|HEAD        admin/bak-sampah ............................ admin.bak-sampah.index › Web\BakSampahController@index
+  POST            admin/bak-sampah ............................ admin.bak-sampah.store › Web\BakSampahController@store
+  GET|HEAD        admin/bak-sampah/create ................... admin.bak-sampah.create › Web\BakSampahController@create
+  POST            admin/bak-sampah/{bakSampah}/regenerate-api-key admin.bak-sampah.regenerate-api-key › Web\BakSampah…
+  GET|HEAD        admin/bak-sampah/{bak_sampah} ................. admin.bak-sampah.show › Web\BakSampahController@show
+  PUT|PATCH       admin/bak-sampah/{bak_sampah} ............. admin.bak-sampah.update › Web\BakSampahController@update
+  DELETE          admin/bak-sampah/{bak_sampah} ........... admin.bak-sampah.destroy › Web\BakSampahController@destroy
+  GET|HEAD        admin/bak-sampah/{bak_sampah}/edit ............ admin.bak-sampah.edit › Web\BakSampahController@edit
+  GET|HEAD        admin/dashboard .................................... admin.dashboard › Web\DashboardController@index
+  GET|HEAD        admin/dashboard/chart-data .......... admin.dashboard.chart-data › Web\DashboardController@chartData
+  GET|HEAD        admin/jenis-sampah ...................... admin.jenis-sampah.index › Web\JenisSampahController@index
+  POST            admin/jenis-sampah ...................... admin.jenis-sampah.store › Web\JenisSampahController@store
+  GET|HEAD        admin/jenis-sampah/create ............. admin.jenis-sampah.create › Web\JenisSampahController@create
+  GET|HEAD        admin/jenis-sampah/{jenis_sampah} ......... admin.jenis-sampah.show › Web\JenisSampahController@show
+  PUT|PATCH       admin/jenis-sampah/{jenis_sampah} ..... admin.jenis-sampah.update › Web\JenisSampahController@update
+  DELETE          admin/jenis-sampah/{jenis_sampah} ... admin.jenis-sampah.destroy › Web\JenisSampahController@destroy
+  GET|HEAD        admin/jenis-sampah/{jenis_sampah}/edit .... admin.jenis-sampah.edit › Web\JenisSampahController@edit
+  GET|HEAD        admin/laporan/mahasiswa .................. admin.laporan.mahasiswa › Web\LaporanController@mahasiswa
+  GET|HEAD        admin/laporan/mahasiswa/pdf ....... admin.laporan.mahasiswa.pdf › Web\LaporanController@mahasiswaPdf
+  GET|HEAD        admin/laporan/transaksi .................. admin.laporan.transaksi › Web\LaporanController@transaksi
+  GET|HEAD        admin/laporan/transaksi/pdf ....... admin.laporan.transaksi.pdf › Web\LaporanController@transaksiPdf
+  GET|HEAD        admin/level .......................................... admin.level.index › Web\LevelController@index
+  POST            admin/level .......................................... admin.level.store › Web\LevelController@store
+  GET|HEAD        admin/level/create ................................. admin.level.create › Web\LevelController@create
+  GET|HEAD        admin/level/{level} .................................... admin.level.show › Web\LevelController@show
+  PUT|PATCH       admin/level/{level} ................................ admin.level.update › Web\LevelController@update
+  DELETE          admin/level/{level} .............................. admin.level.destroy › Web\LevelController@destroy
+  GET|HEAD        admin/level/{level}/edit ............................... admin.level.edit › Web\LevelController@edit
+  GET|HEAD        admin/log-aktivitas ................... admin.log-aktivitas.index › Web\LogAktivitasController@index
+  GET|HEAD        admin/lokasi ....................................... admin.lokasi.index › Web\LokasiController@index
+  POST            admin/lokasi ....................................... admin.lokasi.store › Web\LokasiController@store
+  GET|HEAD        admin/lokasi/create .............................. admin.lokasi.create › Web\LokasiController@create
+  GET|HEAD        admin/lokasi/{lokasi} ................................ admin.lokasi.show › Web\LokasiController@show
+  PUT|PATCH       admin/lokasi/{lokasi} ............................ admin.lokasi.update › Web\LokasiController@update
+  DELETE          admin/lokasi/{lokasi} .......................... admin.lokasi.destroy › Web\LokasiController@destroy
+  GET|HEAD        admin/lokasi/{lokasi}/edit ........................... admin.lokasi.edit › Web\LokasiController@edit
+  GET|HEAD        admin/mahasiswa .............................. admin.mahasiswa.index › Web\MahasiswaController@index
+  GET|HEAD        admin/mahasiswa/{mahasiswa} .................... admin.mahasiswa.show › Web\MahasiswaController@show
+  PUT|PATCH       admin/mahasiswa/{mahasiswa} ................ admin.mahasiswa.update › Web\MahasiswaController@update
+  DELETE          admin/mahasiswa/{mahasiswa} .............. admin.mahasiswa.destroy › Web\MahasiswaController@destroy
+  GET|HEAD        admin/mahasiswa/{mahasiswa}/edit ............... admin.mahasiswa.edit › Web\MahasiswaController@edit
+  GET|HEAD        admin/setting-poin ...................... admin.setting-poin.index › Web\SettingPoinController@index
+  PUT|PATCH       admin/setting-poin/{setting_poin} ..... admin.setting-poin.update › Web\SettingPoinController@update
+  GET|HEAD        admin/setting-poin/{setting_poin}/edit .... admin.setting-poin.edit › Web\SettingPoinController@edit
+  GET|HEAD        admin/transaksi .............................. admin.transaksi.index › Web\TransaksiController@index
+  GET|HEAD        admin/transaksi/{transaksi} .................... admin.transaksi.show › Web\TransaksiController@show
+  GET|HEAD        admin/users ........................................... admin.users.index › Web\UserController@index
+  POST            admin/users ........................................... admin.users.store › Web\UserController@store
+  GET|HEAD        admin/users/create .................................. admin.users.create › Web\UserController@create
+  GET|HEAD        admin/users/{user} ...................................... admin.users.show › Web\UserController@show
+  PUT|PATCH       admin/users/{user} .................................. admin.users.update › Web\UserController@update
+  DELETE          admin/users/{user} ................................ admin.users.destroy › Web\UserController@destroy
+  GET|HEAD        admin/users/{user}/edit ................................. admin.users.edit › Web\UserController@edit
+  GET|HEAD        admin/voucher .................................... admin.voucher.index › Web\VoucherController@index
+  GET|HEAD        api/achievements ................................................... Api\AchievementController@index
+  GET|HEAD        api/achievements/my ....................................... Api\AchievementController@myAchievements
+  POST            api/auth/google ..................................................... Api\AuthController@loginGoogle
+  POST            api/auth/kasir/login ................................................. Api\AuthController@loginKasir
+  POST            api/auth/logout .......................................................... Api\AuthController@logout
+  GET|HEAD        api/dashboard ........................................................ Api\DashboardController@index
+  POST            api/hardware/complete .............................................. Api\HardwareController@complete
+  POST            api/hardware/heartbeat ............................................ Api\HardwareController@heartbeat
+  GET|HEAD        api/hardware/jenis-sampah .................................... Api\HardwareController@getJenisSampah
+  GET|HEAD        api/hardware/session-status/{token} ........................... Api\HardwareController@sessionStatus
+  POST            api/hardware/start-counting ................................... Api\HardwareController@startCounting
+  POST            api/hardware/submit-count ....................................... Api\HardwareController@submitCount
+  POST            api/hardware/submit-weight ..................................... Api\HardwareController@submitWeight
+  POST            api/hardware/verify-rfid ......................................... Api\HardwareController@verifyRfid
+  POST            api/kasir/logout .................................................... Api\AuthController@logoutKasir
+  GET|HEAD        api/kasir/me ................................................................ Api\KasirController@me
+  GET|HEAD        api/kasir/voucher/check/{kode} .................................... Api\KasirController@checkVoucher
+  POST            api/kasir/voucher/validate ..................................... Api\KasirController@validateVoucher
+  GET|HEAD        api/leaderboard .................................................... Api\LeaderboardController@index
+  GET|HEAD        api/leaderboard/my-rank ........................................... Api\LeaderboardController@myRank
+  GET|HEAD        api/notifikasi ...................................................... Api\NotifikasiController@index
+  PUT             api/notifikasi/read-all ..................................... Api\NotifikasiController@markAllAsRead
+  GET|HEAD        api/notifikasi/unread-count ................................... Api\NotifikasiController@unreadCount
+  PUT             api/notifikasi/{id}/read ....................................... Api\NotifikasiController@markAsRead
+  GET|HEAD        api/profile ............................................................ Api\ProfileController@index
+  PUT             api/profile ........................................................... Api\ProfileController@update
+  POST            api/profile/fcm-token ......................................... Api\ProfileController@updateFcmToken
+  POST            api/profile/rfid .................................................. Api\ProfileController@updateRfid
+  GET|HEAD        api/transaksi ........................................................ Api\TransaksiController@index
+  POST            api/transaksi/session ........................................ Api\TransaksiController@createSession
+  GET|HEAD        api/transaksi/session/{token} ................................. Api\TransaksiController@checkSession
+  DELETE          api/transaksi/session/{token} ................................ Api\TransaksiController@cancelSession
+  GET|HEAD        api/transaksi/{id} .................................................... Api\TransaksiController@show
+  GET|HEAD        api/vouchers ........................................................... Api\VoucherController@index
+  POST            api/vouchers/redeem ................................................... Api\VoucherController@redeem
+  POST            api/vouchers/{id}/use ............................................. Api\VoucherController@useVoucher
+  GET|HEAD        login ......................................................... login › Web\AuthController@showLogin
+  POST            login ...................................................... login.submit › Web\AuthController@login
+  POST            logout .......................................................... logout › Web\AuthController@logout
+  GET|HEAD        pengelola/dashboard ............................ pengelola.dashboard › Web\DashboardController@index
+  GET|HEAD        pengelola/dashboard/chart-data .. pengelola.dashboard.chart-data › Web\DashboardController@chartData
+  GET|HEAD        pengelola/laporan/mahasiswa .......... pengelola.laporan.mahasiswa › Web\LaporanController@mahasiswa
+  GET|HEAD        pengelola/laporan/mahasiswa/pdf pengelola.laporan.mahasiswa.pdf › Web\LaporanController@mahasiswaPdf
+  GET|HEAD        pengelola/laporan/transaksi .......... pengelola.laporan.transaksi › Web\LaporanController@transaksi
+  GET|HEAD        pengelola/laporan/transaksi/pdf pengelola.laporan.transaksi.pdf › Web\LaporanController@transaksiPdf
+  GET|HEAD        pengelola/mahasiswa ...................... pengelola.mahasiswa.index › Web\MahasiswaController@index
+  GET|HEAD        pengelola/mahasiswa/{mahasiswa} ............ pengelola.mahasiswa.show › Web\MahasiswaController@show
+  GET|HEAD        pengelola/transaksi ...................... pengelola.transaksi.index › Web\TransaksiController@index
+  GET|HEAD        pengelola/transaksi/{transaksi} ............ pengelola.transaksi.show › Web\TransaksiController@show
+  GET|HEAD        pengelola/voucher ............................ pengelola.voucher.index › Web\VoucherController@index
+  GET|HEAD        sanctum/csrf-cookie .............. sanctum.csrf-cookie › Laravel\Sanctum › CsrfCookieController@show
+  GET|HEAD        storage/{path} storage.local › vendor/laravel/framework/src/Illuminate/Filesystem/FilesystemService…
+  PUT             storage/{path} storage.local.upload › vendor/laravel/framework/src/Illuminate/Filesystem/Filesystem…
+  GET|HEAD        up ..... vendor/laravel/framework/src/Illuminate/Foundation/Configuration/ApplicationBuilder.php:221
+
+                                                                                                  Showing [116] routes
+
+
+===== CONFIG\APP.PHP =====
+<?php
+
+return [
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Name
+    |--------------------------------------------------------------------------
+    |
+    | This value is the name of your application, which will be used when the
+    | framework needs to place the application's name in a notification or
+    | other UI elements where an application name needs to be displayed.
+    |
+    */
+
+    'name' => env('APP_NAME', 'Laravel'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Environment
+    |--------------------------------------------------------------------------
+    |
+    | This value determines the "environment" your application is currently
+    | running in. This may determine how you prefer to configure various
+    | services the application utilizes. Set this in your ".env" file.
+    |
+    */
+
+    'env' => env('APP_ENV', 'production'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Debug Mode
+    |--------------------------------------------------------------------------
+    |
+    | When your application is in debug mode, detailed error messages with
+    | stack traces will be shown on every error that occurs within your
+    | application. If disabled, a simple generic error page is shown.
+    |
+    */
+
+    'debug' => (bool) env('APP_DEBUG', false),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application URL
+    |--------------------------------------------------------------------------
+    |
+    | This URL is used by the console to properly generate URLs when using
+    | the Artisan command line tool. You should set this to the root of
+    | the application so that it's available within Artisan commands.
+    |
+    */
+
+    'url' => env('APP_URL', 'http://localhost'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Timezone
+    |--------------------------------------------------------------------------
+    |
+    | Here you may specify the default timezone for your application, which
+    | will be used by the PHP date and date-time functions. The timezone
+    | is set to "UTC" by default as it is suitable for most use cases.
+    |
+    */
+
+    'timezone' => env('APP_TIMEZONE', 'Asia/Jakarta'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Application Locale Configuration
+    |--------------------------------------------------------------------------
+    |
+    | The application locale determines the default locale that will be used
+    | by Laravel's translation / localization methods. This option can be
+    | set to any locale for which you plan to have translation strings.
+    |
+    */
+
+    'locale' => env('APP_LOCALE', 'en'),
+
+    'fallback_locale' => env('APP_FALLBACK_LOCALE', 'en'),
+
+    'faker_locale' => env('APP_FAKER_LOCALE', 'en_US'),
+
+    /*
+    |--------------------------------------------------------------------------
+    | Encryption Key
+    |--------------------------------------------------------------------------
+    |
+    | This key is utilized by Laravel's encryption services and should be set
+    | to a random, 32 character string to ensure that all encrypted values
+    | are secure. You should do this prior to deploying the application.
+    |
+    */
+
+    'cipher' => 'AES-256-CBC',
+
+    'key' => env('APP_KEY'),
+
+    'previous_keys' => [
+        ...array_filter(
+            explode(',', (string) env('APP_PREVIOUS_KEYS', ''))
+        ),
+    ],
+
+    /*
+    |--------------------------------------------------------------------------
+    | Maintenance Mode Driver
+    |--------------------------------------------------------------------------
+    |
+    | These configuration options determine the driver used to determine and
+    | manage Laravel's "maintenance mode" status. The "cache" driver will
+    | allow maintenance mode to be controlled across multiple machines.
+    |
+    | Supported drivers: "file", "cache"
+    |
+    */
+
+    'maintenance' => [
+        'driver' => env('APP_MAINTENANCE_DRIVER', 'file'),
+        'store' => env('APP_MAINTENANCE_STORE', 'database'),
+    ],
+
+];
+
+===== BOOTSTRAP\APP.PHP =====
+<?php
+
+use Illuminate\Foundation\Application;
+use Illuminate\Foundation\Configuration\Exceptions;
+use Illuminate\Foundation\Configuration\Middleware;
+
+return Application::configure(basePath: dirname(__DIR__))
+    ->withRouting(
+        web: __DIR__.'/../routes/web.php',
+        api: __DIR__.'/../routes/api.php',
+        commands: __DIR__.'/../routes/console.php',
+        health: '/up',
+    )
+    ->withMiddleware(function (Middleware $middleware) {
+        $middleware->api(prepend: [
+            \Illuminate\Http\Middleware\HandleCors::class,
+        ]);
+        $middleware->alias([
+            'role' => \App\Http\Middleware\RoleMiddleware::class,
+            'hardware.apikey' => \App\Http\Middleware\HardwareApiKeyMiddleware::class,
+        ]);
+    })
+    ->withProviders([
+        \App\Providers\EventServiceProvider::class,
+    ])
+    ->withExceptions(function (Exceptions $exceptions) {
+        //
+    })->create();
+[NOT FOUND] app\Exceptions\Handler.php
+
+[NOT FOUND] resources\lang\id\validation.php
+
+[NOT FOUND] lang\id\validation.php
+
+===== ROUTES\API.PHP =====
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\DashboardController;
+use App\Http\Controllers\Api\ProfileController;
+use App\Http\Controllers\Api\TransaksiController;
+use App\Http\Controllers\Api\LeaderboardController;
+use App\Http\Controllers\Api\AchievementController;
+use App\Http\Controllers\Api\NotifikasiController;
+use App\Http\Controllers\Api\HardwareController;
+use App\Http\Controllers\Api\VoucherController;
+use App\Http\Controllers\Api\KasirController;
+
+/*
+|--------------------------------------------------------------------------
+| Hardware Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('hardware')->middleware('hardware.apikey')->group(function () {
+    Route::post('/verify-rfid', [HardwareController::class, 'verifyRfid']);
+    Route::post('/start-counting', [HardwareController::class, 'startCounting']);
+    Route::get('/session-status/{token}', [HardwareController::class, 'sessionStatus']);
+    Route::post('/submit-weight', [HardwareController::class, 'submitWeight']);
+    Route::post('/submit-count', [HardwareController::class, 'submitCount']);
+    Route::post('/complete', [HardwareController::class, 'complete']);
+    Route::get('/jenis-sampah', [HardwareController::class, 'getJenisSampah']);
+    Route::post('/heartbeat', [HardwareController::class, 'heartbeat']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Auth Routes (PUBLIC)
+|--------------------------------------------------------------------------
+*/
+Route::post('/auth/google', [AuthController::class, 'loginGoogle']);
+
+// Mock Login — hanya aktif di environment local/development
+if (app()->environment(['local', 'development'])) {
+Route::post('/auth/mock-login', function (\Illuminate\Http\Request $request) {
+    $mahasiswa = $request->mahasiswa_id
+        ? \App\Models\Mahasiswa::find($request->mahasiswa_id)
+        : \App\Models\Mahasiswa::first();
+
+    if (!$mahasiswa) {
+        return response()->json([
+            'success' => false,
+            'message' => 'Tidak ada data mahasiswa di database'
+        ], 404);
+    }
+
+    $token = $mahasiswa->createToken('mobile-app')->plainTextToken;
+
+    return response()->json([
+        'success' => true,
+        'message' => 'Mock login berhasil',
+        'data' => [
+            'token' => $token,
+            'mahasiswa' => [
+                'id' => $mahasiswa->id,
+                'name' => $mahasiswa->name,
+                'email' => $mahasiswa->email,
+                'avatar' => $mahasiswa->avatar,
+                'nim' => $mahasiswa->nim,
+                'prodi' => $mahasiswa->prodi,
+                'rfid_uid' => $mahasiswa->rfid_uid,
+                'total_poin' => $mahasiswa->total_poin,
+                'total_koin_botol' => $mahasiswa->total_koin_botol,
+                'level_id' => $mahasiswa->level_id,
+                'level' => $mahasiswa->level,
+            ]
+        ]
+    ]);
+});
+} // end mock-login env check
+
+
+/*
+|--------------------------------------------------------------------------
+| Kasir Auth Routes (PUBLIC)
+|--------------------------------------------------------------------------
+*/
+Route::prefix('auth/kasir')->group(function () {
+    Route::post('/login', [AuthController::class, 'loginKasir']);
+});
+
+/*
+|--------------------------------------------------------------------------
+| Kasir Protected Routes
+|--------------------------------------------------------------------------
+*/
+Route::prefix('kasir')
+    ->middleware(['auth:sanctum', 'role:kasir'])
+    ->group(function () {
+        Route::get('/me', [KasirController::class, 'me']);
+        Route::post('/logout', [AuthController::class, 'logoutKasir']);
+        Route::post('/voucher/validate', [KasirController::class, 'validateVoucher']);
+        Route::get('/voucher/check/{kode}', [KasirController::class, 'checkVoucher']);
+    });
+
+/*
+|--------------------------------------------------------------------------
+| Protected Routes (Mahasiswa - Sanctum)
+|--------------------------------------------------------------------------
+*/
+Route::middleware('auth:sanctum')->group(function () {
+    // Auth
+    Route::post('/auth/logout', [AuthController::class, 'logout']);
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index']);
+
+    // Profile
+    Route::get('/profile', [ProfileController::class, 'index']);
+    Route::put('/profile', [ProfileController::class, 'update']);
+    Route::post('/profile/rfid', [ProfileController::class, 'updateRfid']);
+    Route::post('/profile/fcm-token', [ProfileController::class, 'updateFcmToken']);
+
+    // Transaksi Session (BARU)
+    Route::post('/transaksi/session', [TransaksiController::class, 'createSession']);
+    Route::get('/transaksi/session/{token}', [TransaksiController::class, 'checkSession']);
+    Route::delete('/transaksi/session/{token}', [TransaksiController::class, 'cancelSession']);
+
+    // Transaksi History
+    Route::get('/transaksi', [TransaksiController::class, 'index']);
+    Route::get('/transaksi/{id}', [TransaksiController::class, 'show']);
+
+    // Voucher (BARU)
+    Route::get('/vouchers', [VoucherController::class, 'index']);
+    Route::post('/vouchers/redeem', [VoucherController::class, 'redeem']);
+    Route::post('/vouchers/{id}/use', [VoucherController::class, 'useVoucher']);
+
+    // Leaderboard
+    Route::get('/leaderboard', [LeaderboardController::class, 'index']);
+    Route::get('/leaderboard/my-rank', [LeaderboardController::class, 'myRank']);
+
+    // Achievement
+    Route::get('/achievements', [AchievementController::class, 'index']);
+    Route::get('/achievements/my', [AchievementController::class, 'myAchievements']);
+
+    // Notifikasi
+    Route::get('/notifikasi', [NotifikasiController::class, 'index']);
+    Route::put('/notifikasi/{id}/read', [NotifikasiController::class, 'markAsRead']);
+    Route::put('/notifikasi/read-all', [NotifikasiController::class, 'markAllAsRead']);
+    Route::get('/notifikasi/unread-count', [NotifikasiController::class, 'unreadCount']);
+});
+===== ROUTES\WEB.PHP =====
+<?php
+
+use Illuminate\Support\Facades\Route;
+use App\Http\Controllers\Web\AuthController;
+use App\Http\Controllers\Web\DashboardController;
+use App\Http\Controllers\Web\UserController;
+use App\Http\Controllers\Web\MahasiswaController;
+use App\Http\Controllers\Web\LokasiController;
+use App\Http\Controllers\Web\BakSampahController;
+use App\Http\Controllers\Web\JenisSampahController;
+use App\Http\Controllers\Web\LevelController;
+use App\Http\Controllers\Web\AchievementController;
+use App\Http\Controllers\Web\SettingPoinController;
+use App\Http\Controllers\Web\TransaksiController;
+use App\Http\Controllers\Web\LaporanController;
+use App\Http\Controllers\Web\LogAktivitasController;
+use App\Http\Controllers\Web\VoucherController;
+/*
+|--------------------------------------------------------------------------
+| Public Routes
+|--------------------------------------------------------------------------
+*/
+
+Route::get('/', function () {
+    // Jika sudah login, langsung ke dashboard
+    if (Auth::check()) {
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.dashboard');
+    }
+    return view('welcome');
+})->name('welcome');
+
+Route::get('/login', [AuthController::class, 'showLogin'])->name('login');
+Route::post('/login', [AuthController::class, 'login'])->name('login.submit');
+Route::post('/logout', [AuthController::class, 'logout'])->name('logout');
+
+/*
+|--------------------------------------------------------------------------
+| Admin Routes (Admin Only)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(function () {
+
+    // Dashboard
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
+
+    // User Management (Admin Only)
+    Route::resource('users', UserController::class);
+
+    // Master Data - Lokasi
+    Route::resource('lokasi', LokasiController::class);
+
+    // Master Data - Bak Sampah
+    Route::resource('bak-sampah', BakSampahController::class);
+    Route::post('bak-sampah/{bakSampah}/regenerate-api-key', [BakSampahController::class, 'regenerateApiKey'])
+        ->name('bak-sampah.regenerate-api-key');
+
+    // Master Data - Jenis Sampah
+    Route::resource('jenis-sampah', JenisSampahController::class);
+
+    // Master Data - Level
+    Route::resource('level', LevelController::class);
+
+    // Master Data - Achievement
+    Route::resource('achievement', AchievementController::class);
+
+    // Master Data - Setting Poin
+    Route::resource('setting-poin', SettingPoinController::class)->only(['index', 'edit', 'update']);
+
+    // Mahasiswa
+    Route::resource('mahasiswa', MahasiswaController::class)->except(['create', 'store']);
+
+    // Transaksi
+    Route::get('transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+    Route::get('transaksi/{transaksi}', [TransaksiController::class, 'show'])->name('transaksi.show');
+
+    // Voucher
+    Route::get('voucher', [VoucherController::class, 'index'])->name('voucher.index');
+    // Laporan
+    Route::get('laporan/transaksi', [LaporanController::class, 'transaksi'])->name('laporan.transaksi');
+    Route::get('laporan/transaksi/pdf', [LaporanController::class, 'transaksiPdf'])->name('laporan.transaksi.pdf');
+    Route::get('laporan/mahasiswa', [LaporanController::class, 'mahasiswa'])->name('laporan.mahasiswa');
+    Route::get('laporan/mahasiswa/pdf', [LaporanController::class, 'mahasiswaPdf'])->name('laporan.mahasiswa.pdf');
+
+    // Log Aktivitas
+    Route::get('log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
+});
+
+/*
+|--------------------------------------------------------------------------
+| Pengelola Routes (Admin & Pengelola)
+|--------------------------------------------------------------------------
+*/
+
+Route::prefix('pengelola')->name('pengelola.')->middleware(['role:admin,pengelola'])->group(function () {
+
+    // Dashboard (sama dengan admin)
+    Route::get('/dashboard', [DashboardController::class, 'index'])->name('dashboard');
+    Route::get('/dashboard/chart-data', [DashboardController::class, 'chartData'])->name('dashboard.chart-data');
+
+    // View Only - Mahasiswa
+    Route::get('mahasiswa', [MahasiswaController::class, 'index'])->name('mahasiswa.index');
+    Route::get('mahasiswa/{mahasiswa}', [MahasiswaController::class, 'show'])->name('mahasiswa.show');
+
+    // View Only - Transaksi
+    Route::get('transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
+    Route::get('transaksi/{transaksi}', [TransaksiController::class, 'show'])->name('transaksi.show');
+    Route::get('voucher', [VoucherController::class, 'index'])->name('voucher.index');
+    // View Only - Laporan
+    Route::get('laporan/transaksi', [LaporanController::class, 'transaksi'])->name('laporan.transaksi');
+    Route::get('laporan/transaksi/pdf', [LaporanController::class, 'transaksiPdf'])->name('laporan.transaksi.pdf');
+    Route::get('laporan/mahasiswa', [LaporanController::class, 'mahasiswa'])->name('laporan.mahasiswa');
+    Route::get('laporan/mahasiswa/pdf', [LaporanController::class, 'mahasiswaPdf'])->name('laporan.mahasiswa.pdf');
+});
+===== API AUTHCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Mahasiswa;
+use App\Models\Level;
+use Illuminate\Support\Facades\Validator;
+use Google\Client as GoogleClient;
+use Illuminate\Support\Facades\Auth;
+
+class AuthController extends Controller
+{
+    /**
+     * Login with Google ID Token
+     * POST /api/auth/google
+     */
+    public function loginGoogle(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'id_token' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        try {
+            // Verify Google ID Token
+            $client = new GoogleClient(['client_id' => config('services.google.client_id')]);
+            $payload = $client->verifyIdToken($request->id_token);
+
+            if (!$payload) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Token Google tidak valid'
+                ], 401);
+            }
+
+            // Extract user data from token
+            $googleId = $payload['sub'];
+            $email = $payload['email'];
+            $name = $payload['name'];
+            $avatar = $payload['picture'] ?? null;
+
+            // Find or create mahasiswa
+            $mahasiswa = Mahasiswa::where('google_id', $googleId)->first();
+
+            if (!$mahasiswa) {
+                // Buat mahasiswa baru
+                $mahasiswa = Mahasiswa::create([
+                    'google_id' => $googleId,
+                    'email' => $email,
+                    'name' => $name,
+                    'avatar' => $avatar,
+                    'level_id' => 1, // Default: Eco Starter
+                    'total_poin' => 0,
+                ]);
+            } else {
+                // Hanya update email (sinkronisasi)
+                // name dan avatar TIDAK di-overwrite agar edit profil user tetap tersimpan
+                $updateData = ['email' => $email];
+
+                // Update avatar hanya jika user belum punya avatar sama sekali
+                if (empty($mahasiswa->avatar) && $avatar) {
+                    $updateData['avatar'] = $avatar;
+                }
+
+                $mahasiswa->update($updateData);
+            }
+            // Create Sanctum token
+            $token = $mahasiswa->createToken('mobile-app')->plainTextToken;
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Login berhasil',
+                'data' => [
+                    'mahasiswa' => [
+                        'id' => $mahasiswa->id,
+                        'name' => $mahasiswa->name,
+                        'email' => $mahasiswa->email,
+                        'avatar' => $mahasiswa->avatar,
+                        'nim' => $mahasiswa->nim,
+                        'prodi' => $mahasiswa->prodi,
+                        'total_poin' => $mahasiswa->total_poin,
+                        'level' => $mahasiswa->level->nama_level ?? 'Eco Starter',
+                        'rfid_registered' => !empty($mahasiswa->rfid_uid),
+                    ],
+                    'token' => $token,
+                ]
+            ], 200);
+
+        } catch (\Exception $e) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan saat verifikasi Google',
+                'error' => $e->getMessage()
+            ], 500);
+        }
+    }
+
+    /**
+     * Login Kasir (email + password)
+     * POST /api/auth/kasir/login
+     */
+    public function loginKasir(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 6 karakter.',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Cek credentials
+        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Email atau password salah.',
+            ], 401);
+        }
+
+        $user = Auth::user();
+
+        // Pastikan role adalah kasir
+        if ($user->role !== 'kasir') {
+            Auth::logout();
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun ini bukan akun kasir.',
+            ], 403);
+        }
+
+        // Cek aktif
+        if (!$user->is_active) {
+            Auth::logout();
+            return response()->json([
+                'success' => false,
+                'message' => 'Akun Anda tidak aktif. Hubungi administrator.',
+            ], 403);
+        }
+
+        // Hapus token lama, buat token baru
+        $user->tokens()->delete();
+        $token = $user->createToken('kasir-app')->plainTextToken;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Login berhasil.',
+            'data' => [
+                'token' => $token,
+                'kasir' => [
+                    'id' => $user->id,
+                    'name' => $user->name,
+                    'email' => $user->email,
+                    'role' => $user->role,
+                    'is_active' => (bool) $user->is_active,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Logout Kasir
+     * POST /api/auth/kasir/logout
+     */
+    public function logoutKasir(Request $request)
+    {
+        // Hapus token yang sedang dipakai
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logout berhasil.',
+        ]);
+    }
+
+    /**
+     * Logout - revoke token
+     * POST /api/auth/logout
+     */
+    public function logout(Request $request)
+    {
+        $request->user()->currentAccessToken()->delete();
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Logout berhasil'
+        ], 200);
+    }
+}
+===== API PROFILECONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\SettingPoin;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Validator;
+
+class ProfileController extends Controller
+{
+    /**
+     * Get Profile
+     * GET /api/profile
+     */
+    public function index(Request $request)
+    {
+        $mahasiswa = $request->user();
+        $koinPerVoucher = SettingPoin::where('nama_setting', 'koin_per_voucher')
+            ->value('value') ?? 20;
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $mahasiswa->id,
+                'name' => $mahasiswa->name,
+                'email' => $mahasiswa->email,
+                'avatar' => $mahasiswa->avatar,
+                'nim' => $mahasiswa->nim,
+                'prodi' => $mahasiswa->prodi,
+                'rfid_uid' => $mahasiswa->rfid_uid,
+                'total_poin' => $mahasiswa->total_poin,
+                'total_koin_botol' => $mahasiswa->total_koin_botol,
+                'koin_per_voucher' => (int) $koinPerVoucher,
+                'level' => $mahasiswa->level ? [
+                    'id' => $mahasiswa->level->id,
+                    'nama_level' => $mahasiswa->level->nama_level,
+                    'min_poin' => $mahasiswa->level->min_poin,
+                    'max_poin' => $mahasiswa->level->max_poin,
+                ] : null,
+            ]
+        ], 200);
+    }
+
+    /**
+     * Update Profile
+     * PUT /api/profile
+     */
+    public function update(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'name' => 'sometimes|string|max:100',
+            'nim' => 'sometimes|string|max:20',
+            'prodi' => 'sometimes|string|max:30',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $mahasiswa->update($request->only(['name', 'nim', 'prodi']));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Profil berhasil diperbarui',
+            'data' => [
+                'name' => $mahasiswa->name,
+                'nim' => $mahasiswa->nim,
+                'prodi' => $mahasiswa->prodi,
+            ]
+        ], 200);
+    }
+
+    /**
+     * Register/Update RFID
+     * POST /api/profile/rfid
+     */
+    public function updateRfid(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'rfid_uid' => 'required|string|max:20|unique:mahasiswa,rfid_uid,' . $mahasiswa->id,
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $mahasiswa->update(['rfid_uid' => $request->rfid_uid]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'RFID berhasil didaftarkan',
+            'data' => [
+                'rfid_uid' => $mahasiswa->rfid_uid
+            ]
+        ], 200);
+    }
+
+    /**
+     * Update FCM Token (for push notification)
+     * POST /api/profile/fcm-token
+     */
+    public function updateFcmToken(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        $validator = Validator::make($request->all(), [
+            'fcm_token' => 'required|string|max:255',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors()
+            ], 422);
+        }
+
+        $mahasiswa->update(['fcm_token' => $request->fcm_token]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'FCM Token berhasil diperbarui'
+        ], 200);
+    }
+}
+===== API HARDWARECONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Events\TransaksiCreated;
+use App\Models\Mahasiswa;
+use App\Models\JenisSampah;
+use App\Models\TransaksiSampah;
+use App\Models\TransaksiSession;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\DB;
+use Illuminate\Support\Facades\Validator;
+
+class HardwareController extends Controller
+{
+    /**
+     * POST /api/hardware/verify-rfid
+     * Verifikasi RFID & cari session aktif dari mobile
+     */
+    public function verifyRfid(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'rfid_uid' => 'required|string|max:20',
+            'bak_sampah_id' => 'required|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Cari mahasiswa by RFID
+        $mahasiswa = Mahasiswa::where('rfid_uid', $request->rfid_uid)
+            ->with('level')
+            ->first();
+
+        if (!$mahasiswa) {
+            return response()->json([
+                'success' => false,
+                'error' => 'RFID_NOT_FOUND',
+                'message' => 'RFID tidak terdaftar. Mahasiswa harus register KTM di aplikasi.',
+            ], 404);
+        }
+
+        // Cari session aktif milik mahasiswa ini
+        $session = TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'pending')
+            ->where('expired_at', '>', now())
+            ->latest('created_at')
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'error' => 'NO_SESSION',
+                'message' => 'Tidak ada session aktif. Silakan input jumlah di aplikasi terlebih dahulu.',
+            ], 404);
+        }
+
+        // Hitung expected weight range (hanya botol plastik)
+        $botol = JenisSampah::find(1); // Botol Plastik
+
+        if (!$botol) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Konfigurasi jenis sampah tidak ditemukan.',
+            ], 500);
+        }
+
+        $minExpected = $session->jumlah_botol * $botol->berat_min_gram;
+        $maxExpected = $session->jumlah_botol * $botol->berat_max_gram;
+        // Update status session -> tapped dan refresh waktu aktif
+        $session->update([
+            'status' => 'tapped',
+            'expired_at' => now()->addMinutes(10),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'mahasiswa' => [
+                    'id' => $mahasiswa->id,
+                    'name' => $mahasiswa->name,
+                    'nim' => $mahasiswa->nim,
+                ],
+                'session' => [
+                    'id' => $session->id,
+                    'token' => $session->session_token,
+                    'jumlah_botol' => $session->jumlah_botol,
+                    'total_input' => $session->jumlah_botol,
+                ],
+                'expected_weight' => [
+                    'min_gram' => (int) ($minExpected * 0.9),
+                    'max_gram' => (int) ($maxExpected * 1.1),
+                ],
+            ],
+            'message' => 'Halo ' . $mahasiswa->name . '! Silakan timbang ' . $session->jumlah_botol . ' botol plastik.',
+        ]);
+    }
+
+    /**
+     * POST /api/hardware/start-counting
+     * Dipanggil Arduino saat objek pertama terdeteksi
+     */
+    public function startCounting(Request $request)
+    {
+               $validator = Validator::make($request->all(), [
+            'session_token' => 'required|string',
+            'bak_sampah_id' => 'nullable|integer',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $session = TransaksiSession::where('session_token', $request->session_token)->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak ditemukan.',
+            ], 404);
+        }
+
+        if ($session->status === 'expired' || $session->isExpired()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session sudah dibatalkan atau expired.',
+            ], 422);
+        }
+
+        // Idempotent: kalau sudah mulai proses, anggap sukses
+        if (in_array($session->status, ['counting', 'weighing', 'completed'])) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Session sudah mulai diproses.',
+                'data' => [
+                    'status' => $session->status,
+                ],
+            ]);
+        }
+
+        if ($session->status !== 'tapped') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Status session tidak valid untuk mulai counting.',
+            ], 422);
+        }
+
+        $session->update([
+            'status' => 'counting',
+            'expired_at' => now()->addMinutes(10),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Counting dimulai.',
+            'data' => [
+                'status' => 'counting',
+            ],
+        ]);
+    }
+
+    /**
+     * POST /api/hardware/submit-weight
+     * Kirim data berat dari load cell ΓÇö DILAKUKAN SETELAH count
+     */
+    public function submitWeight(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'session_token' => 'required|string',
+            'berat_gram' => 'required|integer|min:1',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Cek status 'counting' — sudah dihitung, belum ditimbang
+        $session = TransaksiSession::where('session_token', $request->session_token)
+            ->where('status', 'counting')
+            ->where('expired_at', '>', now())
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'error' => 'SESSION_INVALID',
+                'message' => 'Session tidak valid atau sudah expired.',
+            ], 404);
+        }
+
+        // Ambil data count dari cache
+        $countData = cache()->get('session_count_' . $session->id);
+
+        if (!$countData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data hitungan tidak ditemukan. Ulangi proses.',
+            ], 422);
+        }
+
+        // Validasi berat berdasarkan jumlah input botol dari user
+        $botol = JenisSampah::find(1);
+
+        if (!$botol) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Konfigurasi jenis sampah tidak ditemukan.',
+            ], 500);
+        }
+
+        $jumlahInput = $session->jumlah_botol;
+        $jumlahFinal = $countData['jumlah_final'];
+
+        $minExpected = $jumlahInput * $botol->berat_min_gram;
+        $maxExpected = $jumlahInput * $botol->berat_max_gram;
+
+        // Toleransi ±15%
+        $minTolerance = $minExpected * 0.85;
+        $maxTolerance = $maxExpected * 1.15;
+
+        $isValid = $request->berat_gram >= $minTolerance
+            && $request->berat_gram <= $maxTolerance;
+
+        $statusValidasi = $isValid ? 'valid' : 'anomali';
+
+        // Update status → weighing
+        $session->update(['status' => 'weighing']);
+
+        // Simpan berat di cache
+        cache()->put(
+            'session_weight_' . $session->id,
+            [
+                'berat_gram' => $request->berat_gram,
+                'status_validasi' => $statusValidasi,
+            ],
+            now()->addMinutes(15)
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'berat_gram' => $request->berat_gram,
+                'status_validasi' => $statusValidasi,
+                'min_tolerance' => (int) $minTolerance,
+                'max_tolerance' => (int) $maxTolerance,
+                'pesan' => $isValid
+                    ? 'Berat sesuai. Siap menyelesaikan transaksi.'
+                    : 'Berat tidak sesuai, transaksi akan ditandai anomali.',
+                'ready_to_complete' => true,
+            ],
+        ]);
+    }
+
+    /**
+     * POST /api/hardware/submit-count
+     * Kirim jumlah dari ultrasonik — DILAKUKAN DULU sebelum timbang
+     */
+    public function submitCount(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'session_token' => 'required|string',
+            'jumlah_terhitung' => 'required|integer|min:0',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        // Cek status 'tapped' — user sudah tap RFID, belum counting
+        $session = TransaksiSession::where('session_token', $request->session_token)
+            ->whereIn('status', ['tapped', 'counting'])
+            ->where('expired_at', '>', now())
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'error' => 'SESSION_INVALID',
+                'message' => 'Session tidak valid atau sudah expired.',
+            ], 404);
+        }
+
+        // Anti-cheat: jika terhitung > input, pakai input sebagai batas atas
+        $totalInput = $session->jumlah_botol;
+        $jumlahTerhitung = $request->jumlah_terhitung;
+        $jumlahFinal = min($jumlahTerhitung, $totalInput);
+        // Update status ke counting
+        $session->update([
+            'status' => 'counting',
+            'expired_at' => now()->addMinutes(15),
+        ]);
+
+        cache()->put(
+            'session_count_' . $session->id,
+            [
+                'jumlah_terhitung' => $jumlahTerhitung,
+                'jumlah_final' => $jumlahFinal,
+            ],
+            now()->addMinutes(15)
+        );
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'jumlah_terhitung' => $jumlahTerhitung,
+                'jumlah_final' => $jumlahFinal,
+                'pesan' => 'Sampah terhitung. Silakan tunggu proses penimbangan.',
+                'ready_to_weigh' => true,
+            ],
+        ]);
+    }
+
+    /**
+     * POST /api/hardware/complete
+     * Finalisasi transaksi
+     */
+    public function complete(Request $request)
+    {
+        $validator = Validator::make($request->all(), [
+            'session_token' => 'required|string',
+        ]);
+
+        if ($validator->fails()) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Validasi gagal',
+                'errors' => $validator->errors(),
+            ], 422);
+        }
+
+        $session = TransaksiSession::where('session_token', $request->session_token)
+            ->where('status', 'weighing')
+            ->where('expired_at', '>', now())
+            ->with('mahasiswa')
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'error' => 'SESSION_INVALID',
+                'message' => 'Session tidak valid atau sudah expired.',
+            ], 404);
+        }
+
+        // Ambil data dari cache
+        $countData = cache()->get('session_count_' . $session->id);
+        $weightData = cache()->get('session_weight_' . $session->id);
+
+        if (!$countData || !$weightData) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Data transaksi tidak lengkap. Ulangi proses.',
+            ], 422);
+        }
+
+        $mahasiswa = $session->mahasiswa;
+        $jumlahTerhitung = $countData['jumlah_terhitung'];
+        $jumlahFinal = $countData['jumlah_final'];
+        $beratGram = $weightData['berat_gram'];
+        $statusValidasi = $weightData['status_validasi'];
+
+        // Reject jika jumlah final 0
+        if ($jumlahFinal < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jumlah sampah tidak valid. Transaksi dibatalkan.',
+            ], 422);
+        }
+
+        // Hitung poin: (berat_gram / 1000) x poin_per_kg botol plastik
+        $botol = JenisSampah::find(1);
+
+        if (!$botol) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Konfigurasi jenis sampah tidak ditemukan.',
+            ], 500);
+        }
+
+        $rataRataPoin = $botol->poin_per_kg;
+
+        // Anomali = poin 0 DAN koin 0
+        if ($statusValidasi === 'anomali') {
+            $poinDidapat = 0;
+            $koinDidapat = 0;
+        } else {
+            $poinDidapat = (int) round(($beratGram / 1000) * $rataRataPoin);
+            $koinDidapat = $jumlahFinal;
+        }
+
+        DB::beginTransaction();
+        try {
+            // Simpan transaksi
+            $transaksi = TransaksiSampah::create([
+                'mahasiswa_id' => $mahasiswa->id,
+                                              'bak_sampah_id' => $request->bak_sampah_id ?? 1,
+                'session_id' => $session->id,
+                'jenis_sampah_id' => 1, // Botol Plastik
+                'berat' => $beratGram,
+                'jumlah_input_botol' => $session->jumlah_botol,
+                'jumlah_terhitung' => $jumlahTerhitung,
+                'jumlah_final' => $jumlahFinal,
+                'status_validasi' => $statusValidasi,
+                'poin_didapat' => $poinDidapat,
+                'koin_didapat' => $koinDidapat,
+                'tanggal_transaksi' => now(),
+            ]);
+
+            // Update mahasiswa
+            $mahasiswa->increment('total_poin', $poinDidapat);
+            $mahasiswa->increment('total_koin_botol', $koinDidapat);
+
+
+            // Update session → completed
+            $session->update([
+                'status' => 'completed',
+                'completed_at' => now(),
+            ]);
+
+            DB::commit(); // ← commit dulu sebelum apapun
+
+            // Bersihkan cache setelah commit
+            cache()->forget('session_weight_' . $session->id);
+            cache()->forget('session_count_' . $session->id);
+
+            // Refresh data mahasiswa terbaru
+            $mahasiswa->refresh();
+
+            $levelNama = $mahasiswa->level->nama_level ?? 'Eco Starter';
+            $levelUp = false;
+
+            // Trigger gamifikasi setelah commit
+            event(new TransaksiCreated($transaksi));
+
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'transaksi_id' => $transaksi->id,
+                    'mahasiswa_name' => $mahasiswa->name,
+                    'berat_gram' => $beratGram,
+                    'jumlah_final' => $jumlahFinal,
+                    'status_validasi' => $statusValidasi,
+                    'poin_didapat' => $poinDidapat,
+                    'koin_didapat' => $koinDidapat,
+                    'total_poin' => $mahasiswa->total_poin,
+                    'total_koin' => $mahasiswa->total_koin_botol,
+                    'level' => $levelNama,
+                    'level_up' => $levelUp,
+                ],
+                'message' => "Transaksi berhasil! +{$koinDidapat} koin, +{$poinDidapat} poin.",
+            ]);
+        } catch (\Exception $e) {
+            DB::rollBack();
+            return response()->json([
+                'success' => false,
+                'message' => 'Terjadi kesalahan.',
+                'error' => $e->getMessage(),
+            ], 500);
+        }
+    }
+
+    /**
+     * GET /api/hardware/jenis-sampah
+     */
+    public function getJenisSampah()
+    {
+        $jenisSampah = JenisSampah::where('is_active', 1)
+            ->select('id', 'nama', 'poin_per_kg', 'berat_min_gram', 'berat_max_gram', 'satuan')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $jenisSampah,
+        ]);
+    }
+
+    /**
+     * GET /api/hardware/session-status/{token}
+     * Dipolling Arduino sebelum objek pertama masuk
+     */
+    public function sessionStatus(Request $request, $token)
+    {
+        $session = TransaksiSession::where('session_token', $token)->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak ditemukan.',
+                'should_stop' => true,
+                'status' => 'not_found',
+            ], 404);
+        }
+
+        if ($session->status === 'expired' || $session->isExpired()) {
+            return response()->json([
+                'success' => true,
+                'message' => 'Session dibatalkan atau expired.',
+                'should_stop' => true,
+                'status' => 'expired',
+            ]);
+        }
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Session aktif.',
+            'should_stop' => false,
+            'status' => $session->status,
+        ]);
+    }
+
+    /**
+     * POST /api/hardware/heartbeat
+     */
+    public function heartbeat(Request $request)
+    {
+        $bakSampah = $request->bak_sampah;
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Hardware terhubung',
+            'data' => [
+                'bak_sampah_id' => $bakSampah['id'] ?? null,
+                'nama' => $bakSampah['nama'] ?? null,
+                'status' => $bakSampah['status'] ?? null,
+                'server_time' => now()->toDateTimeString(),
+            ],
+        ]);
+    }
+}
+
+
+===== API TRANSAKSICONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\TransaksiSampah;
+use App\Models\TransaksiSession;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+class TransaksiController extends Controller
+{
+    /**
+     * GET /api/transaksi
+     * List riwayat transaksi
+     */
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+        $period = $request->query('period', 'all');
+
+        $query = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->with(['bakSampah.lokasi', 'jenisSampah']);
+
+        if ($period === '7days') {
+            $query->where('tanggal_transaksi', '>=', now()->subDays(7));
+        } elseif ($period === '30days') {
+            $query->where('tanggal_transaksi', '>=', now()->subDays(30));
+        }
+
+        $transaksi = $query->orderByDesc('tanggal_transaksi')
+            ->paginate(10)
+            ->through(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'berat_gram' => $item->berat,
+                    'jumlah_final' => $item->jumlah_final,
+                    'status_validasi' => $item->status_validasi,
+                    'poin_didapat' => $item->poin_didapat,
+                    'koin_didapat' => $item->koin_didapat,
+                    'bak_sampah' => $item->bakSampah->nama ?? '-',
+                    'lokasi' => $item->bakSampah->lokasi->nama_lokasi ?? '-',
+                    'tanggal' => $item->tanggal_transaksi,
+                    'jenis_sampah' => $item->jenisSampah->nama ?? '-',
+                    'poin_per_kg' => $item->jenisSampah->poin_per_kg ?? 0,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $transaksi,
+        ]);
+    }
+
+    /**
+     * GET /api/transaksi/{id}
+     * Detail transaksi
+     */
+    public function show(Request $request, $id)
+    {
+        $user = $request->user();
+
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+
+        $transaksi = TransaksiSampah::where('id', $id)
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->with(['bakSampah.lokasi', 'session', 'jenisSampah'])
+            ->first();
+
+        if (!$transaksi) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Transaksi tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $transaksi->id,
+                'berat_gram' => $transaksi->berat,
+                'jumlah_botol' => $transaksi->jumlah_input_botol,
+                'jumlah_terhitung' => $transaksi->jumlah_terhitung,
+                'jumlah_final' => $transaksi->jumlah_final,
+                'status_validasi' => $transaksi->status_validasi,
+                'poin_didapat' => $transaksi->poin_didapat,
+                'koin_didapat' => $transaksi->koin_didapat,
+                'jenis_sampah' => $transaksi->jenisSampah ? [
+                    'id' => $transaksi->jenisSampah->id,
+                    'nama' => $transaksi->jenisSampah->nama,
+                    'poin_per_kg' => $transaksi->jenisSampah->poin_per_kg,
+                    'satuan' => $transaksi->jenisSampah->satuan,
+                ] : null,
+                'bak_sampah' => [
+                    'nama' => $transaksi->bakSampah->nama ?? '-',
+                    'lokasi' => $transaksi->bakSampah->lokasi->nama_lokasi ?? '-',
+                ],
+                'tanggal_transaksi' => $transaksi->tanggal_transaksi,
+            ],
+        ]);
+    }
+    /**
+     * POST /api/transaksi/session
+     * Buat session baru (input jumlah botol & kaleng dari mobile)
+     */
+    public function createSession(Request $request)
+    {
+        $request->validate([
+            'jumlah_botol' => 'required|integer|min:1|max:50',
+        ]);
+
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+
+        // Validasi minimal 1 botol
+        if ($request->jumlah_botol < 1) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Jumlah botol tidak boleh 0.',
+            ], 422);
+        }
+
+        // Expire session lama yang sudah lewat expired_at
+        TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['pending', 'tapped', 'weighing', 'counting'])
+            ->where('expired_at', '<', now())
+            ->update(['status' => 'expired']);
+
+        // Force expire session tapped/counting/weighing yang stuck
+        // (hardware gagal menyelesaikan proses, lebih dari 15 menit)
+        TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['tapped', 'counting', 'weighing'])
+            ->where('created_at', '<', now()->subMinutes(15))
+            ->update(['status' => 'expired']);
+
+        // Cek apakah ada session aktif
+        $activeSession = TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['pending', 'tapped', 'weighing', 'counting'])
+            ->where('expired_at', '>', now())
+            ->first();
+
+        if ($activeSession) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kamu masih memiliki session aktif. Selesaikan atau tunggu hingga expired.',
+                'data' => [
+                    'session_token' => $activeSession->session_token,
+                    'status' => $activeSession->status,
+                    'expired_at' => $activeSession->expired_at,
+                ],
+            ], 422);
+        }
+
+        // Buat session baru
+            $session = TransaksiSession::create([
+            'mahasiswa_id' => $mahasiswa->id,
+            'session_token' => Str::random(64),
+            'jumlah_botol' => $request->jumlah_botol,
+            'status' => 'pending',
+            'created_at' => now(),
+            'expired_at' => now()->addMinutes(10),
+        ]);
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'session_token' => $session->session_token,
+                'jumlah_botol' => $session->jumlah_botol,
+                'total_input' => $session->jumlah_botol,
+                'status' => $session->status,
+                'expired_at' => $session->expired_at,
+            ],
+            'message' => 'Session berhasil dibuat. Silakan tap KTM ke mesin.',
+        ]);
+    }
+
+    /**
+     * DELETE /api/transaksi/session/{token}
+     * Cancel session dari mobile (user keluar dari menu)
+     */
+    public function cancelSession(Request $request, $token)
+    {
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+        $session = TransaksiSession::where('session_token', $token)
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->whereIn('status', ['pending', 'tapped', 'counting', 'weighing'])
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak ditemukan atau sudah tidak aktif.',
+            ], 404);
+        }
+
+ 
+
+        $session->update(['status' => 'expired']);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Session berhasil dibatalkan.',
+        ]);
+    }
+
+    /**
+     * GET /api/transaksi/session/{token}
+     * Cek status session (polling dari mobile)
+     */
+    public function checkSession(Request $request, $token)
+    {
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+
+        $session = TransaksiSession::where('session_token', $token)
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->first();
+
+        if (!$session) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Session tidak ditemukan.',
+            ], 404);
+        }
+
+        // Auto expire
+        if ($session->isExpired() && !in_array($session->status, ['completed', 'expired'])) {
+            $session->update(['status' => 'expired']);
+        }
+        $data = [
+            'session_token' => $session->session_token,
+            'jumlah_botol' => $session->jumlah_botol,
+            'total_input' => $session->jumlah_botol,
+            'status' => $session->status,
+            'expired_at' => $session->expired_at,
+            'completed_at' => $session->completed_at,
+        ];
+
+        // Jika sudah completed, sertakan hasil transaksi
+        if ($session->status === 'completed') {
+            $transaksi = TransaksiSampah::where('session_id', $session->id)->first();
+            if ($transaksi) {
+                $data['transaksi'] = [
+                    'id' => $transaksi->id,
+                    'berat_gram' => $transaksi->berat,
+                    'jumlah_final' => $transaksi->jumlah_final,
+                    'status_validasi' => $transaksi->status_validasi,
+                    'poin_didapat' => $transaksi->poin_didapat,
+                    'koin_didapat' => $transaksi->koin_didapat,
+                ];
+            }
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => $data,
+        ]);
+    }
+}
+===== API VOUCHERCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\VoucherMahasiswa;
+use App\Models\SettingPoin;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+class VoucherController extends Controller
+{
+    /**
+     * List voucher milik user
+     */
+    public function index(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        // Auto-expire voucher yang sudah lewat
+        VoucherMahasiswa::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'aktif')
+            ->where('expired_at', '<', now())
+            ->update(['status' => 'expired']);
+
+        $vouchers = VoucherMahasiswa::where('mahasiswa_id', $mahasiswa->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'total_koin' => $mahasiswa->total_koin_botol,
+                'koin_per_voucher' => (int) SettingPoin::where('nama_setting', 'koin_per_voucher')->value('value'),
+                'vouchers' => $vouchers,
+            ],
+        ]);
+    }
+
+    /**
+     * Tukar koin jadi voucher
+     */
+    public function redeem(Request $request)
+    {
+        $mahasiswa = $request->user();
+        $koinPerVoucher = (int) SettingPoin::where('nama_setting', 'koin_per_voucher')->value('value');
+        $expiredDays = (int) SettingPoin::where('nama_setting', 'voucher_expired_days')->value('value');
+
+        // Validasi koin cukup
+        if ($mahasiswa->total_koin_botol < $koinPerVoucher) {
+            return response()->json([
+                'success' => false,
+                'message' => "Koin tidak cukup. Butuh {$koinPerVoucher} koin, kamu punya {$mahasiswa->total_koin_botol} koin.",
+            ], 422);
+        }
+
+        // Generate kode voucher unik
+        do {
+            $kode = 'VCH-' . strtoupper(Str::random(6));
+        } while (VoucherMahasiswa::where('kode_voucher', $kode)->exists());
+
+        // Buat voucher
+        $voucher = VoucherMahasiswa::create([
+            'mahasiswa_id'  => $mahasiswa->id,
+            'kode_voucher'  => $kode,
+            'status'        => 'aktif',
+            'koin_digunakan' => $koinPerVoucher,
+            'created_at'    => now(),
+            'expired_at'    => now()->addDays($expiredDays),
+        ]);
+
+        // Kurangi koin
+        $mahasiswa->decrement('total_koin_botol', $koinPerVoucher);
+
+        return response()->json([
+            'success' => true,
+            'data' => $voucher,
+            'message' => "Voucher berhasil dibuat! Kode: {$kode}",
+        ]);
+    }
+
+    /**
+     * Endpoint lama - sekarang voucher hanya bisa divalidasi oleh kasir
+     */
+    public function useVoucher(Request $request, $id)
+    {
+        return response()->json([
+            'success' => false,
+            'message' => 'Voucher hanya bisa divalidasi oleh kasir. Tunjukkan kode voucher ke kasir untuk digunakan.',
+        ], 403);
+    }
+}
+===== API KASIRCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use App\Models\VoucherMahasiswa;
+use Illuminate\Http\Request;
+
+class KasirController extends Controller
+{
+
+    /**
+     * Ambil data kasir yang sedang login
+     * GET /api/kasir/me
+     */
+    public function me(Request $request)
+    {
+        $user = $request->user();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'id' => $user->id,
+                'name' => $user->name,
+                'email' => $user->email,
+                'role' => $user->role,
+                'is_active' => (bool) $user->is_active,
+            ],
+        ]);
+    }
+/**
+     * Validasi & gunakan voucher berdasarkan kode
+     * POST /api/kasir/voucher/validate
+     */
+    public function validateVoucher(Request $request)
+    {
+        $request->validate([
+            'kode_voucher' => 'required|string',
+        ], [
+            'kode_voucher.required' => 'Kode voucher wajib diisi.',
+        ]);
+
+        $kode = strtoupper(trim($request->kode_voucher));
+
+        // Cari voucher berdasarkan kode
+        $voucher = VoucherMahasiswa::with('mahasiswa')
+            ->where('kode_voucher', $kode)
+            ->first();
+
+        // Voucher tidak ditemukan
+        if (!$voucher) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode voucher tidak ditemukan.',
+            ], 404);
+        }
+
+        // Cek expired
+        if ($voucher->isExpired()) {
+            $voucher->update(['status' => 'expired']);
+            return response()->json([
+                'success' => false,
+                'message' => 'Voucher sudah expired.',
+                'data' => [
+                    'kode_voucher' => $voucher->kode_voucher,
+                    'status' => 'expired',
+                    'expired_at' => $voucher->expired_at,
+                ],
+            ], 422);
+        }
+
+        // Cek status
+        if ($voucher->status === 'terpakai') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Voucher sudah pernah digunakan.',
+                'data' => [
+                    'kode_voucher' => $voucher->kode_voucher,
+                    'status' => 'terpakai',
+                    'used_at' => $voucher->used_at,
+                    'mahasiswa' => [
+                        'name' => $voucher->mahasiswa->name,
+                        'nim' => $voucher->mahasiswa->nim,
+                    ],
+                ],
+            ], 422);
+        }
+
+        if ($voucher->status !== 'aktif') {
+            return response()->json([
+                'success' => false,
+                'message' => "Voucher tidak valid. Status: {$voucher->status}",
+            ], 422);
+        }
+
+        // Semua valid — tandai sebagai terpakai
+        $voucher->update([
+            'status' => 'terpakai',
+            'used_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Voucher berhasil divalidasi!',
+            'data' => [
+                'kode_voucher' => $voucher->kode_voucher,
+                'status' => 'terpakai',
+                'koin_digunakan' => $voucher->koin_digunakan,
+                'used_at' => $voucher->used_at,
+                'mahasiswa' => [
+                    'name' => $voucher->mahasiswa->name,
+                    'nim' => $voucher->mahasiswa->nim,
+                    'avatar' => $voucher->mahasiswa->avatar,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Cek info voucher tanpa menggunakannya (preview)
+     * GET /api/kasir/voucher/check/{kode}
+     */
+    public function checkVoucher(string $kode)
+    {
+        $kode = strtoupper(trim($kode));
+
+        $voucher = VoucherMahasiswa::with('mahasiswa')
+            ->where('kode_voucher', $kode)
+            ->first();
+
+        if (!$voucher) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode voucher tidak ditemukan.',
+            ], 404);
+        }
+
+        // Auto update jika expired
+        if ($voucher->isExpired() && $voucher->status === 'aktif') {
+            $voucher->update(['status' => 'expired']);
+            $voucher->refresh();
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'kode_voucher' => $voucher->kode_voucher,
+                'status' => $voucher->status,
+                'koin_digunakan' => $voucher->koin_digunakan,
+                'created_at' => $voucher->created_at,
+                'expired_at' => $voucher->expired_at,
+                'used_at' => $voucher->used_at,
+                'mahasiswa' => [
+                    'name' => $voucher->mahasiswa->name,
+                    'nim' => $voucher->mahasiswa->nim,
+                    'avatar' => $voucher->mahasiswa->avatar,
+                ],
+            ],
+        ]);
+    }
+}
+===== API ACHIEVEMENTCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Achievement;
+use App\Models\Mahasiswa;
+
+class AchievementController extends Controller
+{
+    /**
+     * Get All Achievements + Status Unlock
+     * GET /api/achievements
+     */
+    public function index(Request $request)
+    {
+        $user = $request->user();
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Data mahasiswa tidak ditemukan.'], 404);
+        }
+
+        $unlockedIds = $mahasiswa->achievements()->pluck('achievement.id')->toArray();
+
+        $achievements = Achievement::all()->map(function ($achievement) use ($unlockedIds) {
+            return [
+                'id' => $achievement->id,
+                'nama' => $achievement->nama,
+                'deskripsi' => $achievement->deskripsi,
+                'icon' => $achievement->icon,
+                'syarat_type' => $achievement->syarat_type,
+                'syarat_value' => $achievement->syarat_value,
+                'poin_bonus' => $achievement->poin_bonus,
+                'is_unlocked' => in_array($achievement->id, $unlockedIds),
+            ];
+        });
+
+        return response()->json([
+            'success' => true,
+            'data' => $achievements
+        ], 200);
+    }
+
+    /**
+     * Get My Unlocked Achievements
+     * GET /api/achievements/my
+     */
+    public function myAchievements(Request $request)
+    {
+        $user = $request->user();
+
+        if ($user instanceof \App\Models\Mahasiswa) {
+            $mahasiswa = $user;
+        } else {
+            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+        }
+
+        if (!$mahasiswa) {
+            return response()->json(['success' => false, 'message' => 'Data mahasiswa tidak ditemukan.'], 404);
+        }
+
+        $achievements = $mahasiswa->achievements()
+            ->orderBy('mahasiswa_achievement.unlocked_at', 'desc')
+            ->get()
+            ->map(function ($achievement) {
+                return [
+                    'id' => $achievement->id,
+                    'nama' => $achievement->nama,
+                    'deskripsi' => $achievement->deskripsi,
+                    'icon' => $achievement->icon,
+                    'poin_bonus' => $achievement->poin_bonus,
+                    'unlocked_at' => $achievement->pivot->unlocked_at,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $achievements
+        ], 200);
+    }
+}
+===== API DASHBOARDCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\TransaksiSampah;
+use App\Models\VoucherMahasiswa;
+use App\Models\SettingPoin;
+
+class DashboardController extends Controller
+{
+    /**
+     * Get Dashboard Summary
+     * GET /api/dashboard
+     */
+    public function index(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        // Summary statistik
+        $totalBeratGram = (int) TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->sum('berat');
+
+        $totalBotol = (int) TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->sum('jumlah_final');
+
+        $totalTransaksi = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->count();
+
+        $ranking = $mahasiswa->leaderboard->ranking_alltime ?? null;
+
+        // Voucher stats
+        $koinPerVoucher = (int) SettingPoin::where('nama_setting', 'koin_per_voucher')->value('value');
+
+        $voucherAktif = VoucherMahasiswa::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'aktif')
+            ->where('expired_at', '>', now())
+            ->count();
+
+        $recentTransactions = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+            ->with(['bakSampah.lokasi', 'jenisSampah'])
+            ->orderByDesc('tanggal_transaksi')
+            ->limit(3)
+            ->get()
+            ->map(function ($transaksi) {
+                return [
+                    'id' => $transaksi->id,
+                    'jenis_sampah' => $transaksi->jenisSampah?->nama ?? '-',
+                    'berat' => (int) $transaksi->berat,
+                    'jumlah_final' => $transaksi->jumlah_final,
+                    'poin' => $transaksi->poin_didapat,
+                    'koin' => $transaksi->koin_didapat,
+                    'status_validasi' => $transaksi->status_validasi,
+                    'lokasi' => $transaksi->bakSampah?->lokasi?->nama_lokasi ?? '-',
+                    'tanggal' => $transaksi->tanggal_transaksi,
+                ];
+            });
+
+        // Level progress
+        $currentLevel = $mahasiswa->level;
+        $nextLevel = \App\Models\Level::where('urutan', '>', $currentLevel->urutan)
+            ->orderBy('urutan', 'asc')
+            ->first();
+
+        $levelProgress = 0;
+        if ($nextLevel) {
+            if ($mahasiswa->total_poin < $currentLevel->min_poin) {
+                $levelProgress = 0;
+            } else {
+                $range = $nextLevel->min_poin - $currentLevel->min_poin;
+                $progress = $mahasiswa->total_poin - $currentLevel->min_poin;
+                $levelProgress = min(100, max(0, ($progress / $range) * 100));
+            }
+        } else {
+            $levelProgress = 100;
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'mahasiswa' => [
+                    'name' => $mahasiswa->name,
+                    'avatar' => $mahasiswa->avatar,
+                    'nim' => $mahasiswa->nim,
+                    'prodi' => $mahasiswa->prodi,
+                ],
+                'poin' => [
+                    'total' => $mahasiswa->total_poin,
+                    'level' => $currentLevel->nama_level,
+                    'level_urutan' => $currentLevel->urutan,
+                    'next_level' => $nextLevel ? $nextLevel->nama_level : null,
+                    'progress_percentage' => round($levelProgress, 2),
+                ],
+                'koin' => [
+                    'total' => $mahasiswa->total_koin_botol,
+                    'koin_per_voucher' => $koinPerVoucher,
+                    'voucher_aktif' => $voucherAktif,
+                ],
+                'stats' => [
+                    'total_berat_gram' => $totalBeratGram,
+                    'total_botol' => $totalBotol,
+                    'total_transaksi' => $totalTransaksi,
+                    'total_koin' => $mahasiswa->total_koin_botol,
+                    'ranking' => $ranking,
+                ],
+                'recent_transactions' => $recentTransactions,
+            ],
+        ]);
+    }
+}
+===== API LEADERBOARDCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Leaderboard;
+
+class LeaderboardController extends Controller
+{
+    /**
+     * Get Leaderboard
+     * GET /api/leaderboard?period=alltime
+     */
+    public function index(Request $request)
+    {
+        $period = $request->query('period', 'alltime'); // harian, mingguan, bulanan, alltime
+
+        $rankingField = match ($period) {
+            'harian' => 'ranking_harian',
+            'mingguan' => 'ranking_mingguan',
+            'bulanan' => 'ranking_bulanan',
+            default => 'ranking_alltime',
+        };
+
+        $leaderboard = Leaderboard::with(['mahasiswa.level'])
+            ->whereNotNull($rankingField)
+            ->orderBy($rankingField, 'asc')
+            ->limit(100)
+            ->get()
+            ->map(function ($item) use ($rankingField) {
+                return [
+                    'mahasiswa_id' => $item->mahasiswa_id,
+                    'ranking' => $item->{$rankingField},
+                    'nama' => $item->mahasiswa->name,
+                    'avatar' => $item->mahasiswa->avatar,
+                    'nama_level' => $item->mahasiswa->level->nama_level ?? 'Eco Starter',
+                    'total_poin' => $item->mahasiswa->total_poin,
+                    'total_berat_kg' => (float) $item->total_berat_gram / 1000,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $leaderboard
+        ], 200);
+    }
+
+    /**
+     * Get My Rank
+     * GET /api/leaderboard/my-rank?period=alltime
+     */
+    public function myRank(Request $request)
+    {
+        $mahasiswa = $request->user();
+        $period = $request->query('period', 'alltime');
+
+        $rankingField = match ($period) {
+            'harian' => 'ranking_harian',
+            'mingguan' => 'ranking_mingguan',
+            'bulanan' => 'ranking_bulanan',
+            default => 'ranking_alltime',
+        };
+
+        $myLeaderboard = Leaderboard::where('mahasiswa_id', $mahasiswa->id)->first();
+
+        if (!$myLeaderboard) {
+            return response()->json([
+                'success' => true,
+                'data' => [
+                    'ranking' => null,
+                    'total_poin' => $mahasiswa->total_poin,
+                    'total_berat_kg' => 0,
+                ]
+            ], 200);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'ranking' => $myLeaderboard->{$rankingField},
+                'total_poin' => $mahasiswa->total_poin,
+                'total_berat_kg' => (float) $myLeaderboard->total_berat_gram / 1000,
+            ]
+        ], 200);
+    }
+}
+===== API NOTIFIKASICONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Api;
+
+use App\Http\Controllers\Controller;
+use Illuminate\Http\Request;
+use App\Models\Notifikasi;
+
+class NotifikasiController extends Controller
+{
+    /**
+     * Get List Notifikasi (paginated)
+     * GET /api/notifikasi
+     */
+    public function index(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        $notifikasi = Notifikasi::where('mahasiswa_id', $mahasiswa->id)
+            ->orderBy('created_at', 'desc')
+            ->paginate(20)
+            ->through(function ($item) {
+                return [
+                    'id' => $item->id,
+                    'judul' => $item->judul,
+                    'pesan' => $item->pesan,
+                    'tipe' => $item->tipe,
+                    'is_read' => (bool) $item->is_read,
+                    'created_at' => $item->created_at,
+                ];
+            });
+
+        return response()->json([
+            'success' => true,
+            'data' => $notifikasi
+        ], 200);
+    }
+
+    /**
+     * Mark as Read
+     * PUT /api/notifikasi/{id}/read
+     */
+    public function markAsRead(Request $request, $id)
+    {
+        $mahasiswa = $request->user();
+
+        $notifikasi = Notifikasi::where('id', $id)
+            ->where('mahasiswa_id', $mahasiswa->id)
+            ->first();
+
+        if (!$notifikasi) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Notifikasi tidak ditemukan'
+            ], 404);
+        }
+
+        $notifikasi->update(['is_read' => 1]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Notifikasi ditandai sudah dibaca'
+        ], 200);
+    }
+
+    /**
+     * Mark All as Read
+     * PUT /api/notifikasi/read-all
+     */
+    public function markAllAsRead(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        Notifikasi::where('mahasiswa_id', $mahasiswa->id)
+            ->where('is_read', 0)
+            ->update(['is_read' => 1]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Semua notifikasi ditandai sudah dibaca'
+        ], 200);
+    }
+
+    /**
+     * Get Unread Count
+     * GET /api/notifikasi/unread-count
+     */
+    public function unreadCount(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        $count = Notifikasi::where('mahasiswa_id', $mahasiswa->id)
+            ->where('is_read', 0)
+            ->count();
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'unread_count' => $count
+            ]
+        ], 200);
+    }
+}
+===== WEB AUTHCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
+
+class AuthController extends Controller
+{
+    /**
+     * Tampilkan halaman login
+     */
+    public function showLogin()
+    {
+        if (Auth::check()) {
+            $user = Auth::user();
+            $redirectRoute = match($user->role) {
+                'admin' => 'admin.dashboard',
+                'pengelola' => 'pengelola.dashboard',
+                default => 'admin.dashboard',
+            };
+            return redirect()->route($redirectRoute);
+        }
+
+        return view('welcome'); 
+    }
+
+    /**
+     * Proses login
+     */
+    public function login(Request $request)
+    {
+        $credentials = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required|min:6',
+        ], [
+            'email.required' => 'Email wajib diisi.',
+            'email.email' => 'Format email tidak valid.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 6 karakter.',
+        ]);
+
+        $remember = $request->boolean('remember');
+
+        if (Auth::attempt($credentials, $remember)) {
+            $user = Auth::user();
+
+            // Cek apakah user aktif
+            if (!$user->is_active) {
+                Auth::logout();
+                return back()
+                    ->withInput($request->only('email'))
+                    ->withErrors(['email' => 'Akun Anda tidak aktif. Hubungi administrator.']);
+            }
+
+            $request->session()->regenerate();
+
+            // Log aktivitas
+            LogAktivitas::create([
+                'user_type' => $user->role,
+                'user_id' => $user->id,
+                'aktivitas' => 'Login ke sistem',
+                'ip_address' => $request->ip(),
+            ]);
+
+            $redirectRoute = match($user->role) {
+                'admin' => 'admin.dashboard',
+                'pengelola' => 'pengelola.dashboard',
+                default => 'admin.dashboard',
+            };
+
+            return redirect()->intended(route($redirectRoute))
+                ->with('success', "Selamat datang, {$user->name}!");
+        }
+
+        return back()
+            ->withInput($request->only('email'))
+            ->withErrors(['email' => 'Email atau password salah.']);
+    }
+
+    /**
+     * Proses logout
+     */
+    public function logout(Request $request)
+    {
+        $user = Auth::user();
+
+        if ($user) {
+            // Log aktivitas
+            LogAktivitas::create([
+                'user_type' => $user->role,
+                'user_id' => $user->id,
+                'aktivitas' => 'Logout dari sistem',
+                'ip_address' => $request->ip(),
+            ]);
+        }
+
+        Auth::logout();
+        $request->session()->invalidate();
+        $request->session()->regenerateToken();
+
+        return redirect()->route('login')->with('success', 'Anda telah berhasil logout.');
+    }
+}
+===== WEB USERCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\User;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
+
+class UserController extends Controller
+{
+    /**
+     * Display a listing of the resource.
+     */
+    public function index(Request $request)
+    {
+        $query = User::query();
+
+        // Filter by role
+        if ($request->filled('role')) {
+            $query->where('role', $request->role);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%");
+            });
+        }
+
+        $users = $query->orderBy('created_at', 'desc')->paginate(15);
+
+        return view('admin.users.index', compact('users'));
+    }
+
+    /**
+     * Show the form for creating a new resource.
+     */
+    public function create()
+    {
+        return view('admin.users.create');
+    }
+
+    /**
+     * Store a newly created resource in storage.
+     */
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => 'required|email|max:75|unique:users,email',
+            'password' => 'required|string|min:6|confirmed',
+            'phone' => 'nullable|string|max:15',
+            'role' => 'required|in:admin,pengelola',
+                      'is_active' => 'boolean',
+        ], [
+            'name.required' => 'Nama wajib diisi.',
+            'email.required' => 'Email wajib diisi.',
+            'email.unique' => 'Email sudah terdaftar.',
+            'password.required' => 'Password wajib diisi.',
+            'password.min' => 'Password minimal 6 karakter.',
+            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+            'role.required' => 'Role wajib dipilih.',
+        ]);
+
+          $validated['password'] = Hash::make($validated['password']);
+        $validated['is_active'] = true;
+
+        $user = User::create($validated);
+
+        // Log aktivitas
+        $this->logActivity('Menambahkan user baru: ' . $user->name, 'users');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.users.index')
+            ->with('success', 'User berhasil ditambahkan.');
+    }
+    /**
+     * Display the specified resource.
+     */
+    public function show(User $user)
+    {
+        return view('admin.users.show', compact('user'));
+    }
+
+    /**
+     * Show the form for editing the specified resource.
+     */
+    public function edit(User $user)
+    {
+        return view('admin.users.edit', compact('user'));
+    }
+
+    /**
+     * Update the specified resource in storage.
+     */
+    public function update(Request $request, User $user)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'email' => ['required', 'email', 'max:75', Rule::unique('users')->ignore($user->id)],
+            'password' => 'nullable|string|min:6|confirmed',
+            'phone' => 'nullable|string|max:15',
+            'role' => 'required|in:admin,pengelola',
+            'is_active' => 'required|boolean',
+        ]);
+
+        if (!empty($validated['password'])) {
+            $validated['password'] = Hash::make($validated['password']);
+        } else {
+            unset($validated['password']);
+        }
+
+        $user->update($validated);
+
+        // Log aktivitas
+        $this->logActivity('Mengupdate user: ' . $user->name, 'users');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.users.index')
+            ->with('success', 'User berhasil diupdate.');
+    }
+    /**
+     * Remove the specified resource from storage.
+     */
+    public function destroy(User $user)
+    {
+        // Jangan hapus diri sendiri
+        if ($user->id === auth()->id()) {
+            return back()->with('error', 'Anda tidak bisa menghapus akun sendiri.');
+        }
+
+        $userName = $user->name;
+        $user->delete();
+
+        // Log aktivitas
+        $this->logActivity('Menghapus user: ' . $userName, 'users');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.users.index')
+            ->with('success', 'User berhasil dihapus.');
+    }
+
+    /**
+     * Helper untuk log aktivitas
+     */
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+===== WEB MAHASISWACONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\Mahasiswa;
+use App\Models\Level;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+use Illuminate\Validation\Rule;
+
+class MahasiswaController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Mahasiswa::with('level');
+
+        // Filter by level
+        if ($request->filled('level_id')) {
+            $query->where('level_id', $request->level_id);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->where(function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                  ->orWhere('email', 'like', "%{$search}%")
+                  ->orWhere('nim', 'like', "%{$search}%")
+                  ->orWhere('rfid_uid', 'like', "%{$search}%");
+            });
+        }
+
+        // Sort
+        $sortBy = $request->get('sort', 'created_at');
+        $sortDir = $request->get('dir', 'desc');
+        $query->orderBy($sortBy, $sortDir);
+
+        $mahasiswas = $query->paginate(15);
+        $levels = Level::orderBy('urutan')->get();
+
+        return view('admin.mahasiswa.index', compact('mahasiswas', 'levels'));
+    }
+
+    public function show(Mahasiswa $mahasiswa)
+    {
+        $mahasiswa->load([
+            'level',
+            'achievements',
+            'leaderboard',
+            'transaksiSampah' => function ($q) {
+                $q->with(['jenisSampah', 'bakSampah'])
+                  ->orderBy('tanggal_transaksi', 'desc')
+                  ->limit(20);
+            },
+        ]);
+
+        return view('admin.mahasiswa.show', compact('mahasiswa'));
+    }
+
+    public function edit(Mahasiswa $mahasiswa)
+    {
+        $levels = Level::orderBy('urutan')->get();
+        return view('admin.mahasiswa.edit', compact('mahasiswa', 'levels'));
+    }
+
+    public function update(Request $request, Mahasiswa $mahasiswa)
+    {
+        $validated = $request->validate([
+            'name' => 'required|string|max:100',
+            'nim' => 'nullable|string|max:20',
+            'prodi' => 'nullable|string|max:30',
+            'rfid_uid' => ['nullable', 'string', 'max:20', Rule::unique('mahasiswa')->ignore($mahasiswa->id)],
+            'total_poin' => 'required|integer|min:0',
+            'level_id' => 'required|exists:level,id',
+        ]);
+
+             $mahasiswa->update($validated);
+
+        $this->logActivity('Mengupdate data mahasiswa: ' . $mahasiswa->name, 'mahasiswa');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+
+        return redirect()->route($routePrefix . '.mahasiswa.index')
+            ->with('success', 'Data mahasiswa berhasil diupdate.');
+    }
+
+    public function destroy(Mahasiswa $mahasiswa)
+    {
+        $name = $mahasiswa->name;
+
+        $mahasiswa->transaksiSession()->delete();
+        $mahasiswa->vouchers()->delete();
+
+        $mahasiswa->delete();
+
+        $this->logActivity('Menghapus mahasiswa: ' . $name, 'mahasiswa');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+
+        return redirect()->route($routePrefix . '.mahasiswa.index')
+            ->with('success', 'Mahasiswa berhasil dihapus.');
+    }
+
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+===== WEB TRANSAKSICONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\TransaksiSampah;
+use App\Models\Mahasiswa;
+use App\Models\JenisSampah;
+use App\Models\BakSampah;
+use Illuminate\Http\Request;
+use Carbon\Carbon;
+
+class TransaksiController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = TransaksiSampah::with(['mahasiswa', 'jenisSampah', 'bakSampah']);
+
+        // Filter tanggal
+        if ($request->filled('tanggal_dari')) {
+            $query->whereDate('tanggal_transaksi', '>=', $request->tanggal_dari);
+        }
+        if ($request->filled('tanggal_sampai')) {
+            $query->whereDate('tanggal_transaksi', '<=', $request->tanggal_sampai);
+        }
+
+        // Filter jenis sampah
+        if ($request->filled('jenis_sampah_id')) {
+            $query->where('jenis_sampah_id', $request->jenis_sampah_id);
+        }
+
+        // Filter bak sampah
+        if ($request->filled('bak_sampah_id')) {
+            $query->where('bak_sampah_id', $request->bak_sampah_id);
+        }
+
+        // Filter status validasi (BARU)
+        if ($request->filled('status_validasi')) {
+            $query->where('status_validasi', $request->status_validasi);
+        }
+
+        // Filter mahasiswa
+        if ($request->filled('mahasiswa_id')) {
+            $query->where('mahasiswa_id', $request->mahasiswa_id);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $search = $request->search;
+            $query->whereHas('mahasiswa', function ($q) use ($search) {
+                $q->where('name', 'like', "%{$search}%")
+                    ->orWhere('nim', 'like', "%{$search}%");
+            });
+        }
+
+        // Summary dihitung SEBELUM paginate (pakai clone agar query tidak terpengaruh)
+        $summaryQuery = clone $query;
+        $summary = [
+            'total_transaksi' => $summaryQuery->count(),
+            'total_berat' => $summaryQuery->sum('berat'),
+            'total_poin' => $summaryQuery->sum('poin_didapat'),
+            'total_koin' => $summaryQuery->sum('koin_didapat'),
+            'total_anomali' => (clone $query)->where('status_validasi', 'anomali')->count(),
+        ];
+
+        $transaksis = $query->orderBy('tanggal_transaksi', 'desc')->paginate(20)->withQueryString();
+
+        // Data untuk filter
+        $jenisSampahs = JenisSampah::where('is_active', 1)->orderBy('nama')->get();
+        $bakSampahs = BakSampah::orderBy('nama')->get();
+
+        return view('admin.transaksi.index', compact(
+            'transaksis',
+            'jenisSampahs',
+            'bakSampahs',
+            'summary'
+        ));
+    }
+
+    public function show(TransaksiSampah $transaksi)
+    {
+        $transaksi->load(['mahasiswa.level', 'jenisSampah', 'bakSampah.lokasi']);
+        return view('admin.transaksi.show', compact('transaksi'));
+    }
+}
+===== WEB VOUCHERCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\VoucherMahasiswa;
+use Illuminate\Http\Request;
+
+class VoucherController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = VoucherMahasiswa::with('mahasiswa')
+            ->orderByDesc('created_at');
+
+        // Filter status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Filter search mahasiswa
+        if ($request->filled('search')) {
+            $query->whereHas('mahasiswa', function ($q) use ($request) {
+                $q->where('name', 'like', '%' . $request->search . '%')
+                  ->orWhere('nim', 'like', '%' . $request->search . '%');
+            });
+        }
+
+        // Filter tanggal
+        if ($request->filled('dari')) {
+            $query->whereDate('created_at', '>=', $request->dari);
+        }
+        if ($request->filled('sampai')) {
+            $query->whereDate('created_at', '<=', $request->sampai);
+        }
+
+        $vouchers = $query->paginate(15)->withQueryString();
+
+        // Statistik
+        $stats = [
+            'total'    => VoucherMahasiswa::count(),
+            'aktif'    => VoucherMahasiswa::where('status', 'aktif')
+                            ->where('expired_at', '>', now())->count(),
+            'terpakai' => VoucherMahasiswa::where('status', 'terpakai')->count(),
+            'expired'  => VoucherMahasiswa::where('status', 'expired')
+                            ->orWhere(function ($q) {
+                                $q->where('status', 'aktif')
+                                  ->where('expired_at', '<', now());
+                            })->count(),
+        ];
+
+        return view('admin.voucher.index', compact('vouchers', 'stats'));
+    }
+}
+===== WEB BAKSAMPAHCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\BakSampah;
+use App\Models\Lokasi;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+use Illuminate\Support\Str;
+
+class BakSampahController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = BakSampah::with('lokasi');
+
+        // Filter by lokasi
+        if ($request->filled('lokasi_id')) {
+            $query->where('lokasi_id', $request->lokasi_id);
+        }
+
+        // Filter by status
+        if ($request->filled('status')) {
+            $query->where('status', $request->status);
+        }
+
+        // Search
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', "%{$request->search}%");
+        }
+
+        $bakSampahs = $query->orderBy('nama')->paginate(15);
+        $lokasis = Lokasi::orderBy('nama_lokasi')->get();
+
+        return view('admin.bak-sampah.index', compact('bakSampahs', 'lokasis'));
+    }
+
+    public function create()
+    {
+        $lokasis = Lokasi::orderBy('nama_lokasi')->get();
+        return view('admin.bak-sampah.create', compact('lokasis'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:100',
+            'lokasi_id' => 'required|exists:lokasi,id',
+            'status' => 'required|in:aktif,nonaktif,maintenance',
+            'kapasitas_max' => 'nullable|numeric|min:0',
+        ]);
+
+        // Generate API key unik
+        $validated['api_key'] = Str::random(64);
+
+        $bakSampah = BakSampah::create($validated);
+
+        $this->logActivity('Menambahkan bak sampah baru: ' . $bakSampah->nama, 'bak_sampah');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.bak-sampah.index')
+            ->with('success', 'Bak sampah berhasil ditambahkan.');
+    }
+
+    public function show(BakSampah $bakSampah)
+    {
+        $bakSampah->load([
+            'lokasi',
+            'transaksiSampah' => function ($q) {
+                $q->with(['mahasiswa', 'jenisSampah'])
+                    ->orderBy('tanggal_transaksi', 'desc')
+                    ->limit(20);
+            }
+        ]);
+
+        // Statistik
+        $stats = [
+            'total_transaksi' => $bakSampah->transaksiSampah()->count(),
+            'total_berat' => $bakSampah->transaksiSampah()->sum('berat'),
+            'total_poin' => $bakSampah->transaksiSampah()->sum('poin_didapat'),
+        ];
+
+        return view('admin.bak-sampah.show', compact('bakSampah', 'stats'));
+    }
+
+    public function edit(BakSampah $bakSampah)
+    {
+        $lokasis = Lokasi::orderBy('nama_lokasi')->get();
+        return view('admin.bak-sampah.edit', compact('bakSampah', 'lokasis'));
+    }
+
+    public function update(Request $request, BakSampah $bakSampah)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:100',
+            'lokasi_id' => 'required|exists:lokasi,id',
+            'status' => 'required|in:aktif,nonaktif,maintenance',
+            'kapasitas_max' => 'nullable|numeric|min:0',
+        ]);
+
+        $bakSampah->update($validated);
+
+        $this->logActivity('Mengupdate bak sampah: ' . $bakSampah->nama, 'bak_sampah');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.bak-sampah.index')
+            ->with('success', 'Bak sampah berhasil diupdate.');
+    }
+
+    /**
+     * Regenerate API Key
+     */
+    public function regenerateApiKey(BakSampah $bakSampah)
+    {
+        $bakSampah->update(['api_key' => Str::random(64)]);
+
+        $this->logActivity('Regenerate API key bak sampah: ' . $bakSampah->nama, 'bak_sampah');
+
+        return back()->with('success', 'API Key berhasil di-regenerate.');
+    }
+
+    public function destroy(BakSampah $bakSampah)
+    {
+        if ($bakSampah->transaksiSampah()->count() > 0) {
+            return back()->with('error', 'Bak sampah tidak bisa dihapus karena sudah memiliki transaksi.');
+        }
+
+        $name = $bakSampah->nama;
+        $bakSampah->delete();
+
+        $this->logActivity('Menghapus bak sampah: ' . $name, 'bak_sampah');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.bak-sampah.index')
+            ->with('success', 'Bak sampah berhasil dihapus.');
+    }
+
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+===== WEB JENISSAMPAHCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\JenisSampah;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+
+class JenisSampahController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = JenisSampah::withCount('transaksiSampah');
+
+        if ($request->filled('status')) {
+            $query->where('is_active', $request->status);
+        }
+
+        if ($request->filled('search')) {
+            $query->where('nama', 'like', "%{$request->search}%");
+        }
+
+        $jenisSampahs = $query->orderBy('nama')->paginate(15);
+
+        return view('admin.jenis-sampah.index', compact('jenisSampahs'));
+    }
+
+    public function create()
+    {
+        return view('admin.jenis-sampah.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:100',
+            'deskripsi' => 'nullable|string',
+            'poin_per_kg' => 'required|integer|min:0',
+            'satuan' => 'required|string|max:10',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $jenisSampah = JenisSampah::create($validated);
+
+        $this->logActivity('Menambahkan jenis sampah baru: ' . $jenisSampah->nama, 'jenis_sampah');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.jenis-sampah.index')
+            ->with('success', 'Jenis sampah berhasil ditambahkan.');
+    }
+
+    public function edit(JenisSampah $jenisSampah)
+    {
+        return view('admin.jenis-sampah.edit', compact('jenisSampah'));
+    }
+
+    public function update(Request $request, JenisSampah $jenisSampah)
+    {
+        $validated = $request->validate([
+            'nama' => 'required|string|max:100',
+            'deskripsi' => 'nullable|string',
+            'poin_per_kg' => 'required|integer|min:0',
+            'satuan' => 'required|string|max:10',
+            'is_active' => 'required|boolean',
+        ]);
+
+        $jenisSampah->update($validated);
+
+        $this->logActivity('Mengupdate jenis sampah: ' . $jenisSampah->nama, 'jenis_sampah');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.jenis-sampah.index')
+            ->with('success', 'Jenis sampah berhasil diupdate.');
+    }
+
+    public function destroy(JenisSampah $jenisSampah)
+    {
+        if ($jenisSampah->transaksiSampah()->count() > 0) {
+            return back()->with('error', 'Jenis sampah tidak bisa dihapus karena sudah digunakan dalam transaksi.');
+        }
+
+        $name = $jenisSampah->nama;
+        $jenisSampah->delete();
+
+        $this->logActivity('Menghapus jenis sampah: ' . $name, 'jenis_sampah');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.jenis-sampah.index')
+            ->with('success', 'Jenis sampah berhasil dihapus.');
+    }
+
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+===== WEB LOKASICONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\Lokasi;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+
+class LokasiController extends Controller
+{
+    public function index(Request $request)
+    {
+        $query = Lokasi::withCount('bakSampahs');
+
+        if ($request->filled('search')) {
+            $query->where('nama_lokasi', 'like', "%{$request->search}%");
+        }
+
+        $lokasis = $query->orderBy('nama_lokasi')->paginate(15);
+
+        return view('admin.lokasi.index', compact('lokasis'));
+    }
+
+    public function create()
+    {
+        return view('admin.lokasi.create');
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_lokasi' => 'required|string|max:100',
+            'alamat' => 'nullable|string',
+            'koordinat' => 'nullable|string|max:50',
+        ]);
+
+        $lokasi = Lokasi::create($validated);
+
+        $this->logActivity('Menambahkan lokasi baru: ' . $lokasi->nama_lokasi, 'lokasi');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.lokasi.index')
+            ->with('success', 'Lokasi berhasil ditambahkan.');
+    }
+    public function show(Lokasi $lokasi)
+    {
+        $lokasi->load('bakSampahs');
+        return view('admin.lokasi.show', compact('lokasi'));
+    }
+
+    public function edit(Lokasi $lokasi)
+    {
+        return view('admin.lokasi.edit', compact('lokasi'));
+    }
+
+    public function update(Request $request, Lokasi $lokasi)
+    {
+        $validated = $request->validate([
+            'nama_lokasi' => 'required|string|max:100',
+            'alamat' => 'nullable|string',
+            'koordinat' => 'nullable|string|max:50',
+        ]);
+
+        $lokasi->update($validated);
+
+        $this->logActivity('Mengupdate lokasi: ' . $lokasi->nama_lokasi, 'lokasi');
+
+          $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.lokasi.index')
+            ->with('success', 'Lokasi berhasil diupdate.');
+    }
+
+    public function destroy(Lokasi $lokasi)
+    {
+        if ($lokasi->bakSampahs()->count() > 0) {
+            return back()->with('error', 'Lokasi tidak bisa dihapus karena masih memiliki bak sampah terdaftar.');
+        }
+
+        $name = $lokasi->nama_lokasi;
+        $lokasi->delete();
+
+        $this->logActivity('Menghapus lokasi: ' . $name, 'lokasi');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.lokasi.index')
+            ->with('success', 'Lokasi berhasil dihapus.');
+    }
+
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+===== WEB LEVELCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\Level;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+
+class LevelController extends Controller
+{
+    public function index()
+    {
+        $levels = Level::withCount('mahasiswas')->orderBy('urutan')->get();
+        return view('admin.level.index', compact('levels'));
+    }
+
+    public function create()
+    {
+        $maxUrutan = Level::max('urutan') ?? 0;
+        return view('admin.level.create', compact('maxUrutan'));
+    }
+
+    public function store(Request $request)
+    {
+        $validated = $request->validate([
+            'nama_level' => 'required|string|max:50',
+            'min_poin' => 'required|integer|min:0',
+            'max_poin' => 'required|integer|min:0|gt:min_poin',
+            'urutan' => 'required|integer|min:1|unique:level,urutan',
+        ], [
+            'max_poin.gt' => 'Max poin harus lebih besar dari min poin.',
+            'urutan.unique' => 'Urutan level sudah digunakan.',
+        ]);
+
+        $level = Level::create($validated);
+
+        $this->logActivity('Menambahkan level baru: ' . $level->nama_level, 'level');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.level.index')
+            ->with('success', 'Level berhasil ditambahkan.');
+    }
+
+    public function edit(Level $level)
+    {
+        return view('admin.level.edit', compact('level'));
+    }
+
+    public function update(Request $request, Level $level)
+    {
+        $validated = $request->validate([
+            'nama_level' => 'required|string|max:50',
+            'min_poin' => 'required|integer|min:0',
+            'max_poin' => 'required|integer|min:0|gt:min_poin',
+            'urutan' => 'required|integer|min:1|unique:level,urutan,' . $level->id,
+        ]);
+
+        $level->update($validated);
+
+        $this->logActivity('Mengupdate level: ' . $level->nama_level, 'level');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.level.index')
+            ->with('success', 'Level berhasil diupdate.');
+    }
+
+    public function destroy(Level $level)
+    {
+        if ($level->mahasiswas()->count() > 0) {
+            return back()->with('error', 'Level tidak bisa dihapus karena masih ada mahasiswa yang menggunakan level ini.');
+        }
+
+        $name = $level->nama_level;
+        $level->delete();
+
+        $this->logActivity('Menghapus level: ' . $name, 'level');
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.level.index')
+            ->with('success', 'Level berhasil dihapus.');
+    }
+
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+===== WEB SETTINGPOINCONTROLLER =====
+<?php
+
+namespace App\Http\Controllers\Web;
+
+use App\Http\Controllers\Controller;
+use App\Models\SettingPoin;
+use App\Models\LogAktivitas;
+use Illuminate\Http\Request;
+
+class SettingPoinController extends Controller
+{
+    public function index()
+    {
+        $settings = SettingPoin::orderBy('nama_setting')->get();
+        return view('admin.setting-poin.index', compact('settings'));
+    }
+
+    public function edit(SettingPoin $settingPoin)
+    {
+        return view('admin.setting-poin.edit', compact('settingPoin'));
+    }
+
+    public function update(Request $request, SettingPoin $settingPoin)
+    {
+        $validated = $request->validate([
+            'value' => 'required|integer|min:0',
+            'deskripsi' => 'nullable|string',
+        ]);
+
+        $oldValue = $settingPoin->value;
+        $settingPoin->update($validated);
+
+        $this->logActivity(
+            "Mengubah setting '{$settingPoin->nama_setting}' dari {$oldValue} ke {$validated['value']}",
+            'setting_poin'
+        );
+
+        $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+        return redirect()->route($routePrefix . '.setting-poin.index')
+            ->with('success', 'Setting poin berhasil diupdate.');
+    }
+
+    private function logActivity(string $aktivitas, string $tabel = null): void
+    {
+        LogAktivitas::create([
+            'user_type' => auth()->user()->role,
+            'user_id' => auth()->id(),
+            'aktivitas' => $aktivitas,
+            'tabel_target' => $tabel,
+            'ip_address' => request()->ip(),
+        ]);
+    }
+}
+===== SCAN VALIDATE / VALIDATOR / MESSAGE / JSON =====
+app\Http\Controllers\Api\AchievementController.php:26:            return response()->json(['success' => false, 'message' => 'Data mahasiswa tidak ditemukan.'], 404);
+app\Http\Controllers\Api\AchievementController.php:44:        return response()->json([
+app\Http\Controllers\Api\AchievementController.php:65:            return response()->json(['success' => false, 'message' => 'Data mahasiswa tidak ditemukan.'], 404);
+app\Http\Controllers\Api\AchievementController.php:82:        return response()->json([
+app\Http\Controllers\Api\AuthController.php:21:        $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\AuthController.php:26:            return response()->json([
+app\Http\Controllers\Api\AuthController.php:39:                return response()->json([
+app\Http\Controllers\Api\AuthController.php:79:            return response()->json([
+app\Http\Controllers\Api\AuthController.php:99:            return response()->json([
+app\Http\Controllers\Api\AuthController.php:113:        $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\AuthController.php:124:            return response()->json([
+app\Http\Controllers\Api\AuthController.php:133:            return response()->json([
+app\Http\Controllers\Api\AuthController.php:144:            return response()->json([
+app\Http\Controllers\Api\AuthController.php:153:            return response()->json([
+app\Http\Controllers\Api\AuthController.php:163:        return response()->json([
+app\Http\Controllers\Api\AuthController.php:188:        return response()->json([
+app\Http\Controllers\Api\AuthController.php:202:        return response()->json([
+app\Http\Controllers\Api\DashboardController.php:79:        return response()->json([
+app\Http\Controllers\Api\HardwareController.php:23:        $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\HardwareController.php:29:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:42:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:57:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:68:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:82:        return response()->json([
+app\Http\Controllers\Api\HardwareController.php:111:               $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\HardwareController.php:117:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:127:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:134:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:142:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:152:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:163:        return response()->json([
+app\Http\Controllers\Api\HardwareController.php:178:        $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\HardwareController.php:184:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:198:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:209:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:219:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:253:        return response()->json([
+app\Http\Controllers\Api\HardwareController.php:274:        $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\HardwareController.php:280:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:294:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:320:        return response()->json([
+app\Http\Controllers\Api\HardwareController.php:337:        $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\HardwareController.php:342:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:356:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:368:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:382:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:392:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:453:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:472:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:489:        return response()->json([
+app\Http\Controllers\Api\HardwareController.php:504:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:513:            return response()->json([
+app\Http\Controllers\Api\HardwareController.php:521:        return response()->json([
+app\Http\Controllers\Api\HardwareController.php:536:        return response()->json([
+app\Http\Controllers\Api\KasirController.php:20:        return response()->json([
+app\Http\Controllers\Api\KasirController.php:37:        $request->validate([
+app\Http\Controllers\Api\KasirController.php:52:            return response()->json([
+app\Http\Controllers\Api\KasirController.php:61:            return response()->json([
+app\Http\Controllers\Api\KasirController.php:74:            return response()->json([
+app\Http\Controllers\Api\KasirController.php:90:            return response()->json([
+app\Http\Controllers\Api\KasirController.php:102:        return response()->json([
+app\Http\Controllers\Api\KasirController.php:132:            return response()->json([
+app\Http\Controllers\Api\KasirController.php:144:        return response()->json([
+app\Http\Controllers\Api\LeaderboardController.php:43:        return response()->json([
+app\Http\Controllers\Api\LeaderboardController.php:68:            return response()->json([
+app\Http\Controllers\Api\LeaderboardController.php:78:        return response()->json([
+app\Http\Controllers\Api\NotifikasiController.php:33:        return response()->json([
+app\Http\Controllers\Api\NotifikasiController.php:52:            return response()->json([
+app\Http\Controllers\Api\NotifikasiController.php:60:        return response()->json([
+app\Http\Controllers\Api\NotifikasiController.php:78:        return response()->json([
+app\Http\Controllers\Api\NotifikasiController.php:96:        return response()->json([
+app\Http\Controllers\Api\ProfileController.php:22:        return response()->json([
+app\Http\Controllers\Api\ProfileController.php:53:        $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\ProfileController.php:60:            return response()->json([
+app\Http\Controllers\Api\ProfileController.php:69:        return response()->json([
+app\Http\Controllers\Api\ProfileController.php:88:        $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\ProfileController.php:93:            return response()->json([
+app\Http\Controllers\Api\ProfileController.php:102:        return response()->json([
+app\Http\Controllers\Api\ProfileController.php:119:        $validator = Validator::make($request->all(), [
+app\Http\Controllers\Api\ProfileController.php:124:            return response()->json([
+app\Http\Controllers\Api\ProfileController.php:133:        return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:26:            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+app\Http\Controllers\Api\TransaksiController.php:57:        return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:78:            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+app\Http\Controllers\Api\TransaksiController.php:87:            return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:93:        return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:124:        $request->validate([
+app\Http\Controllers\Api\TransaksiController.php:135:            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+app\Http\Controllers\Api\TransaksiController.php:140:            return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:166:            return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:186:        return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:212:            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+app\Http\Controllers\Api\TransaksiController.php:220:            return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:230:        return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:249:            return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+app\Http\Controllers\Api\TransaksiController.php:257:            return response()->json([
+app\Http\Controllers\Api\TransaksiController.php:291:        return response()->json([
+app\Http\Controllers\Api\VoucherController.php:30:        return response()->json([
+app\Http\Controllers\Api\VoucherController.php:51:            return response()->json([
+app\Http\Controllers\Api\VoucherController.php:75:        return response()->json([
+app\Http\Controllers\Api\VoucherController.php:87:        return response()->json([
+app\Http\Controllers\Web\AchievementController.php:25:        $validated = $request->validate([
+app\Http\Controllers\Web\AchievementController.php:50:        $validated = $request->validate([
+app\Http\Controllers\Web\AuthController.php:35:        $credentials = $request->validate([
+app\Http\Controllers\Web\AuthController.php:55:                    ->withErrors(['email' => 'Akun Anda tidak aktif. Hubungi administrator.']);
+app\Http\Controllers\Web\AuthController.php:80:            ->withErrors(['email' => 'Email atau password salah.']);
+app\Http\Controllers\Web\AuthController.php:101:        $request->session()->invalidate();
+app\Http\Controllers\Web\BakSampahController.php:47:        $validated = $request->validate([
+app\Http\Controllers\Web\BakSampahController.php:95:        $validated = $request->validate([
+app\Http\Controllers\Web\DashboardController.php:42:        return response()->json([
+app\Http\Controllers\Web\JenisSampahController.php:36:        $validated = $request->validate([
+app\Http\Controllers\Web\JenisSampahController.php:60:        $validated = $request->validate([
+app\Http\Controllers\Web\LevelController.php:26:        $validated = $request->validate([
+app\Http\Controllers\Web\LevelController.php:52:        $validated = $request->validate([
+app\Http\Controllers\Web\LokasiController.php:32:        $validated = $request->validate([
+app\Http\Controllers\Web\LokasiController.php:59:        $validated = $request->validate([
+app\Http\Controllers\Web\MahasiswaController.php:69:        $validated = $request->validate([
+app\Http\Controllers\Web\SettingPoinController.php:25:        $validated = $request->validate([
+app\Http\Controllers\Web\UserController.php:58:        $validated = $request->validate([
+app\Http\Controllers\Web\UserController.php:108:        $validated = $request->validate([
+app\Http\Middleware\HardwareApiKeyMiddleware.php:24:            return response()->json([
+app\Http\Middleware\HardwareApiKeyMiddleware.php:34:            return response()->json([
+app\Http\Middleware\HardwareApiKeyMiddleware.php:42:            return response()->json([
+app\Http\Middleware\RoleMiddleware.php:22:                return response()->json([
+app\Http\Middleware\RoleMiddleware.php:36:                return response()->json([
+app\Http\Middleware\RoleMiddleware.php:47:                return response()->json([
+
+===== SCAN UNIQUE / EXISTS / REQUIRED / CONFIRMED / EMAIL =====
+app\Http\Controllers\Api\AchievementController.php:22:            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+app\Http\Controllers\Api\AchievementController.php:61:            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+app\Http\Controllers\Api\AuthController.php:22:            'id_token' => 'required|string',
+app\Http\Controllers\Api\AuthController.php:47:            $email = $payload['email'];
+app\Http\Controllers\Api\AuthController.php:58:                    'email' => $email,
+app\Http\Controllers\Api\AuthController.php:65:                // Hanya update email (sinkronisasi)
+app\Http\Controllers\Api\AuthController.php:67:                $updateData = ['email' => $email];
+app\Http\Controllers\Api\AuthController.php:86:                        'email' => $mahasiswa->email,
+app\Http\Controllers\Api\AuthController.php:108:     * Login Kasir (email + password)
+app\Http\Controllers\Api\AuthController.php:114:            'email' => 'required|email',
+app\Http\Controllers\Api\AuthController.php:115:            'password' => 'required|min:6',
+app\Http\Controllers\Api\AuthController.php:117:            'email.required' => 'Email wajib diisi.',
+app\Http\Controllers\Api\AuthController.php:118:            'email.email' => 'Format email tidak valid.',
+app\Http\Controllers\Api\AuthController.php:119:            'password.required' => 'Password wajib diisi.',
+app\Http\Controllers\Api\AuthController.php:132:        if (!Auth::attempt(['email' => $request->email, 'password' => $request->password])) {
+app\Http\Controllers\Api\AuthController.php:135:                'message' => 'Email atau password salah.',
+app\Http\Controllers\Api\AuthController.php:171:                    'email' => $user->email,
+app\Http\Controllers\Api\HardwareController.php:24:            'rfid_uid' => 'required|string|max:20',
+app\Http\Controllers\Api\HardwareController.php:25:            'bak_sampah_id' => 'required|integer',
+app\Http\Controllers\Api\HardwareController.php:112:            'session_token' => 'required|string',
+app\Http\Controllers\Api\HardwareController.php:179:            'session_token' => 'required|string',
+app\Http\Controllers\Api\HardwareController.php:180:            'berat_gram' => 'required|integer|min:1',
+app\Http\Controllers\Api\HardwareController.php:275:            'session_token' => 'required|string',
+app\Http\Controllers\Api\HardwareController.php:276:            'jumlah_terhitung' => 'required|integer|min:0',
+app\Http\Controllers\Api\HardwareController.php:338:            'session_token' => 'required|string',
+app\Http\Controllers\Api\KasirController.php:25:                'email' => $user->email,
+app\Http\Controllers\Api\KasirController.php:38:            'kode_voucher' => 'required|string',
+app\Http\Controllers\Api\KasirController.php:40:            'kode_voucher.required' => 'Kode voucher wajib diisi.',
+app\Http\Controllers\Api\ProfileController.php:27:                'email' => $mahasiswa->email,
+app\Http\Controllers\Api\ProfileController.php:89:            'rfid_uid' => 'required|string|max:20|unique:mahasiswa,rfid_uid,' . $mahasiswa->id,
+app\Http\Controllers\Api\ProfileController.php:120:            'fcm_token' => 'required|string|max:255',
+app\Http\Controllers\Api\TransaksiController.php:23:            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+app\Http\Controllers\Api\TransaksiController.php:74:            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+app\Http\Controllers\Api\TransaksiController.php:125:            'jumlah_botol' => 'required|integer|min:1|max:50',
+app\Http\Controllers\Api\TransaksiController.php:132:            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+app\Http\Controllers\Api\TransaksiController.php:209:            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+app\Http\Controllers\Api\TransaksiController.php:246:            $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
+app\Http\Controllers\Web\AchievementController.php:26:            'nama' => 'required|string|max:100',
+app\Http\Controllers\Web\AchievementController.php:29:            'syarat_type' => 'required|in:total_kg,streak,transaksi_count,first_time',
+app\Http\Controllers\Web\AchievementController.php:30:            'syarat_value' => 'required|integer|min:0',
+app\Http\Controllers\Web\AchievementController.php:31:            'poin_bonus' => 'required|integer|min:0',
+app\Http\Controllers\Web\AchievementController.php:51:            'nama' => 'required|string|max:100',
+app\Http\Controllers\Web\AchievementController.php:54:            'syarat_type' => 'required|in:total_kg,streak,transaksi_count,first_time',
+app\Http\Controllers\Web\AchievementController.php:55:            'syarat_value' => 'required|integer|min:0',
+app\Http\Controllers\Web\AchievementController.php:56:            'poin_bonus' => 'required|integer|min:0',
+app\Http\Controllers\Web\AuthController.php:36:            'email' => 'required|email',
+app\Http\Controllers\Web\AuthController.php:37:            'password' => 'required|min:6',
+app\Http\Controllers\Web\AuthController.php:39:            'email.required' => 'Email wajib diisi.',
+app\Http\Controllers\Web\AuthController.php:40:            'email.email' => 'Format email tidak valid.',
+app\Http\Controllers\Web\AuthController.php:41:            'password.required' => 'Password wajib diisi.',
+app\Http\Controllers\Web\AuthController.php:54:                    ->withInput($request->only('email'))
+app\Http\Controllers\Web\AuthController.php:55:                    ->withErrors(['email' => 'Akun Anda tidak aktif. Hubungi administrator.']);
+app\Http\Controllers\Web\AuthController.php:79:            ->withInput($request->only('email'))
+app\Http\Controllers\Web\AuthController.php:80:            ->withErrors(['email' => 'Email atau password salah.']);
+app\Http\Controllers\Web\BakSampahController.php:48:            'nama' => 'required|string|max:100',
+app\Http\Controllers\Web\BakSampahController.php:49:            'lokasi_id' => 'required|exists:lokasi,id',
+app\Http\Controllers\Web\BakSampahController.php:50:            'status' => 'required|in:aktif,nonaktif,maintenance',
+app\Http\Controllers\Web\BakSampahController.php:96:            'nama' => 'required|string|max:100',
+app\Http\Controllers\Web\BakSampahController.php:97:            'lokasi_id' => 'required|exists:lokasi,id',
+app\Http\Controllers\Web\BakSampahController.php:98:            'status' => 'required|in:aktif,nonaktif,maintenance',
+app\Http\Controllers\Web\JenisSampahController.php:37:            'nama' => 'required|string|max:100',
+app\Http\Controllers\Web\JenisSampahController.php:39:            'poin_per_kg' => 'required|integer|min:0',
+app\Http\Controllers\Web\JenisSampahController.php:40:            'satuan' => 'required|string|max:10',
+app\Http\Controllers\Web\JenisSampahController.php:41:            'is_active' => 'required|boolean',
+app\Http\Controllers\Web\JenisSampahController.php:61:            'nama' => 'required|string|max:100',
+app\Http\Controllers\Web\JenisSampahController.php:63:            'poin_per_kg' => 'required|integer|min:0',
+app\Http\Controllers\Web\JenisSampahController.php:64:            'satuan' => 'required|string|max:10',
+app\Http\Controllers\Web\JenisSampahController.php:65:            'is_active' => 'required|boolean',
+app\Http\Controllers\Web\LevelController.php:27:            'nama_level' => 'required|string|max:50',
+app\Http\Controllers\Web\LevelController.php:28:            'min_poin' => 'required|integer|min:0',
+app\Http\Controllers\Web\LevelController.php:29:            'max_poin' => 'required|integer|min:0|gt:min_poin',
+app\Http\Controllers\Web\LevelController.php:30:            'urutan' => 'required|integer|min:1|unique:level,urutan',
+app\Http\Controllers\Web\LevelController.php:53:            'nama_level' => 'required|string|max:50',
+app\Http\Controllers\Web\LevelController.php:54:            'min_poin' => 'required|integer|min:0',
+app\Http\Controllers\Web\LevelController.php:55:            'max_poin' => 'required|integer|min:0|gt:min_poin',
+app\Http\Controllers\Web\LevelController.php:56:            'urutan' => 'required|integer|min:1|unique:level,urutan,' . $level->id,
+app\Http\Controllers\Web\LokasiController.php:33:            'nama_lokasi' => 'required|string|max:100',
+app\Http\Controllers\Web\LokasiController.php:60:            'nama_lokasi' => 'required|string|max:100',
+app\Http\Controllers\Web\MahasiswaController.php:28:                  ->orWhere('email', 'like', "%{$search}%")
+app\Http\Controllers\Web\MahasiswaController.php:70:            'name' => 'required|string|max:100',
+app\Http\Controllers\Web\MahasiswaController.php:74:            'total_poin' => 'required|integer|min:0',
+app\Http\Controllers\Web\MahasiswaController.php:75:            'level_id' => 'required|exists:level,id',
+app\Http\Controllers\Web\SettingPoinController.php:26:            'value' => 'required|integer|min:0',
+app\Http\Controllers\Web\UserController.php:36:                  ->orWhere('email', 'like', "%{$search}%");
+app\Http\Controllers\Web\UserController.php:59:            'name' => 'required|string|max:100',
+app\Http\Controllers\Web\UserController.php:60:            'email' => 'required|email|max:75|unique:users,email',
+app\Http\Controllers\Web\UserController.php:61:            'password' => 'required|string|min:6|confirmed',
+app\Http\Controllers\Web\UserController.php:63:            'role' => 'required|in:admin,pengelola',
+app\Http\Controllers\Web\UserController.php:66:            'name.required' => 'Nama wajib diisi.',
+app\Http\Controllers\Web\UserController.php:67:            'email.required' => 'Email wajib diisi.',
+app\Http\Controllers\Web\UserController.php:68:            'email.unique' => 'Email sudah terdaftar.',
+app\Http\Controllers\Web\UserController.php:69:            'password.required' => 'Password wajib diisi.',
+app\Http\Controllers\Web\UserController.php:71:            'password.confirmed' => 'Konfirmasi password tidak cocok.',
+app\Http\Controllers\Web\UserController.php:72:            'role.required' => 'Role wajib dipilih.',
+app\Http\Controllers\Web\UserController.php:109:            'name' => 'required|string|max:100',
+app\Http\Controllers\Web\UserController.php:110:            'email' => ['required', 'email', 'max:75', Rule::unique('users')->ignore($user->id)],
+app\Http\Controllers\Web\UserController.php:111:            'password' => 'nullable|string|min:6|confirmed',
+app\Http\Controllers\Web\UserController.php:113:            'role' => 'required|in:admin,pengelola',
+app\Http\Controllers\Web\UserController.php:114:            'is_active' => 'required|boolean',
+app\Models\Mahasiswa.php:19:        'email',
+app\Models\User.php:16:        'email',
+app\Models\User.php:29:        'email_verified_at' => 'datetime',
+
+===== SCAN ABORT / THROW / FAIL / FIRSTORFAIL =====
+app\Http\Middleware\RoleMiddleware.php:52:            abort(403, 'Anda tidak memiliki akses ke halaman ini.');
+
+===== LANG FOLDER LIST =====
+c:\tugasakhir\smart-trash-system\vendor\laravel\framework\src\Illuminate\Translation\lang
+c:\tugasakhir\smart-trash-system\vendor\nesbot\carbon\src\Carbon\Lang

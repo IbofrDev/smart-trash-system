@@ -12,6 +12,8 @@ class JenisSampah extends Model
         'nama',
         'deskripsi',
         'poin_per_kg',
+        'berat_min_gram',
+        'berat_max_gram',
         'satuan',
         'is_active',
     ];

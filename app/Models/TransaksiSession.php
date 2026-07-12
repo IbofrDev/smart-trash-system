@@ -14,6 +14,7 @@ class TransaksiSession extends Model
         'mahasiswa_id',
         'session_token',
         'jumlah_botol',
+        'botol_breakdown',
         'status',
         'created_at',
         'expired_at',
@@ -21,9 +22,10 @@ class TransaksiSession extends Model
     ];
 
     protected $casts = [
-        'created_at'   => 'datetime',
-        'expired_at'   => 'datetime',
-        'completed_at' => 'datetime',
+        'created_at'      => 'datetime',
+        'expired_at'      => 'datetime',
+        'completed_at'    => 'datetime',
+        'botol_breakdown' => 'array',
     ];
 
     public function mahasiswa()
