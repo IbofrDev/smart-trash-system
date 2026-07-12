@@ -119,7 +119,7 @@ class TransaksiController extends Controller
      * POST /api/transaksi/session
      * Buat session baru (input jumlah botol & kaleng dari mobile)
      */
-       public function createSession(Request $request)
+    public function createSession(Request $request)
     {
         // Ambil jenis sampah aktif dari DB sebagai acuan valid keys
         $jenisList = \App\Models\JenisSampah::where('is_active', 1)->get();
@@ -129,15 +129,18 @@ class TransaksiController extends Controller
         foreach ($jenisList as $j) {
             if (preg_match('/(\d+)/', $j->nama, $matches)) {
                 $validKeys[] = $matches[1];
+            } else {
+                // Nama tanpa angka → fallback ke id (sama dengan Flutter sizeKey)
+                $validKeys[] = (string) $j->id;
             }
         }
 
         $request->validate([
-            'botol_breakdown'         => 'required|array',
-            'botol_breakdown.*'       => 'integer|min:0|max:50',
+            'botol_breakdown' => 'required|array',
+            'botol_breakdown.*' => 'integer|min:0|max:50',
         ], [
             'botol_breakdown.required' => 'Breakdown botol wajib diisi.',
-            'botol_breakdown.array'    => 'Format breakdown tidak valid.',
+            'botol_breakdown.array' => 'Format breakdown tidak valid.',
         ]);
 
         // Filter hanya ukuran valid dari DB (jika validKeys kosong, terima semua)
@@ -145,8 +148,8 @@ class TransaksiController extends Controller
         $totalBotol = 0;
         foreach ($request->botol_breakdown as $size => $count) {
             $count = (int) $count;
-            if ($count > 0 && (empty($validKeys) || in_array((string)$size, $validKeys))) {
-                $breakdown[(string)$size] = $count;
+            if ($count > 0 && (empty($validKeys) || in_array((string) $size, $validKeys))) {
+                $breakdown[(string) $size] = $count;
                 $totalBotol += $count;
             }
         }
@@ -204,24 +207,24 @@ class TransaksiController extends Controller
         }
 
         $session = TransaksiSession::create([
-            'mahasiswa_id'    => $mahasiswa->id,
-            'session_token'   => Str::random(64),
-            'jumlah_botol'    => $totalBotol,
+            'mahasiswa_id' => $mahasiswa->id,
+            'session_token' => Str::random(64),
+            'jumlah_botol' => $totalBotol,
             'botol_breakdown' => $breakdown,
-            'status'          => 'pending',
-            'created_at'      => now(),
-            'expired_at'      => now()->addMinutes(10),
+            'status' => 'pending',
+            'created_at' => now(),
+            'expired_at' => now()->addMinutes(10),
         ]);
 
         return response()->json([
             'success' => true,
             'data' => [
-                'session_token'   => $session->session_token,
-                'jumlah_botol'    => $session->jumlah_botol,
+                'session_token' => $session->session_token,
+                'jumlah_botol' => $session->jumlah_botol,
                 'botol_breakdown' => $session->botol_breakdown,
-                'total_input'     => $session->jumlah_botol,
-                'status'          => $session->status,
-                'expired_at'      => $session->expired_at,
+                'total_input' => $session->jumlah_botol,
+                'status' => $session->status,
+                'expired_at' => $session->expired_at,
             ],
             'message' => 'Session berhasil dibuat. Silakan tap KTM ke mesin.',
         ]);
@@ -254,7 +257,7 @@ class TransaksiController extends Controller
             ], 404);
         }
 
- 
+
 
         $session->update(['status' => 'expired']);
 
