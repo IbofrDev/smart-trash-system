@@ -545,12 +545,15 @@ class HardwareController extends Controller
             // Coba ekstrak angka dari nama sebagai key (misal "220", "500", dll)
             if (preg_match('/(\d+)/', $j->nama, $matches)) {
                 $key = $matches[1];
-                $dbRanges[$key] = [
-                    'min' => $j->berat_min_gram ?? 6,
-                    'max' => $j->berat_max_gram ?? 26,
-                    'jenis_sampah_id' => $j->id,
-                ];
+            } else {
+                // Nama tanpa angka → fallback ke id (sama dengan Flutter sizeKey)
+                $key = (string) $j->id;
             }
+            $dbRanges[$key] = [
+                'min' => $j->berat_min_gram ?? 6,
+                'max' => $j->berat_max_gram ?? 26,
+                'jenis_sampah_id' => $j->id,
+            ];
         }
 
         // Fallback default jika DB kosong
@@ -596,9 +599,13 @@ class HardwareController extends Controller
 
         foreach ($jenisList as $j) {
             if (preg_match('/(\d+)/', $j->nama, $matches)) {
-                if (isset($breakdown[$matches[1]])) {
-                    return $j->id;
-                }
+                $key = $matches[1];
+            } else {
+                // Nama tanpa angka → fallback ke id
+                $key = (string) $j->id;
+            }
+            if (isset($breakdown[$key])) {
+                return $j->id;
             }
         }
 
