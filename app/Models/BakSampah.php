@@ -27,4 +27,11 @@ class BakSampah extends Model
     {
         return $this->hasMany(TransaksiSampah::class);
     }
+
+    public function transaksiSessions()
+    {
+        return TransaksiSession::whereHas('transaksiItems', function ($q) {
+            $q->where('bak_sampah_id', $this->id);
+        });
+    }
 }

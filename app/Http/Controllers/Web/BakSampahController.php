@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\BakSampah;
 use App\Models\Lokasi;
 use App\Models\LogAktivitas;
+use App\Models\TransaksiSession;
 use Illuminate\Http\Request;
 use Illuminate\Support\Str;
 
@@ -68,23 +69,28 @@ class BakSampahController extends Controller
 
     public function show(BakSampah $bakSampah)
     {
-        $bakSampah->load([
-            'lokasi',
-            'transaksiSampah' => function ($q) {
-                $q->with(['mahasiswa', 'jenisSampah'])
-                    ->orderBy('tanggal_transaksi', 'desc')
-                    ->limit(20);
-            }
-        ]);
+        $bakSampah->load('lokasi');
 
-        // Statistik
+        $recentSessions = TransaksiSession::where('status', 'completed')
+            ->whereHas('transaksiItems', function ($q) use ($bakSampah) {
+                $q->where('bak_sampah_id', $bakSampah->id);
+            })
+            ->with(['transaksiItems' => function ($q) use ($bakSampah) {
+                $q->where('bak_sampah_id', $bakSampah->id)
+                  ->with(['mahasiswa', 'jenisSampah']);
+            }])
+            ->orderByDesc('completed_at')
+            ->limit(20)
+            ->get();
+
+        $allItems = $bakSampah->transaksiSampah();
         $stats = [
-            'total_transaksi' => $bakSampah->transaksiSampah()->count(),
-            'total_berat' => $bakSampah->transaksiSampah()->sum('berat'),
-            'total_poin' => $bakSampah->transaksiSampah()->sum('poin_didapat'),
+            'total_transaksi' => $recentSessions->count(),
+            'total_berat'     => $allItems->sum('berat') / 1000,
+            'total_poin'      => $allItems->sum('poin_didapat'),
         ];
 
-        return view('admin.bak-sampah.show', compact('bakSampah', 'stats'));
+        return view('admin.bak-sampah.show', compact('bakSampah', 'stats', 'recentSessions'));
     }
 
     public function edit(BakSampah $bakSampah)

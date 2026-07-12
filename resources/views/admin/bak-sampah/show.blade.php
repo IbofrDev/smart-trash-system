@@ -189,24 +189,51 @@
                                 <th class="pe-4 text-end">Poin Keluar</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @forelse($bakSampah->transaksiSampah as $trx)
-                            <tr>
+                                            <tbody>
+                            @forelse($recentSessions as $session)
+                            @php
+                                $sItems   = $session->transaksiItems;
+                                $sFirst   = $sItems->first();
+                                $sBerat   = $sItems->sum('berat');
+                                $sPoin    = $sItems->sum('poin_didapat');
+                                $sFinal   = $sItems->sum('jumlah_final');
+                                $sTgl     = $session->completed_at ?? $session->created_at;
+                                $sHasAnom = $sItems->contains('status_validasi', 'anomali');
+                            @endphp
+                            <tr style="{{ $sHasAnom ? 'background: #fef7f7;' : '' }}">
                                 <td class="ps-4">
-                                    <div class="fw-bold text-dark" style="color: #0f172a !important;">{{ \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('H:i') }}</div>
-                                    <small class="text-muted">{{ \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('d M Y') }}</small>
+                                    <div class="fw-bold text-dark" style="color: #0f172a !important;">{{ \Carbon\Carbon::parse($sTgl)->format('H:i') }}</div>
+                                    <small class="text-muted">{{ \Carbon\Carbon::parse($sTgl)->format('d M Y') }}</small>
                                 </td>
                                 <td>
-                                    <div class="fw-semibold" style="color: #334155;">{{ $trx->mahasiswa->name ?? '-' }}</div>
+                                    <div class="fw-semibold" style="color: #334155;">{{ $sFirst?->mahasiswa->name ?? '-' }}</div>
+                                    <small class="text-muted" style="font-size: 0.7rem; font-family: monospace;">{{ $sFirst?->mahasiswa->nim ?? '' }}</small>
                                 </td>
                                 <td>
-                                    <span class="badge rounded-2 px-2 py-1" style="background: #f8fafc; color: #475569; border: 1px solid #e2e8f0;">
-                                        {{ $trx->jenisSampah->nama ?? '-' }}
+                                    @if($sItems->count() === 1)
+                                        <span class="badge rounded-2 px-2 py-1" style="background: #f8fafc; color: #475569; border: 1px solid #e2e8f0;">
+                                            {{ $sFirst?->jenisSampah->nama ?? '-' }}
+                                        </span>
+                                    @else
+                                        <div class="fw-semibold" style="font-size: 0.8rem; color: #0f172a;">{{ $sItems->count() }} Jenis Sampah</div>
+                                        @foreach($sItems as $sItem)
+                                            <small class="text-muted d-block" style="font-size: 0.7rem;">
+                                                • {{ $sItem->jenisSampah->nama ?? '-' }} ({{ $sItem->jumlah_final ?? 0 }}x)
+                                            </small>
+                                        @endforeach
+                                    @endif
+                                </td>
+                                <td>
+                                    <span class="fw-bold" style="color: #0f172a;">
+                                        {{ $sBerat >= 1000 ? number_format($sBerat / 1000, 2).' kg' : number_format($sBerat, 0).' g' }}
                                     </span>
+                                    <small class="text-muted d-block" style="font-size: 0.7rem;">{{ $sFinal }} pcs</small>
                                 </td>
-                                <td><span class="fw-bold" style="color: #0f172a;">{{ number_format($trx->berat, 2) }} <small class="text-muted">kg</small></span></td>
                                 <td class="text-end pe-4">
-                                    <span class="badge px-2 py-1 rounded-2" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;">+{{ $trx->poin_didapat }} Pts</span>
+                                    <span class="badge px-2 py-1 rounded-2" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;">+{{ number_format($sPoin) }} Pts</span>
+                                    @if($sHasAnom)
+                                        <span class="badge px-2 py-1 rounded-2 d-block mt-1" style="background: #fff1f2; color: #dc2626; border: 1px solid #fecaca;">Anomali</span>
+                                    @endif
                                 </td>
                             </tr>
                             @empty
