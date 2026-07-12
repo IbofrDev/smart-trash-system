@@ -48,14 +48,26 @@ class MahasiswaController extends Controller
             'level',
             'achievements',
             'leaderboard',
-            'transaksiSampah' => function ($q) {
-                $q->with(['jenisSampah', 'bakSampah'])
-                  ->orderBy('tanggal_transaksi', 'desc')
-                  ->limit(20);
+            'vouchers',
+            'transaksiSession' => function ($q) {
+                $q->where('status', 'completed')
+                  ->with(['transaksiItems.jenisSampah', 'transaksiItems.bakSampah.lokasi'])
+                  ->orderByDesc('completed_at')
+                  ->limit(10);
             },
         ]);
 
-        return view('admin.mahasiswa.show', compact('mahasiswa'));
+        // Stat summary dari semua session completed
+        $allSessions = $mahasiswa->transaksiSession;
+        $allItems    = $allSessions->pluck('transaksiItems')->flatten();
+
+        $stats = [
+            'total_transaksi' => $allSessions->count(),
+            'total_berat'     => $allItems->sum('berat'),
+            'total_botol'     => $allItems->sum('jumlah_final'),
+        ];
+
+        return view('admin.mahasiswa.show', compact('mahasiswa', 'stats'));
     }
 
     public function edit(Mahasiswa $mahasiswa)

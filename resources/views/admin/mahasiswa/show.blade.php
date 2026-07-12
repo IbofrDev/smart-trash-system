@@ -167,22 +167,21 @@
     <div class="col-lg-8 animate-fade-up" style="animation-delay: 0.2s;">
         
         <div class="row g-3 mb-4">
-            <div class="col-md-3 col-6">
+                       <div class="col-md-3 col-6">
                 <div class="stat-card-boxy">
                     <i class="bi bi-arrow-left-right stat-icon"></i>
-                    <h3>{{ $mahasiswa->transaksiSampah->count() }}</h3>
+                    <h3>{{ $stats['total_transaksi'] }}</h3>
                     <p>Transaksi</p>
                 </div>
             </div>
             <div class="col-md-3 col-6">
                 <div class="stat-card-boxy">
                     <i class="bi bi-speedometer2 stat-icon"></i>
-                    @php $totalBerat = $mahasiswa->transaksiSampah->sum('berat'); @endphp
                     <h3>
-                        @if($totalBerat >= 1000)
-                            {{ number_format($totalBerat / 1000, 1) }}<span style="font-size: 1rem; font-weight: normal; color: #64748b;"> kg</span>
+                        @if($stats['total_berat'] >= 1000)
+                            {{ number_format($stats['total_berat'] / 1000, 1) }}<span style="font-size: 1rem; font-weight: normal; color: #64748b;"> kg</span>
                         @else
-                            {{ number_format($totalBerat, 0) }}<span style="font-size: 1rem; font-weight: normal; color: #64748b;"> g</span>
+                            {{ number_format($stats['total_berat'], 0) }}<span style="font-size: 1rem; font-weight: normal; color: #64748b;"> g</span>
                         @endif
                     </h3>
                     <p>Total Berat</p>
@@ -191,7 +190,7 @@
             <div class="col-md-3 col-6">
                 <div class="stat-card-boxy">
                     <i class="bi bi-recycle stat-icon"></i>
-                    <h3>{{ number_format($mahasiswa->transaksiSampah->sum('jumlah_final')) }}</h3>
+                    <h3>{{ number_format($stats['total_botol']) }}</h3>
                     <p>Total Botol</p>
                 </div>
             </div>
@@ -252,32 +251,50 @@
                                 <th class="text-center">Status</th>
                             </tr>
                         </thead>
-                        <tbody>
-                            @forelse($mahasiswa->transaksiSampah->sortByDesc('tanggal_transaksi')->take(10) as $trx)
+                                                <tbody>
+                            @forelse($mahasiswa->transaksiSession as $session)
+                            @php
+                                $sItems     = $session->transaksiItems;
+                                $sFirst     = $sItems->first();
+                                $sHasAnom   = $sItems->contains('status_validasi', 'anomali');
+                                $sBerat     = $sItems->sum('berat');
+                                $sFinal     = $sItems->sum('jumlah_final');
+                                $sPoin      = $sItems->sum('poin_didapat');
+                                $sKoin      = $sItems->sum('koin_didapat');
+                                $sTanggal   = $session->completed_at ?? $session->created_at;
+                            @endphp
                             <tr>
                                 <td>
-                                    <div class="fw-bold text-dark" style="color: #0f172a !important;">{{ \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('d M Y') }}</div>
-                                    <small class="text-muted">{{ \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('H:i') }} WITA</small>
+                                    <div class="fw-bold text-dark" style="color: #0f172a !important;">{{ \Carbon\Carbon::parse($sTanggal)->format('d M Y') }}</div>
+                                    <small class="text-muted">{{ \Carbon\Carbon::parse($sTanggal)->format('H:i') }} WITA</small>
                                 </td>
                                 <td>
-                                    <span class="fw-medium" style="color: #334155;"><i class="bi bi-hdd-network text-muted me-1"></i>{{ $trx->bakSampah->nama ?? '-' }}</span>
+                                    <span class="fw-medium" style="color: #334155;">
+                                        <i class="bi bi-hdd-network text-muted me-1"></i>{{ $sFirst?->bakSampah->nama ?? '-' }}
+                                    </span>
+                                    @if($sFirst?->bakSampah?->lokasi)
+                                        <small class="text-muted d-block" style="font-size: 0.7rem;">
+                                            <i class="bi bi-geo-alt"></i> {{ $sFirst->bakSampah->lokasi->nama_lokasi }}
+                                        </small>
+                                    @endif
                                 </td>
                                 <td>
-                                    <span class="badge border me-1" style="background: #f8fafc; color: #0f172a; border-radius: 4px;">{{ $trx->jumlah_final ?? 0 }} pcs</span>
+                                    @if($sItems->count() === 1)
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">{{ $sFirst?->jenisSampah->nama ?? '-' }}</small>
+                                    @else
+                                        <small class="text-muted d-block" style="font-size: 0.75rem;">{{ $sItems->count() }} Jenis Sampah</small>
+                                    @endif
+                                    <span class="badge border me-1" style="background: #f8fafc; color: #0f172a; border-radius: 4px;">{{ $sFinal }} pcs</span>
                                     <span class="badge border" style="background: #f8fafc; color: #0f172a; border-radius: 4px;">
-                                        @if(($trx->berat ?? 0) >= 1000)
-                                            {{ number_format($trx->berat / 1000, 2) }} kg
-                                        @else
-                                            {{ number_format($trx->berat ?? 0, 0) }} g
-                                        @endif
+                                        {{ $sBerat >= 1000 ? number_format($sBerat / 1000, 2).' kg' : number_format($sBerat, 0).' g' }}
                                     </span>
                                 </td>
                                 <td>
-                                    <div class="fw-bold small" style="color: #059669;"><i class="bi bi-star-fill me-1 text-warning"></i>+{{ number_format($trx->poin_didapat ?? 0) }} Pts</div>
-                                    <div class="fw-bold small" style="color: #d97706;"><i class="bi bi-coin me-1 text-warning"></i>+{{ number_format($trx->koin_didapat ?? 0) }} Koin</div>
+                                    <div class="fw-bold small" style="color: #059669;"><i class="bi bi-star-fill me-1 text-warning"></i>+{{ number_format($sPoin) }} Pts</div>
+                                    <div class="fw-bold small" style="color: #d97706;"><i class="bi bi-coin me-1 text-warning"></i>+{{ number_format($sKoin) }} Koin</div>
                                 </td>
                                 <td class="text-center">
-                                    @if(($trx->status_validasi ?? 'valid') === 'valid')
+                                    @if(!$sHasAnom)
                                         <span class="badge px-3 py-1 rounded-2" style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;">Valid</span>
                                     @else
                                         <span class="badge px-3 py-1 rounded-2" style="background: #fff1f2; color: #dc2626; border: 1px solid #fecaca;">Anomali</span>
