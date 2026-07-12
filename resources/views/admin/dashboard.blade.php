@@ -347,8 +347,20 @@
                             <tbody>
                                 @forelse($recentTransaksi ?? [] as $trx)
                                     @php
-                                        $isAnomali = ($trx->status_validasi ?? 'valid') !== 'valid';
-                                        $jenisNama = strtolower($trx->jenisSampah->nama ?? '');
+                                        $tItems = $trx->transaksiItems;
+                                        $tFirst = $tItems->first();
+                                        $tMhs = $tFirst?->mahasiswa;
+                                        $tHasAnom = $tItems->contains('status_validasi', 'anomali');
+                                        $tBerat = $tItems->sum('berat');
+                                        $tFinal = $tItems->sum('jumlah_final');
+                                        $tPoin = $tItems->sum('poin_didapat');
+                                        $tTanggal = $trx->completed_at ?? $trx->created_at;
+
+                                        if ($tItems->count() === 1) {
+                                            $jenisNama = strtolower($tFirst?->jenisSampah->nama ?? '');
+                                        } else {
+                                            $jenisNama = '';
+                                        }
                                         if (str_contains($jenisNama, 'botol') || str_contains($jenisNama, 'plastik')) {
                                             $jenisIcon = '🥤';
                                             $jenisColor = '#0ea5e9';
@@ -366,65 +378,70 @@
                                             $jenisColor = '#64748b';
                                         }
                                     @endphp
-                                    <tr style="{{ $isAnomali ? 'background: #fef2f2;' : '' }}">
+                                    <tr style="{{ $tHasAnom ? 'background: #fef2f2;' : '' }}">
                                         <td class="ps-4">
                                             <div class="d-flex align-items-center">
-                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($trx->mahasiswa->name ?? 'M') }}&background=ecfdf5&color=047857&bold=true&size=36"
+                                                <img src="https://ui-avatars.com/api/?name={{ urlencode($tMhs->name ?? 'M') }}&background=ecfdf5&color=047857&bold=true&size=36"
                                                     class="rounded-circle me-2" width="36" height="36">
                                                 <div>
                                                     <div class="fw-bold" style="color: #0f172a; font-size: 0.875rem;">
-                                                        {{ Str::limit($trx->mahasiswa->name ?? '-', 18) }}</div>
+                                                        {{ Str::limit($tMhs->name ?? '-', 18) }}
+                                                    </div>
                                                     <small class="text-muted"
-                                                        style="font-family: monospace; font-size: 0.7rem;">{{ $trx->mahasiswa->nim ?? '' }}</small>
+                                                        style="font-family: monospace; font-size: 0.7rem;">{{ $tMhs->nim ?? '' }}</small>
                                                 </div>
                                             </div>
                                         </td>
                                         <td>
                                             <span class="fw-medium" style="color: #334155; font-size: 0.875rem;">
                                                 <i class="bi bi-geo-alt-fill" style="color: #10b981; font-size: 0.75rem;"></i>
-                                                {{ $trx->bakSampah->nama ?? '-' }}
+                                                {{ $tFirst?->bakSampah->nama ?? '-' }}
                                             </span>
                                         </td>
                                         <td>
-                                            <span class="badge rounded-pill px-2 py-1"
-                                                style="background: {{ $jenisColor }}15; color: {{ $jenisColor }}; font-weight: 600;">
-                                                {{ $jenisIcon }} {{ $trx->jenisSampah->nama ?? 'Lainnya' }}
-                                            </span>
+                                            @if($tItems->count() === 1)
+                                                <span class="badge rounded-pill px-2 py-1"
+                                                    style="background: {{ $jenisColor }}15; color: {{ $jenisColor }}; font-weight: 600;">
+                                                    {{ $jenisIcon }} {{ $tFirst?->jenisSampah->nama ?? 'Lainnya' }}
+                                                </span>
+                                            @else
+                                                <div class="fw-semibold" style="font-size: 0.8rem; color: #0f172a;">
+                                                    ♻️ {{ $tItems->count() }} Jenis Sampah
+                                                </div>
+                                                @foreach($tItems as $tItem)
+                                                    <small class="text-muted d-block" style="font-size: 0.7rem;">
+                                                        • {{ $tItem->jenisSampah->nama ?? '-' }} ({{ $tItem->jumlah_final ?? 0 }}x)
+                                                    </small>
+                                                @endforeach
+                                            @endif
                                         </td>
                                         <td>
                                             <div class="fw-bold" style="color: #0f172a; font-size: 0.875rem;">
-                                                @if(($trx->berat ?? 0) >= 1000)
-                                                    {{ number_format($trx->berat / 1000, 2) }} kg
-                                                @else
-                                                    {{ number_format($trx->berat ?? 0, 0) }} g
-                                                @endif
+                                                {{ $tBerat >= 1000 ? number_format($tBerat / 1000, 2) . ' kg' : number_format($tBerat, 0) . ' g' }}
                                             </div>
                                             <small class="text-muted" style="font-size: 0.7rem;">
-                                                <i class="bi bi-box-seam"></i> {{ $trx->jumlah_final ?? 0 }} item
+                                                <i class="bi bi-box-seam"></i> {{ $tFinal }} item
                                             </small>
                                         </td>
                                         <td class="text-end">
-                                            @if(($trx->poin_didapat ?? 0) > 0)
+                                            @if($tPoin > 0)
                                                 <span class="fw-bold"
-                                                    style="color: #059669; font-size: 0.95rem;">+{{ number_format($trx->poin_didapat) }}</span>
+                                                    style="color: #059669; font-size: 0.95rem;">+{{ number_format($tPoin) }}</span>
                                             @else
                                                 <span class="fw-bold text-muted" style="font-size: 0.95rem;">0</span>
                                             @endif
                                         </td>
                                         <td>
-                                            <span class="text-muted small fw-medium"
-                                                title="{{ $trx->tanggal_transaksi ? $trx->tanggal_transaksi->format('d M Y, H:i') : '-' }}"
-                                                data-bs-toggle="tooltip" style="cursor: help;">
+                                            <span class="text-muted small fw-medium" style="cursor: help;">
                                                 <i class="bi bi-clock" style="font-size: 0.7rem;"></i>
-                                                {{ $trx->tanggal_transaksi ? $trx->tanggal_transaksi->diffForHumans() : '-' }}
+                                                {{ $tTanggal ? \Carbon\Carbon::parse($tTanggal)->diffForHumans() : '-' }}
                                             </span>
                                         </td>
                                         <td class="text-center pe-4">
-                                            @if($isAnomali)
+                                            @if($tHasAnom)
                                                 <span class="badge rounded-pill px-3 py-2"
                                                     style="background: #fee2e2; color: #b91c1c; font-weight: 600;">
-                                                    <i class="bi bi-exclamation-triangle-fill"></i>
-                                                    {{ ucfirst($trx->status_validasi) }}
+                                                    <i class="bi bi-exclamation-triangle-fill"></i> Anomali
                                                 </span>
                                             @else
                                                 <span class="badge rounded-pill px-3 py-2"

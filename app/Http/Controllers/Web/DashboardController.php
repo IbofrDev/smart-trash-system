@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Web;
 use App\Http\Controllers\Controller;
 use App\Models\Mahasiswa;
 use App\Models\TransaksiSampah;
+use App\Models\TransaksiSession;
 use App\Models\BakSampah;
 use App\Models\VoucherMahasiswa;
 use Carbon\Carbon;
@@ -107,9 +108,15 @@ class DashboardController extends Controller
             ->limit(5)
             ->get();
 
-        // Transaksi Terbaru
-        $recentTransaksi = TransaksiSampah::with(['mahasiswa', 'bakSampah', 'jenisSampah'])
-            ->orderByDesc('tanggal_transaksi')
+            // Transaksi Terbaru (session-based)
+        $recentTransaksi = TransaksiSession::with([
+            'transaksiItems.jenisSampah',
+            'transaksiItems.bakSampah',
+            'transaksiItems.mahasiswa',
+        ])
+            ->where('status', 'completed')
+            ->whereHas('transaksiItems')
+            ->orderByDesc('completed_at')
             ->limit(8)
             ->get();
 
