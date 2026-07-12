@@ -23,7 +23,7 @@
         <h4 class="fw-bold mb-1" style="color: #0f172a;">Monitoring Kapasitas Bak</h4>
         <p class="text-muted mb-0 small">Pantau isi bak sampah dan lakukan pengosongan jika sudah penuh.</p>
     </div>
-    <a href="{{ route($routePrefix . '.bak-sampah.index') }}" class="btn btn-light border rounded-3 fw-bold px-4" style="color: #64748b;">
+      <a href="{{ route($routePrefix . '.dashboard') }}" class="btn btn-light border rounded-3 fw-bold px-4" style="color: #64748b;">
         <i class="bi bi-arrow-left me-1"></i> Kembali
     </a>
 </div>
