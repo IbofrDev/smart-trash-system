@@ -26,23 +26,29 @@ class JenisSampahController extends Controller
         return view('admin.jenis-sampah.index', compact('jenisSampahs'));
     }
 
-    public function create()
-    {
-        return view('admin.jenis-sampah.create');
-    }
+ public function create()
+{
+    $routePrefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola';
+    return view('admin.jenis-sampah.create', compact('routePrefix'));
+}
 
     public function store(Request $request)
     {
-              $validated = $request->validate([
-            'nama' => 'required|string|max:100',
-            'deskripsi' => 'nullable|string',
-            'poin_per_kg' => 'required|integer|min:0',
-            'satuan' => 'required|string|max:10',
-            'is_active' => 'required|boolean',
-        ], [
-            'poin_per_kg.min' => 'Poin per kg tidak boleh negatif.',
-            'is_active.boolean' => 'Status aktif tidak valid.',
-        ]);
+         $validated = $request->validate([
+    'nama'           => 'required|string|max:100',
+    'deskripsi'      => 'nullable|string',
+    'poin_per_kg'    => 'required|integer|min:0',
+    'satuan'         => 'required|string|max:10',
+    'is_active'      => 'required|boolean',
+    'berat_min_gram' => 'required|integer|min:1',
+    'berat_max_gram' => 'required|integer|min:1|gte:berat_min_gram',
+], [
+    'poin_per_kg.min'         => 'Poin per kg tidak boleh negatif.',
+    'is_active.boolean'       => 'Status aktif tidak valid.',
+    'berat_min_gram.required' => 'Berat minimum wajib diisi.',
+    'berat_max_gram.required' => 'Berat maksimum wajib diisi.',
+    'berat_max_gram.gte'      => 'Berat maksimum harus lebih besar atau sama dengan berat minimum.',
+]);
 
         $jenisSampah = JenisSampah::create($validated);
 
