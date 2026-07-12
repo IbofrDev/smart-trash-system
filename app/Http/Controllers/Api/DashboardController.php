@@ -5,6 +5,7 @@ namespace App\Http\Controllers\Api;
 use App\Http\Controllers\Controller;
 use Illuminate\Http\Request;
 use App\Models\TransaksiSampah;
+use App\Models\TransaksiSession;
 use App\Models\VoucherMahasiswa;
 use App\Models\SettingPoin;
 
@@ -38,24 +39,62 @@ class DashboardController extends Controller
             ->where('expired_at', '>', now())
             ->count();
 
-        $recentTransactions = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
-            ->with(['bakSampah.lokasi', 'jenisSampah'])
-            ->orderByDesc('tanggal_transaksi')
+        $recentTransactions = TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'completed')
+            ->with(['transaksiItems.jenisSampah', 'transaksiItems.bakSampah.lokasi'])
+            ->orderByDesc('completed_at')
             ->limit(3)
             ->get()
-            ->map(function ($transaksi) {
+            ->map(function ($session) {
+                $items = $session->transaksiItems;
+                $firstItem = $items->first();
+
+                $jenisBreakdown = $items->map(function ($item) {
+                    $nama = $item->jenisSampah?->nama ?? 'Sampah Daur Ulang';
+                    $jumlah = (int) ($item->jumlah_final ?? 0);
+
+                    return $jumlah > 0 ? "{$nama} ({$jumlah}x)" : $nama;
+                })->values()->all();
+
                 return [
-                    'id' => $transaksi->id,
-                    'jenis_sampah' => $transaksi->jenisSampah?->nama ?? '-',
-                    'berat' => (int) $transaksi->berat,
-                    'jumlah_final' => $transaksi->jumlah_final,
-                    'poin' => $transaksi->poin_didapat,
-                    'koin' => $transaksi->koin_didapat,
-                    'status_validasi' => $transaksi->status_validasi,
-                    'lokasi' => $transaksi->bakSampah?->lokasi?->nama_lokasi ?? '-',
-                    'tanggal' => $transaksi->tanggal_transaksi,
+                    'id' => $session->id,
+                    'jenis_sampah' => $items->count() > 1
+                        ? $items->count() . ' Jenis Sampah'
+                        : ($firstItem?->jenisSampah?->nama ?? 'Sampah Daur Ulang'),
+                    'jenis_breakdown' => $jenisBreakdown,
+                    'berat' => (int) $items->sum('berat'),
+                    'jumlah_final' => (int) $items->sum('jumlah_final'),
+                    'poin' => (int) $items->sum('poin_didapat'),
+                    'koin' => (int) $items->sum('koin_didapat'),
+                    'status_validasi' => $items->contains('status_validasi', 'anomali') ? 'anomali' : 'valid',
+                    'lokasi' => $firstItem?->bakSampah?->lokasi?->nama_lokasi ?? '-',
+                    'tanggal' => $session->completed_at?->toDateTimeString()
+                        ?? $session->created_at?->toDateTimeString()
+                        ?? now()->toDateTimeString(),
                 ];
             });
+
+        if ($recentTransactions->isEmpty()) {
+            $recentTransactions = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
+                ->with(['bakSampah.lokasi', 'jenisSampah'])
+                ->orderByDesc('tanggal_transaksi')
+                ->limit(3)
+                ->get()
+                ->map(function ($transaksi) {
+                    return [
+                        'id' => $transaksi->id,
+                        'jenis_sampah' => $transaksi->jenisSampah?->nama ?? '-',
+                        'jenis_breakdown' => [],
+                        'berat' => (int) $transaksi->berat,
+                        'jumlah_final' => $transaksi->jumlah_final,
+                        'poin' => $transaksi->poin_didapat,
+                        'koin' => $transaksi->koin_didapat,
+                        'status_validasi' => $transaksi->status_validasi,
+                        'lokasi' => $transaksi->bakSampah?->lokasi?->nama_lokasi ?? '-',
+                        'tanggal' => $transaksi->tanggal_transaksi,
+                    ];
+                });
+        }
 
         // Level progress
         $currentLevel = $mahasiswa->level;

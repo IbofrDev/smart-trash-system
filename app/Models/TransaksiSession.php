@@ -38,6 +38,11 @@ class TransaksiSession extends Model
         return $this->hasOne(TransaksiSampah::class, 'session_id');
     }
 
+    public function transaksiItems()
+    {
+        return $this->hasMany(TransaksiSampah::class, 'session_id');
+    }
+
     public function isExpired()
     {
         return now()->greaterThan($this->expired_at);
