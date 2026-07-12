@@ -87,6 +87,7 @@ class AuthController extends Controller
                         'avatar' => $mahasiswa->avatar,
                         'nim' => $mahasiswa->nim,
                         'prodi' => $mahasiswa->prodi,
+                        'rfid_uid' => $mahasiswa->rfid_uid, // Wajib ditambah agar Flutter mendeteksi data sudah ada
                         'total_poin' => $mahasiswa->total_poin,
                         'level' => $mahasiswa->level->nama_level ?? 'Eco Starter',
                         'rfid_registered' => !empty($mahasiswa->rfid_uid),
