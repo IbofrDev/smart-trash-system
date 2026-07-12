@@ -107,6 +107,9 @@ Route::middleware('auth:sanctum')->group(function () {
     // Auth
     Route::post('/auth/logout', [AuthController::class, 'logout']);
 
+    // Jenis Sampah (untuk mobile)
+    Route::get('/jenis-sampah', [\App\Http\Controllers\Api\HardwareController::class, 'getJenisSampah']);
+
     // Dashboard
     Route::get('/dashboard', [DashboardController::class, 'index']);
 

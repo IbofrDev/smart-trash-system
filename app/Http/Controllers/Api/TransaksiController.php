@@ -121,16 +121,16 @@ class TransaksiController extends Controller
      */
        public function createSession(Request $request)
     {
-        // Range berat per ukuran (gram)
-        $sizeRanges = [
-            '220' => ['min' => 6,  'max' => 12],
-            '250' => ['min' => 7,  'max' => 13],
-            '330' => ['min' => 9,  'max' => 15],
-            '350' => ['min' => 10, 'max' => 16],
-            '390' => ['min' => 12, 'max' => 18],
-            '500' => ['min' => 14, 'max' => 22],
-            '600' => ['min' => 16, 'max' => 26],
-        ];
+        // Ambil jenis sampah aktif dari DB sebagai acuan valid keys
+        $jenisList = \App\Models\JenisSampah::where('is_active', 1)->get();
+
+        // Bangun valid keys dari nama jenis sampah (ekstrak angka)
+        $validKeys = [];
+        foreach ($jenisList as $j) {
+            if (preg_match('/(\d+)/', $j->nama, $matches)) {
+                $validKeys[] = $matches[1];
+            }
+        }
 
         $request->validate([
             'botol_breakdown'         => 'required|array',
@@ -140,13 +140,13 @@ class TransaksiController extends Controller
             'botol_breakdown.array'    => 'Format breakdown tidak valid.',
         ]);
 
-        // Filter hanya ukuran valid
+        // Filter hanya ukuran valid dari DB (jika validKeys kosong, terima semua)
         $breakdown = [];
         $totalBotol = 0;
-        foreach ($sizeRanges as $size => $range) {
-            $count = (int) ($request->botol_breakdown[$size] ?? 0);
-            if ($count > 0) {
-                $breakdown[$size] = $count;
+        foreach ($request->botol_breakdown as $size => $count) {
+            $count = (int) $count;
+            if ($count > 0 && (empty($validKeys) || in_array((string)$size, $validKeys))) {
+                $breakdown[(string)$size] = $count;
                 $totalBotol += $count;
             }
         }

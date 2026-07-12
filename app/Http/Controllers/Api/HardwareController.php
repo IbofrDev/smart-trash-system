@@ -61,16 +61,7 @@ class HardwareController extends Controller
             ], 404);
         }
 
-        // Hitung expected weight range (hanya botol plastik)
-        $botol = JenisSampah::find(1); // Botol Plastik
-
-        if (!$botol) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Konfigurasi jenis sampah tidak ditemukan.',
-            ], 500);
-        }
-
+        // Hitung expected weight range berdasarkan breakdown dari DB
         $expected = $this->calculateExpectedWeight($session->botol_breakdown, $session->jumlah_botol);
         $minExpected = $expected['min'];
         $maxExpected = $expected['max'];
@@ -213,17 +204,7 @@ class HardwareController extends Controller
             ], 422);
         }
 
-        // Validasi berat berdasarkan jumlah input botol dari user
-        $botol = JenisSampah::find(1);
-
-        if (!$botol) {
-            return response()->json([
-                'success' => false,
-                'message' => 'Konfigurasi jenis sampah tidak ditemukan.',
-            ], 500);
-        }
-
-        $jumlahInput = $session->jumlah_botol;
+         $jumlahInput = $session->jumlah_botol;
         $jumlahFinal = $countData['jumlah_final'];
 
         $expected = $this->calculateExpectedWeight($session->botol_breakdown, $jumlahInput);
@@ -387,8 +368,9 @@ class HardwareController extends Controller
             ], 422);
         }
 
-        // Hitung poin: (berat_gram / 1000) x poin_per_kg botol plastik
-        $botol = JenisSampah::find(1);
+        // Tentukan jenis_sampah_id dari breakdown session (ambil id pertama yang aktif)
+        $jenisSampahId = $this->resolveJenisSampahId($session->botol_breakdown);
+        $botol = JenisSampah::find($jenisSampahId);
 
         if (!$botol) {
             return response()->json([
@@ -415,7 +397,7 @@ class HardwareController extends Controller
                 'mahasiswa_id' => $mahasiswa->id,
                 'bak_sampah_id' => $request->bak_sampah_id ?? 1,
                 'session_id' => $session->id,
-                'jenis_sampah_id' => 1, // Botol Plastik
+                               'jenis_sampah_id' => $jenisSampahId,
                 'berat' => $beratGram,
                 'jumlah_input_botol' => $session->jumlah_botol,
                 'jumlah_terhitung' => $jumlahTerhitung,
@@ -550,36 +532,79 @@ class HardwareController extends Controller
     /**
      * Hitung range berat expected dari breakdown botol
      */
-    private function calculateExpectedWeight(?array $breakdown, int $totalBotol): array
+     private function calculateExpectedWeight(?array $breakdown, int $totalBotol): array
     {
-        $sizeRanges = [
-            '220' => ['min' => 6, 'max' => 12],
-            '250' => ['min' => 7, 'max' => 13],
-            '330' => ['min' => 9, 'max' => 15],
-            '350' => ['min' => 10, 'max' => 16],
-            '390' => ['min' => 12, 'max' => 18],
-            '500' => ['min' => 14, 'max' => 22],
-            '600' => ['min' => 16, 'max' => 26],
-        ];
+        // Ambil semua jenis sampah aktif dari DB, key by nama (lowercase, tanpa spasi)
+        $jenisList = JenisSampah::where('is_active', 1)->get();
+
+        // Buat map: nama_key => [min, max]
+        // nama_key diambil dari nama jenis sampah, misal "Botol Plastik 220ml" → "220"
+        // Fallback: gunakan field satuan atau nama untuk matching
+        $dbRanges = [];
+        foreach ($jenisList as $j) {
+            // Coba ekstrak angka dari nama sebagai key (misal "220", "500", dll)
+            if (preg_match('/(\d+)/', $j->nama, $matches)) {
+                $key = $matches[1];
+                $dbRanges[$key] = [
+                    'min' => $j->berat_min_gram ?? 6,
+                    'max' => $j->berat_max_gram ?? 26,
+                    'jenis_sampah_id' => $j->id,
+                ];
+            }
+        }
+
+        // Fallback default jika DB kosong
+        $defaultMin = 6;
+        $defaultMax = 26;
 
         if (empty($breakdown)) {
-            $botol = JenisSampah::find(1);
             return [
-                'min' => $totalBotol * ($botol->berat_min_gram ?? 6),
-                'max' => $totalBotol * ($botol->berat_max_gram ?? 26),
+                'min' => $totalBotol * $defaultMin,
+                'max' => $totalBotol * $defaultMax,
             ];
         }
 
         $min = 0;
         $max = 0;
         foreach ($breakdown as $size => $count) {
-            if (isset($sizeRanges[$size])) {
-                $min += $sizeRanges[$size]['min'] * $count;
-                $max += $sizeRanges[$size]['max'] * $count;
+            if (isset($dbRanges[$size])) {
+                $min += $dbRanges[$size]['min'] * $count;
+                $max += $dbRanges[$size]['max'] * $count;
+            } else {
+                // Ukuran tidak ada di DB, pakai default
+                $min += $defaultMin * $count;
+                $max += $defaultMax * $count;
             }
         }
 
         return ['min' => $min, 'max' => $max];
+    }
+
+    /**
+     * Tentukan jenis_sampah_id utama dari breakdown
+     * Ambil id dari jenis sampah aktif pertama yang cocok dengan breakdown
+     */
+    private function resolveJenisSampahId(?array $breakdown): int
+    {
+        if (empty($breakdown)) {
+            // Fallback: ambil jenis sampah aktif pertama
+            $default = JenisSampah::where('is_active', 1)->first();
+            return $default ? $default->id : 1;
+        }
+
+        $jenisList = JenisSampah::where('is_active', 1)->get();
+
+        foreach ($jenisList as $j) {
+            if (preg_match('/(\d+)/', $j->nama, $matches)) {
+                if (isset($breakdown[$matches[1]])) {
+                    return $j->id;
+                }
+            }
+        }
+
+        // Fallback: jenis aktif pertama
+        $default = JenisSampah::where('is_active', 1)->first();
+        return $default ? $default->id : 1;
     }
 }
 
