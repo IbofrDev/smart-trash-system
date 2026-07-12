@@ -39,8 +39,9 @@ class DashboardController extends Controller
             ->where('expired_at', '>', now())
             ->count();
 
-        $recentTransactions = TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+          $recentTransactions = TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
             ->where('status', 'completed')
+            ->whereHas('transaksiItems')
             ->with(['transaksiItems.jenisSampah', 'transaksiItems.bakSampah.lokasi'])
             ->orderByDesc('completed_at')
             ->limit(3)
