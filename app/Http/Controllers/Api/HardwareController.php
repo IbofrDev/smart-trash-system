@@ -204,7 +204,7 @@ class HardwareController extends Controller
             ], 422);
         }
 
-         $jumlahInput = $session->jumlah_botol;
+        $jumlahInput = $session->jumlah_botol;
         $jumlahFinal = $countData['jumlah_final'];
 
         $expected = $this->calculateExpectedWeight($session->botol_breakdown, $jumlahInput);
@@ -397,7 +397,7 @@ class HardwareController extends Controller
                 'mahasiswa_id' => $mahasiswa->id,
                 'bak_sampah_id' => $request->bak_sampah_id ?? 1,
                 'session_id' => $session->id,
-                               'jenis_sampah_id' => $jenisSampahId,
+                'jenis_sampah_id' => $jenisSampahId,
                 'berat' => $beratGram,
                 'jumlah_input_botol' => $session->jumlah_botol,
                 'jumlah_terhitung' => $jumlahTerhitung,
@@ -418,6 +418,12 @@ class HardwareController extends Controller
                 'status' => 'completed',
                 'completed_at' => now(),
             ]);
+
+            // Update kapasitas bak
+            if ($request->bak_sampah_id) {
+                \App\Models\BakSampah::where('id', $request->bak_sampah_id)
+                    ->increment('jumlah_botol_terisi', $jumlahFinal);
+            }
 
             DB::commit(); // ← commit dulu sebelum apapun
 
@@ -532,7 +538,7 @@ class HardwareController extends Controller
     /**
      * Hitung range berat expected dari breakdown botol
      */
-     private function calculateExpectedWeight(?array $breakdown, int $totalBotol): array
+    private function calculateExpectedWeight(?array $breakdown, int $totalBotol): array
     {
         // Ambil semua jenis sampah aktif dari DB, key by nama (lowercase, tanpa spasi)
         $jenisList = JenisSampah::where('is_active', 1)->get();

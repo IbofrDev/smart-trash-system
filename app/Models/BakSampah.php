@@ -16,6 +16,8 @@ class BakSampah extends Model
         'api_key',
         'status',
         'kapasitas_max',
+        'kapasitas_max_botol',
+        'jumlah_botol_terisi',
     ];
 
     public function lokasi(): BelongsTo
