@@ -579,7 +579,7 @@
                                 </td>
 
                                 <td class="text-center">
-                                    <a href="{{ route($routePrefix . '.transaksi.show', $firstItem->id) }}"
+                                    <a href="{{ route($routePrefix . '.transaksi.show', $trx->id) }}"
                                         class="btn-icon btn-detail mx-auto" title="Lihat Detail Transaksi">
                                         <i class="bi bi-eye"></i>
                                     </a>

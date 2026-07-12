@@ -82,9 +82,17 @@ class TransaksiController extends Controller
         ));
     }
 
-    public function show(TransaksiSampah $transaksi)
+     public function show($id)
     {
-        $transaksi->load(['mahasiswa.level', 'jenisSampah', 'bakSampah.lokasi']);
-        return view('admin.transaksi.show', compact('transaksi'));
+        $session = TransaksiSession::where('id', $id)
+            ->where('status', 'completed')
+            ->with([
+                'transaksiItems.jenisSampah',
+                'transaksiItems.bakSampah.lokasi',
+                'transaksiItems.mahasiswa.level',
+            ])
+            ->firstOrFail();
+
+        return view('admin.transaksi.show', compact('session'));
     }
 }

@@ -80,7 +80,7 @@ Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(functi
 
     // Transaksi
     Route::get('transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
-    Route::get('transaksi/{transaksi}', [TransaksiController::class, 'show'])->name('transaksi.show');
+       Route::get('transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
 
     // Voucher
     Route::get('voucher', [VoucherController::class, 'index'])->name('voucher.index');
@@ -112,7 +112,7 @@ Route::prefix('pengelola')->name('pengelola.')->middleware(['role:admin,pengelol
 
     // View Only - Transaksi
     Route::get('transaksi', [TransaksiController::class, 'index'])->name('transaksi.index');
-    Route::get('transaksi/{transaksi}', [TransaksiController::class, 'show'])->name('transaksi.show');
+       Route::get('transaksi/{id}', [TransaksiController::class, 'show'])->name('transaksi.show');
     Route::get('voucher', [VoucherController::class, 'index'])->name('voucher.index');
     // View Only - Laporan
     Route::get('laporan/transaksi', [LaporanController::class, 'transaksi'])->name('laporan.transaksi');
