@@ -14,7 +14,7 @@ class TransaksiController extends Controller
      * GET /api/transaksi
      * List riwayat transaksi
      */
-    public function index(Request $request)
+      public function index(Request $request)
     {
         $user = $request->user();
         if ($user instanceof \App\Models\Mahasiswa) {
@@ -25,38 +25,53 @@ class TransaksiController extends Controller
         if (!$mahasiswa) {
             return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
         }
+
         $period = $request->query('period', 'all');
 
-        $query = TransaksiSampah::where('mahasiswa_id', $mahasiswa->id)
-            ->with(['bakSampah.lokasi', 'jenisSampah']);
+        $query = TransaksiSession::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'completed')
+            ->whereHas('transaksiItems')
+            ->with(['transaksiItems.jenisSampah', 'transaksiItems.bakSampah.lokasi']);
 
         if ($period === '7days') {
-            $query->where('tanggal_transaksi', '>=', now()->subDays(7));
+            $query->where('completed_at', '>=', now()->subDays(7));
         } elseif ($period === '30days') {
-            $query->where('tanggal_transaksi', '>=', now()->subDays(30));
+            $query->where('completed_at', '>=', now()->subDays(30));
         }
 
-        $transaksi = $query->orderByDesc('tanggal_transaksi')
-            ->paginate(10)
-            ->through(function ($item) {
-                return [
-                    'id' => $item->id,
-                    'berat_gram' => $item->berat,
-                    'jumlah_final' => $item->jumlah_final,
-                    'status_validasi' => $item->status_validasi,
-                    'poin_didapat' => $item->poin_didapat,
-                    'koin_didapat' => $item->koin_didapat,
-                    'bak_sampah' => $item->bakSampah->nama ?? '-',
-                    'lokasi' => $item->bakSampah->lokasi->nama_lokasi ?? '-',
-                    'tanggal' => $item->tanggal_transaksi,
-                    'jenis_sampah' => $item->jenisSampah->nama ?? '-',
-                    'poin_per_kg' => $item->jenisSampah->poin_per_kg ?? 0,
-                ];
-            });
+        $sessions = $query->orderByDesc('completed_at')
+            ->paginate(10);
+
+        $mapped = $sessions->through(function ($session) {
+            $items = $session->transaksiItems;
+            $firstItem = $items->first();
+            $hasAnomali = $items->contains('status_validasi', 'anomali');
+
+            return [
+                'id' => $session->id,
+                'jenis_sampah' => $items->count() > 1
+                    ? $items->count() . ' Jenis Sampah'
+                    : ($firstItem?->jenisSampah?->nama ?? 'Sampah Daur Ulang'),
+                'jenis_breakdown' => $items->map(function ($item) {
+                    $nama = $item->jenisSampah?->nama ?? 'Sampah Daur Ulang';
+                    $jumlah = (int) ($item->jumlah_final ?? 0);
+                    return $jumlah > 0 ? "{$nama} ({$jumlah}x)" : $nama;
+                })->values()->all(),
+                'berat' => (int) $items->sum('berat'),
+                'jumlah_final' => (int) $items->sum('jumlah_final'),
+                'poin' => (int) $items->sum('poin_didapat'),
+                'koin' => (int) $items->sum('koin_didapat'),
+                'status_validasi' => $hasAnomali ? 'anomali' : 'valid',
+                'lokasi' => $firstItem?->bakSampah?->lokasi?->nama_lokasi ?? '-',
+                'tanggal' => $session->completed_at?->toDateTimeString()
+                    ?? $session->created_at?->toDateTimeString()
+                    ?? now()->toDateTimeString(),
+            ];
+        });
 
         return response()->json([
             'success' => true,
-            'data' => $transaksi,
+            'data' => $mapped,
         ]);
     }
 
