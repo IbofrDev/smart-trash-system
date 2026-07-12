@@ -75,15 +75,15 @@
                     </li>
                 </ul>
 
-                <div class="section-title border-top pt-4">Rincian Fisik Sampah</div>
+                               <div class="section-title border-top pt-4">Rincian Fisik Sampah</div>
                 <ul class="list-group list-group-flush list-group-custom">
                     <li class="list-group-item">
-                        <span class="item-label"><i class="bi bi-cup-straw text-success"></i> Botol Plastik (PET)</span>
-                        <span class="item-value">{{ $transaksi->jumlah_botol ?? 0 }} pcs</span>
+                        <span class="item-label"><i class="bi bi-tags text-success"></i> Jenis Sampah</span>
+                        <span class="item-value">{{ $transaksi->jenisSampah->nama ?? '-' }}</span>
                     </li>
                     <li class="list-group-item">
-                        <span class="item-label"><i class="bi bi-plugin text-warning"></i> Kaleng Aluminium</span>
-                        <span class="item-value">{{ $transaksi->jumlah_kaleng ?? 0 }} pcs</span>
+                        <span class="item-label"><i class="bi bi-cup-straw text-success"></i> Jumlah Input</span>
+                        <span class="item-value">{{ $transaksi->jumlah_input_botol ?? 0 }} pcs</span>
                     </li>
                     <li class="list-group-item bg-light" style="background-color: #f8fafc !important;">
                         <span class="item-label"><i class="bi bi-box-seam text-dark"></i> Total Terhitung (Final)</span>
