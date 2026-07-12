@@ -485,103 +485,102 @@
                     <tbody>
                         @forelse($transaksis as $index => $trx)
                             @php
-                                $isAnomali = ($trx->status_validasi ?? 'valid') !== 'valid';
-                                $jenisNama = strtolower($trx->jenisSampah->nama ?? '');
-                                if (str_contains($jenisNama, 'botol') || str_contains($jenisNama, 'plastik')) {
-                                    $jenisIcon = '🥤';
-                                    $jenisColor = '#0ea5e9';
-                                } elseif (str_contains($jenisNama, 'kaleng') || str_contains($jenisNama, 'logam')) {
-                                    $jenisIcon = '🥫';
-                                    $jenisColor = '#64748b';
-                                } elseif (str_contains($jenisNama, 'kertas')) {
-                                    $jenisIcon = '📄';
-                                    $jenisColor = '#f59e0b';
-                                } elseif (str_contains($jenisNama, 'organik')) {
-                                    $jenisIcon = '🍃';
-                                    $jenisColor = '#10b981';
-                                } else {
-                                    $jenisIcon = '♻️';
-                                    $jenisColor = '#64748b';
-                                }
+                                $items = $trx->transaksiItems;
+                                $firstItem = $items->first();
+                                $mahasiswa = $firstItem?->mahasiswa;
+                                $hasAnomali = $items->contains('status_validasi', 'anomali');
+                                $totalBerat = $items->sum('berat');
+                                $totalPoin = $items->sum('poin_didapat');
+                                $totalKoin = $items->sum('koin_didapat');
+                                $totalFinal = $items->sum('jumlah_final');
+                                $tanggal = $trx->completed_at ?? $trx->created_at;
                             @endphp
-                            <tr style="{{ $isAnomali ? 'background: #fef7f7;' : '' }}">
+                            <tr style="{{ $hasAnomali ? 'background: #fef7f7;' : '' }}">
                                 <td class="text-center text-muted fw-semibold">{{ $transaksis->firstItem() + $index }}</td>
 
                                 <td>
                                     <div class="d-flex align-items-center gap-2">
-                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($trx->mahasiswa->name ?? 'Unknown') }}&background=ecfdf5&color=047857&bold=true"
+                                        <img src="https://ui-avatars.com/api/?name={{ urlencode($mahasiswa->name ?? 'Unknown') }}&background=ecfdf5&color=047857&bold=true"
                                             alt="Avatar" class="avatar-square-soft flex-shrink-0">
                                         <div style="min-width: 0;">
                                             <div class="fw-bold text-truncate" style="color: #0f172a; max-width: 140px;">
-                                                {{ $trx->mahasiswa->name ?? 'Mahasiswa Dihapus' }}
+                                                {{ $mahasiswa->name ?? 'Mahasiswa Dihapus' }}
                                             </div>
                                             <div class="text-muted" style="font-family: monospace; font-size: 0.7rem;">
-                                                {{ $trx->mahasiswa->nim ?? '-' }}
+                                                {{ $mahasiswa->nim ?? '-' }}
                                             </div>
-                                            <small class="text-muted d-block"
-                                                title="{{ \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('l, d F Y H:i:s') }}"
-                                                data-bs-toggle="tooltip" style="cursor: help; font-size: 0.7rem;">
+                                            <small class="text-muted d-block" style="font-size: 0.7rem;">
                                                 <i class="bi bi-clock"></i>
-                                                {{ \Carbon\Carbon::parse($trx->tanggal_transaksi)->format('d M Y, H:i') }}
+                                                {{ \Carbon\Carbon::parse($tanggal)->format('d M Y, H:i') }}
                                             </small>
                                         </div>
                                     </div>
                                 </td>
 
                                 <td>
-                                    <div class="fw-medium" style="color: #334155; white-space: nowrap;"><i
-                                            class="bi bi-hdd-network text-muted"></i>
-                                        {{ $trx->bakSampah->nama ?? 'Bak Dihapus' }}</div>
-                                    @if($trx->bakSampah && isset($trx->bakSampah->lokasi))
-                                        <small class="text-muted text-truncate d-block" style="max-width: 130px; font-size: 0.7rem;"
-                                            title="{{ $trx->bakSampah->lokasi->nama_lokasi ?? '-' }}"><i class="bi bi-geo-alt"></i>
-                                            {{ $trx->bakSampah->lokasi->nama_lokasi ?? '-' }}</small>
+                                    <div class="fw-medium" style="color: #334155; white-space: nowrap;">
+                                        <i class="bi bi-hdd-network text-muted"></i>
+                                        {{ $firstItem?->bakSampah->nama ?? 'Bak Dihapus' }}
+                                    </div>
+                                    @if($firstItem?->bakSampah?->lokasi)
+                                        <small class="text-muted d-block" style="max-width: 130px; font-size: 0.7rem;">
+                                            <i class="bi bi-geo-alt"></i>
+                                            {{ $firstItem->bakSampah->lokasi->nama_lokasi }}
+                                        </small>
                                     @endif
                                 </td>
 
                                 <td>
-                                    <span class="badge rounded-pill px-2 py-1"
-                                        style="background: {{ $jenisColor }}15; color: {{ $jenisColor }}; font-weight: 600; font-size: 0.75rem; white-space: nowrap;">
-                                        {{ $jenisIcon }} {{ $trx->jenisSampah->nama ?? 'Lainnya' }}
-                                    </span>
+                                    @if($items->count() === 1)
+                                        <span class="badge rounded-pill px-2 py-1"
+                                            style="background: #0ea5e915; color: #0ea5e9; font-weight: 600; font-size: 0.75rem; white-space: nowrap;">
+                                            🍶 {{ $firstItem?->jenisSampah->nama ?? 'Lainnya' }}
+                                        </span>
+                                    @else
+                                        <div class="fw-semibold" style="font-size: 0.8rem; color: #0f172a;">
+                                            {{ $items->count() }} Jenis Sampah
+                                        </div>
+                                        @foreach($items as $item)
+                                            <small class="text-muted d-block" style="font-size: 0.7rem;">
+                                                • {{ $item->jenisSampah->nama ?? '-' }}
+                                                ({{ $item->jumlah_final ?? 0 }}x,
+                                                {{ $item->berat >= 1000 ? number_format($item->berat / 1000, 2) . ' kg' : number_format($item->berat, 0) . ' g' }})
+                                            </small>
+                                        @endforeach
+                                    @endif
                                 </td>
 
                                 <td>
                                     <div class="fw-bold" style="color: #0f172a; font-size: 0.85rem; white-space: nowrap;">
-                                        @if(($trx->berat ?? 0) >= 1000)
-                                            {{ number_format($trx->berat / 1000, 2) }} kg
-                                        @else
-                                            {{ number_format($trx->berat ?? 0, 0) }} g
-                                        @endif
+                                        {{ $totalBerat >= 1000 ? number_format($totalBerat / 1000, 2) . ' kg' : number_format($totalBerat, 0) . ' g' }}
                                     </div>
                                     <small class="text-muted" style="font-size: 0.7rem; white-space: nowrap;">
-                                        <i class="bi bi-box-seam"></i> {{ $trx->jumlah_final ?? $trx->jumlah_botol ?? 0 }} pcs
+                                        <i class="bi bi-box-seam"></i> {{ $totalFinal }} pcs
                                     </small>
                                 </td>
 
                                 <td>
-                                    <div class="fw-bold" style="font-size: 0.85rem; color: #059669; white-space: nowrap;"><i
-                                            class="bi bi-star-fill text-warning"></i>
-                                        +{{ number_format($trx->poin_didapat ?? 0) }} Pts</div>
-                                    <div class="fw-bold" style="font-size: 0.75rem; color: #d97706; white-space: nowrap;"><i
-                                            class="bi bi-coin text-warning"></i> +{{ number_format($trx->koin_didapat ?? 0) }}
-                                        Koin</div>
+                                    <div class="fw-bold" style="font-size: 0.85rem; color: #059669; white-space: nowrap;">
+                                        <i class="bi bi-star-fill text-warning"></i> +{{ number_format($totalPoin) }} Pts
+                                    </div>
+                                    <div class="fw-bold" style="font-size: 0.75rem; color: #d97706; white-space: nowrap;">
+                                        <i class="bi bi-coin text-warning"></i> +{{ number_format($totalKoin) }} Koin
+                                    </div>
                                 </td>
 
                                 <td class="text-center">
-                                    @if(($trx->status_validasi ?? 'valid') === 'valid')
+                                    @if(!$hasAnomali)
                                         <span class="badge px-3 py-1 rounded-2"
                                             style="background: #ecfdf5; color: #059669; border: 1px solid #a7f3d0;">Valid</span>
                                     @else
                                         <span class="badge px-3 py-1 rounded-2"
-                                            style="background: #fff1f2; color: #dc2626; border: 1px solid #fecaca;"
-                                            title="Peringatan Anomali Sensor">Anomali</span>
+                                            style="background: #fff1f2; color: #dc2626; border: 1px solid #fecaca;">Anomali</span>
                                     @endif
                                 </td>
 
                                 <td class="text-center">
-                                    <a href="{{ route($routePrefix . '.transaksi.show', $trx) }}" class="btn-icon btn-detail mx-auto"
-                                        title="Lihat Detail Transaksi">
+                                    <a href="{{ route($routePrefix . '.transaksi.show', $firstItem->id) }}"
+                                        class="btn-icon btn-detail mx-auto" title="Lihat Detail Transaksi">
                                         <i class="bi bi-eye"></i>
                                     </a>
                                 </td>
