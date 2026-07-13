@@ -105,10 +105,10 @@
                     </td>
 
                     <td>
-                        @php
-                            $maxPoin = $levels->max('max_poin');
-                            $width = $maxPoin > 0 ? ($level->max_poin / $maxPoin) * 100 : 0;
-                        @endphp
+                       @php
+    $maxPoin = $levels->max('max_poin');
+    $width = $maxPoin > 0 ? (log($level->max_poin + 1) / log($maxPoin + 1)) * 100 : 0;
+@endphp
                         <div class="progress-wrapper" title="{{ number_format($width, 1) }}% dari poin tertinggi">
                             <div class="progress-custom">
                                 <div class="progress-bar-custom" style="width: {{ $width }}%"></div>
