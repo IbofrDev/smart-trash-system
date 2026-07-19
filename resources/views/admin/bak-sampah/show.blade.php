@@ -256,20 +256,43 @@
 
     <div class="col-lg-4 animate-fade-up d-flex flex-column" style="animation-delay: 0.3s;">
         
-        <div class="card custom-card mb-4 text-center p-4 flex-shrink-0">
-            <h6 class="fw-bold mb-4 text-start" style="color: #0f172a;"><i class="bi bi-hdd-fill text-success me-2"></i>Kapasitas Hardware</h6>
-            
+          <div class="card custom-card mb-4 text-center p-4 flex-shrink-0">
+            <h6 class="fw-bold mb-4 text-start" style="color: #0f172a;"><i class="bi bi-hdd-fill text-success me-2"></i>Kapasitas Botol</h6>
+
             @php
-                $maxKg = $bakSampah->kapasitas_max ?? 0;
+                $maxBotol  = $bakSampah->kapasitas_max_botol ?: 100;
+                $terisi    = $bakSampah->jumlah_botol_terisi ?? 0;
+                $persen    = $maxBotol > 0 ? min(100, round(($terisi / $maxBotol) * 100)) : 0;
+                $warnaBotol = match(true) {
+                    $persen >= 100 => '#dc2626',
+                    $persen >= 80  => '#d97706',
+                    default        => '#10b981',
+                };
+                $statusBotol = match(true) {
+                    $persen >= 100 => 'PENUH',
+                    $persen >= 80  => 'HAMPIR PENUH',
+                    default        => 'NORMAL',
+                };
             @endphp
-            
-            <div class="capacity-circle" style="--percentage: 100%;">
+
+            <div class="capacity-circle" style="--percentage: {{ $persen }}%; background: conic-gradient({{ $warnaBotol }} {{ $persen }}%, #f1f5f9 0);">
                 <div class="capacity-inner">
-                    <span class="fs-4 fw-bold mb-0" style="color: #0f172a;">{{ $maxKg ? number_format($maxKg, 0) : '0' }}</span>
-                    <small class="text-muted fw-bold" style="font-size: 0.65rem; letter-spacing: 0.5px;">KG MAX</small>
+                    <span class="fs-4 fw-bold mb-0" style="color: {{ $warnaBotol }};">{{ $persen }}%</span>
+                    <small class="fw-bold" style="font-size: 0.6rem; letter-spacing: 0.5px; color: {{ $warnaBotol }};">{{ $statusBotol }}</small>
                 </div>
             </div>
-            <p class="text-muted small mt-4 mb-0">Batas maksimal tampungan fisik yang diizinkan sebelum alat terkunci otomatis.</p>
+
+            <div class="mt-3">
+                <span class="fw-bold" style="color: #0f172a; font-size: 1.1rem;">{{ $terisi }}</span>
+                <span class="text-muted"> / {{ $maxBotol }} botol</span>
+            </div>
+
+            <p class="text-muted small mt-3 mb-0">Jumlah botol yang sudah masuk ke bak sampah ini.</p>
+
+            <a href="{{ route($routePrefix . '.bak-sampah.monitoring') }}" class="btn btn-sm mt-3 rounded-2 fw-semibold w-100"
+                style="background:#f1f5f9; color:#0f172a; border:none; font-size:0.8rem;">
+                <i class="bi bi-bar-chart-line me-1"></i> Lihat Monitoring
+            </a>
         </div>
 
         <div class="card custom-card p-4 flex-grow-1 d-flex flex-column">

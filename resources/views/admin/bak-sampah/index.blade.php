@@ -136,7 +136,7 @@
                     <th width="5%" class="ps-4">No</th>
                     <th width="25%">Perangkat IoT</th>
                     <th width="20%">Lokasi Terpasang</th>
-                    <th width="15%">Kapasitas Max</th>
+                                       <th width="15%">Kapasitas Botol</th>
                     <th width="20%">Status Koneksi</th>
                     <th width="15%" class="text-center pe-4">Aksi</th>
                 </tr>
@@ -166,9 +166,31 @@
                         @endif
                     </td>
 
-                    <td>
-                        <div class="bg-light border rounded-2 px-3 py-1 d-inline-block" style="background-color: #f8fafc !important;">
-                            <span class="fw-bold" style="color: #0f172a;">{{ $bak->kapasitas_max ? number_format($bak->kapasitas_max, 1) : '0' }}</span> <small class="text-muted">kg</small>
+                                    <td>
+                        @php
+                            $maxBotol = $bak->kapasitas_max_botol ?: 100;
+                            $terisi = $bak->jumlah_botol_terisi ?? 0;
+                            $persen = $maxBotol > 0 ? min(100, round(($terisi / $maxBotol) * 100)) : 0;
+                            $warnaStatus = match(true) {
+                                $persen >= 100 => ['bg' => '#fee2e2', 'text' => '#dc2626', 'bar' => '#dc2626', 'label' => 'PENUH'],
+                                $persen >= 80  => ['bg' => '#fef3c7', 'text' => '#d97706', 'bar' => '#d97706', 'label' => 'HAMPIR PENUH'],
+                                default        => ['bg' => '#ecfdf5', 'text' => '#059669', 'bar' => '#10b981', 'label' => null],
+                            };
+                        @endphp
+                        <div style="min-width: 130px;">
+                            <div class="d-flex justify-content-between align-items-center mb-1">
+                                <small class="fw-bold" style="color: {{ $warnaStatus['text'] }};">
+                                    {{ $terisi }}/{{ $maxBotol }} pcs
+                                </small>
+                                @if($warnaStatus['label'])
+                                    <span class="badge" style="background:{{ $warnaStatus['bg'] }}; color:{{ $warnaStatus['text'] }}; font-size:0.6rem; padding:2px 6px; border-radius:4px;">{{ $warnaStatus['label'] }}</span>
+                                @else
+                                    <small class="text-muted">{{ $persen }}%</small>
+                                @endif
+                            </div>
+                            <div style="height:6px; background:#f1f5f9; border-radius:99px; overflow:hidden;">
+                                <div style="width:{{ $persen }}%; height:100%; background:{{ $warnaStatus['bar'] }}; border-radius:99px; transition:width 0.5s;"></div>
+                            </div>
                         </div>
                     </td>
                     

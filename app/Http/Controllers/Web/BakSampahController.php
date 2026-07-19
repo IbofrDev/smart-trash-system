@@ -45,14 +45,17 @@ class BakSampahController extends Controller
 
     public function store(Request $request)
     {
-         $validated = $request->validate([
+                   $validated = $request->validate([
             'nama' => 'required|string|max:100',
             'lokasi_id' => 'required|exists:lokasi,id',
             'status' => 'required|in:aktif,nonaktif,maintenance',
             'kapasitas_max' => 'nullable|numeric|min:0',
+            'kapasitas_max_botol' => 'required|integer|min:1',
         ], [
             'lokasi_id.exists' => 'Lokasi yang dipilih tidak valid.',
             'status.in' => 'Status harus salah satu dari: aktif, nonaktif, atau maintenance.',
+            'kapasitas_max_botol.required' => 'Kapasitas botol wajib diisi.',
+            'kapasitas_max_botol.min' => 'Kapasitas botol minimal 1.',
         ]);
 
         // Generate API key unik
@@ -106,9 +109,12 @@ class BakSampahController extends Controller
             'lokasi_id' => 'required|exists:lokasi,id',
             'status' => 'required|in:aktif,nonaktif,maintenance',
             'kapasitas_max' => 'nullable|numeric|min:0',
+            'kapasitas_max_botol' => 'required|integer|min:1',
         ], [
             'lokasi_id.exists' => 'Lokasi yang dipilih tidak valid.',
             'status.in' => 'Status harus salah satu dari: aktif, nonaktif, atau maintenance.',
+            'kapasitas_max_botol.required' => 'Kapasitas botol wajib diisi.',
+            'kapasitas_max_botol.min' => 'Kapasitas botol minimal 1.',
         ]);
 
         $bakSampah->update($validated);

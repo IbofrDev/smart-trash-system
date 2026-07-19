@@ -134,15 +134,28 @@
                             </div>
                         </div>
 
-                        <div class="col-md-6 mt-2">
+                                             <div class="col-md-6 mt-2">
                             <label class="form-label">Kapasitas Maksimal Fisik</label>
                             <div class="input-group-custom">
-                                <input type="number" step="0.01" name="kapasitas_max" class="form-control-modern input-with-text-right @error('kapasitas_max') is-invalid @enderror" 
+                                <input type="number" step="0.01" name="kapasitas_max" class="form-control-modern input-with-text-right @error('kapasitas_max') is-invalid @enderror"
                                     value="{{ old('kapasitas_max') }}" placeholder="Contoh: 50.00">
                                 <i class="bi bi-speedometer2"></i>
                                 <span class="input-group-text-right">KG</span>
-                                @error('kapasitas_max') 
-                                    <div class="invalid-feedback d-block mt-1">{{ $message }}</div> 
+                                @error('kapasitas_max')
+                                    <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
+                                @enderror
+                            </div>
+                        </div>
+
+                        <div class="col-md-6 mt-2">
+                            <label class="form-label">Kapasitas Maksimal Botol <span class="text-danger">*</span></label>
+                            <div class="input-group-custom">
+                                <input type="number" min="1" name="kapasitas_max_botol" class="form-control-modern input-with-text-right @error('kapasitas_max_botol') is-invalid @enderror"
+                                    value="{{ old('kapasitas_max_botol', 100) }}" placeholder="Contoh: 100" required>
+                                <i class="bi bi-archive"></i>
+                                <span class="input-group-text-right">PCS</span>
+                                @error('kapasitas_max_botol')
+                                    <div class="invalid-feedback d-block mt-1">{{ $message }}</div>
                                 @enderror
                             </div>
                         </div>
