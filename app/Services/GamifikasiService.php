@@ -184,7 +184,7 @@ class GamifikasiService
         // Sync total_koin_botol di mahasiswa dari sumber kebenaran
         $mahasiswa->update(['total_koin_botol' => $totalKoin]);
 
-        $leaderboard = Leaderboard::where('mahasiswa_id', $mahasiswa->id)->first();
+    $leaderboard = Leaderboard::where('mahasiswa_id', $mahasiswa->id)->first();
 
         if ($leaderboard) {
             $leaderboard->update([

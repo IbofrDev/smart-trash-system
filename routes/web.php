@@ -16,6 +16,7 @@ use App\Http\Controllers\Web\LaporanController;
 use App\Http\Controllers\Web\LogAktivitasController;
 use App\Http\Controllers\Web\VoucherController;
 use App\Http\Controllers\Web\PengosonganBakController;
+use App\Http\Controllers\Web\NotifikasiUserController;
 /*
 |--------------------------------------------------------------------------
 | Public Routes
@@ -97,6 +98,10 @@ Route::prefix('admin')->name('admin.')->middleware(['role:admin'])->group(functi
 
     // Log Aktivitas
     Route::get('log-aktivitas', [LogAktivitasController::class, 'index'])->name('log-aktivitas.index');
+
+    // Notifikasi User
+    Route::get('notifikasi', [NotifikasiUserController::class, 'index'])->name('notifikasi.index');
+    Route::post('notifikasi/mark-all-read', [NotifikasiUserController::class, 'markAllRead'])->name('notifikasi.mark-all-read');
 });
 
 /*
@@ -129,4 +134,8 @@ Route::prefix('pengelola')->name('pengelola.')->middleware(['role:admin,pengelol
     Route::get('laporan/transaksi/pdf', [LaporanController::class, 'transaksiPdf'])->name('laporan.transaksi.pdf');
     Route::get('laporan/mahasiswa', [LaporanController::class, 'mahasiswa'])->name('laporan.mahasiswa');
     Route::get('laporan/mahasiswa/pdf', [LaporanController::class, 'mahasiswaPdf'])->name('laporan.mahasiswa.pdf');
+
+    // Notifikasi User
+    Route::get('notifikasi', [NotifikasiUserController::class, 'index'])->name('notifikasi.index');
+    Route::post('notifikasi/mark-all-read', [NotifikasiUserController::class, 'markAllRead'])->name('notifikasi.mark-all-read');
 });

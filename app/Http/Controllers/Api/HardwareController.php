@@ -8,6 +8,8 @@ use App\Models\Mahasiswa;
 use App\Models\JenisSampah;
 use App\Models\TransaksiSampah;
 use App\Models\TransaksiSession;
+use App\Models\NotifikasiUser;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -419,10 +421,57 @@ class HardwareController extends Controller
                 'completed_at' => now(),
             ]);
 
-            // Update kapasitas bak
+                    // Update kapasitas bak & cek notifikasi
             if ($request->bak_sampah_id) {
-                \App\Models\BakSampah::where('id', $request->bak_sampah_id)
-                    ->increment('jumlah_botol_terisi', $jumlahFinal);
+                $bak = \App\Models\BakSampah::find($request->bak_sampah_id);
+                if ($bak) {
+                    $bak->increment('jumlah_botol_terisi', $jumlahFinal);
+                    $bak->refresh();
+
+                    $kapasitas = $bak->kapasitas_max_botol ?: 100;
+                    $persen = $kapasitas > 0 ? ($bak->jumlah_botol_terisi / $kapasitas) * 100 : 0;
+
+                    $tipe = null;
+                    if ($persen >= 100) {
+                        $tipe = 'bak_penuh';
+                    } elseif ($persen >= 80) {
+                        $tipe = 'bak_hampir_penuh';
+                    }
+
+                    if ($tipe) {
+                        // Cek apakah notif tipe sama sudah dikirim & belum dibaca
+                        $sudahAda = NotifikasiUser::where('bak_sampah_id', $bak->id)
+                            ->where('tipe', $tipe)
+                            ->where('is_read', false)
+                            ->exists();
+
+                        if (!$sudahAda) {
+                            $judul = $tipe === 'bak_penuh'
+                                ? "🚨 Bak Sampah Penuh!"
+                                : "⚠️ Bak Sampah Hampir Penuh";
+
+                            $pesan = $tipe === 'bak_penuh'
+                                ? "Bak sampah {$bak->nama} sudah PENUH ({$bak->jumlah_botol_terisi}/{$kapasitas} botol). Segera lakukan pengosongan."
+                                : "Bak sampah {$bak->nama} sudah terisi " . round($persen) . "% ({$bak->jumlah_botol_terisi}/{$kapasitas} botol). Perlu perhatian segera.";
+
+                            // Kirim ke semua admin & pengelola
+                            $users = User::whereIn('role', ['admin', 'pengelola'])
+                                ->where('is_active', true)
+                                ->get();
+
+                            foreach ($users as $user) {
+                                NotifikasiUser::create([
+                                    'user_id'      => $user->id,
+                                    'judul'        => $judul,
+                                    'pesan'        => $pesan,
+                                    'tipe'         => $tipe,
+                                    'bak_sampah_id'=> $bak->id,
+                                    'is_read'      => false,
+                                ]);
+                            }
+                        }
+                    }
+                }
             }
 
             DB::commit(); // ← commit dulu sebelum apapun

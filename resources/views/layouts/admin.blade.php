@@ -352,6 +352,32 @@
 
             @php $prefix = auth()->user()->role === 'admin' ? 'admin' : 'pengelola'; @endphp
 
+                        <div class="nav-section">Monitoring</div>
+            <a href="{{ route($prefix . '.bak-sampah.monitoring') }}"
+                class="nav-link {{ request()->routeIs($prefix . '.bak-sampah.monitoring') ? 'active' : '' }}">
+                <i class="bi bi-bar-chart-line"></i>
+                <span>Kapasitas Bak</span>
+                @php
+                    $bakPenuhCount = \App\Models\BakSampah::whereColumn('jumlah_botol_terisi', '>=', 'kapasitas_max_botol')
+                        ->where('status', 'aktif')->count();
+                @endphp
+                @if($bakPenuhCount > 0)
+                    <span class="menu-badge ms-auto" style="background:#fee2e2; color:#dc2626;">{{ $bakPenuhCount }} Penuh</span>
+                @endif
+            </a>
+            <a href="{{ route($prefix . '.notifikasi.index') }}"
+                class="nav-link {{ request()->routeIs($prefix . '.notifikasi.*') ? 'active' : '' }}">
+                <i class="bi bi-bell"></i>
+                <span>Notifikasi</span>
+                @php
+                    $sidebarUnread = \App\Models\NotifikasiUser::where('user_id', auth()->id())
+                        ->where('is_read', false)->count();
+                @endphp
+                @if($sidebarUnread > 0)
+                    <span class="menu-badge ms-auto">{{ $sidebarUnread }}</span>
+                @endif
+            </a>
+
             <div class="nav-section">Data Transaksi</div>
             <a href="{{ route($prefix . '.mahasiswa.index') }}"
                 class="nav-link {{ request()->routeIs($prefix . '.mahasiswa.*') ? 'active' : '' }}">
@@ -398,6 +424,22 @@
                 <h4 class="mb-0 fw-bold" style="letter-spacing: -0.5px; color: #0f172a;">@yield('title', 'Dashboard')
                 </h4>
             </div>
+
+                      {{-- Notifikasi Bell --}}
+            @php
+                $unreadNotifCount = \App\Models\NotifikasiUser::where('user_id', auth()->id())
+                    ->where('is_read', false)->count();
+            @endphp
+            <a href="{{ route($prefix . '.notifikasi.index') }}" class="btn position-relative me-2"
+                style="background:#fff; border:1px solid #e2e8f0; border-radius:50%; width:42px; height:42px; display:flex; align-items:center; justify-content:center; color:#64748b;">
+                <i class="bi bi-bell" style="font-size:1.1rem;"></i>
+                @if($unreadNotifCount > 0)
+                    <span class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger"
+                        style="font-size:0.65rem; padding: 3px 6px;">
+                        {{ $unreadNotifCount > 99 ? '99+' : $unreadNotifCount }}
+                    </span>
+                @endif
+            </a>
 
             <div class="dropdown user-dropdown">
                 <button class="btn dropdown-toggle" type="button" data-bs-toggle="dropdown">
