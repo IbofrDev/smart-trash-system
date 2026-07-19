@@ -46,6 +46,18 @@ class VoucherController extends Controller
         $koinPerVoucher = (int) SettingPoin::where('nama_setting', 'koin_per_voucher')->value('value');
         $expiredDays = (int) SettingPoin::where('nama_setting', 'voucher_expired_days')->value('value');
 
+           // 🔒 Cek apakah masih ada voucher aktif
+        $hasActiveVoucher = VoucherMahasiswa::where('mahasiswa_id', $mahasiswa->id)
+            ->where('status', 'aktif')
+            ->exists();
+
+        if ($hasActiveVoucher) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Masih ada voucher aktif. Gunakan voucher sebelumnya terlebih dahulu.',
+            ], 422);
+        }
+
         // Validasi koin cukup
         if ($mahasiswa->total_koin_botol < $koinPerVoucher) {
             return response()->json([

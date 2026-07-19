@@ -189,8 +189,16 @@ class TransaksiController extends Controller
         } else {
             $mahasiswa = \App\Models\Mahasiswa::where('email', $user->email)->first();
         }
-        if (!$mahasiswa) {
+             if (!$mahasiswa) {
             return response()->json(['success' => false, 'message' => 'Akses hanya untuk mahasiswa.'], 403);
+        }
+
+        // 🔒 Batas maksimal 20 koin
+        if ($mahasiswa->total_koin_botol >= 20) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Koin sudah mencapai batas maksimal (20). Harap claim voucher terlebih dahulu.',
+            ], 422);
         }
 
         // Expire session lama
