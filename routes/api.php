@@ -92,10 +92,12 @@ Route::prefix('auth/kasir')->group(function () {
 Route::prefix('kasir')
     ->middleware(['auth:sanctum', 'role:kasir'])
     ->group(function () {
-        Route::get('/me', [KasirController::class, 'me']);
+           Route::get('/me', [KasirController::class, 'me']);
         Route::post('/logout', [AuthController::class, 'logoutKasir']);
         Route::post('/voucher/validate', [KasirController::class, 'validateVoucher']);
         Route::get('/voucher/check/{kode}', [KasirController::class, 'checkVoucher']);
+        Route::get('/reward/check/{kode}', [KasirController::class, 'checkReward']);
+        Route::post('/reward/validate', [KasirController::class, 'validateReward']);
     });
 
 /*
@@ -133,6 +135,9 @@ Route::middleware('auth:sanctum')->group(function () {
     Route::get('/vouchers', [VoucherController::class, 'index']);
     Route::post('/vouchers/redeem', [VoucherController::class, 'redeem']);
     Route::post('/vouchers/{id}/use', [VoucherController::class, 'useVoucher']);
+
+    // Reward Tier
+    Route::get('/rewards/my', [VoucherController::class, 'myRewards']);
 
     // Leaderboard
     Route::get('/leaderboard', [LeaderboardController::class, 'index']);

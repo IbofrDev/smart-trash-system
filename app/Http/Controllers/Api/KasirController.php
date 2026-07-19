@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Models\VoucherMahasiswa;
+use App\Models\TierRewardClaim;
 use Illuminate\Http\Request;
 
 class KasirController extends Controller
@@ -120,6 +121,111 @@ class KasirController extends Controller
      * Cek info voucher tanpa menggunakannya (preview)
      * GET /api/kasir/voucher/check/{kode}
      */
+        /**
+     * Cek info reward tier tanpa menggunakannya
+     * GET /api/kasir/reward/check/{kode}
+     */
+    public function checkReward(string $kode)
+    {
+        $kode = strtoupper(trim($kode));
+
+        $reward = TierRewardClaim::with('mahasiswa')
+            ->where('kode_reward', $kode)
+            ->first();
+
+        if (!$reward) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode reward tidak ditemukan.',
+            ], 404);
+        }
+
+        return response()->json([
+            'success' => true,
+            'data' => [
+                'kode_reward'  => $reward->kode_reward,
+                'status'       => $reward->status,
+                'nama_hadiah'  => $reward->nama_hadiah,
+                'level_urutan' => $reward->level_urutan,
+                'created_at'   => $reward->created_at,
+                'used_at'      => $reward->used_at,
+                'mahasiswa' => [
+                    'name' => $reward->mahasiswa->name,
+                    'nim'  => $reward->mahasiswa->nim,
+                ],
+            ],
+        ]);
+    }
+
+    /**
+     * Validasi reward tier
+     * POST /api/kasir/reward/validate
+     */
+    public function validateReward(Request $request)
+    {
+        $request->validate([
+            'kode_reward' => 'required|string',
+        ], [
+            'kode_reward.required' => 'Kode reward wajib diisi.',
+        ]);
+
+        $kode = strtoupper(trim($request->kode_reward));
+
+        $reward = TierRewardClaim::with('mahasiswa')
+            ->where('kode_reward', $kode)
+            ->first();
+
+        if (!$reward) {
+            return response()->json([
+                'success' => false,
+                'message' => 'Kode reward tidak ditemukan.',
+            ], 404);
+        }
+
+        if ($reward->status === 'terpakai') {
+            return response()->json([
+                'success' => false,
+                'message' => 'Reward sudah pernah digunakan.',
+                'data' => [
+                    'kode_reward' => $reward->kode_reward,
+                    'status'      => $reward->status,
+                    'used_at'     => $reward->used_at,
+                    'mahasiswa' => [
+                        'name' => $reward->mahasiswa->name,
+                        'nim'  => $reward->mahasiswa->nim,
+                    ],
+                ],
+            ], 422);
+        }
+
+        if ($reward->status !== 'aktif') {
+            return response()->json([
+                'success' => false,
+                'message' => "Reward tidak valid. Status: {$reward->status}",
+            ], 422);
+        }
+
+        $reward->update([
+            'status'  => 'terpakai',
+            'used_at' => now(),
+        ]);
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Reward berhasil divalidasi!',
+            'data' => [
+                'kode_reward'  => $reward->kode_reward,
+                'status'       => 'terpakai',
+                'nama_hadiah'  => $reward->nama_hadiah,
+                'level_urutan' => $reward->level_urutan,
+                'used_at'      => $reward->used_at,
+                'mahasiswa' => [
+                    'name' => $reward->mahasiswa->name,
+                    'nim'  => $reward->mahasiswa->nim,
+                ],
+            ],
+        ]);
+    }
     public function checkVoucher(string $kode)
     {
         $kode = strtoupper(trim($kode));

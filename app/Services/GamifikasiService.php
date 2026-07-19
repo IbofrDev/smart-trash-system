@@ -9,13 +9,22 @@ use App\Models\Leaderboard;
 use App\Models\TransaksiSampah;
 use App\Models\Notifikasi;
 use App\Models\SettingPoin;
+use App\Models\TierRewardClaim;
 use Illuminate\Support\Facades\DB;
-
+use Illuminate\Support\Str;
 class GamifikasiService
 {
     /**
      * Check dan update level mahasiswa berdasarkan total poin
      */
+    // Mapping hadiah per tier (urutan level)
+    private array $tierRewards = [
+        2 => ['Air mineral 600mL', 'Teh gelas', 'Es teh', 'Permen', 'Jelly'],
+        3 => ['Roti', 'Biskuit', 'Wafer', 'Mie cup', 'Susu UHT'],
+        4 => ['Kopi botol', 'Minuman isotonik', 'Jus', 'Voucher makan Rp10.000', 'Paket snack'],
+        5 => ['Paket nasi + ayam', 'Paket nasi + telur'],
+    ];
+
     public function checkLevelUp(Mahasiswa $mahasiswa): ?array
     {
         $currentLevel = $mahasiswa->level;
@@ -35,22 +44,56 @@ class GamifikasiService
             $mahasiswa->increment('total_poin', $bonusPoin);
         }
 
-        Notifikasi::create([
-            'mahasiswa_id' => $mahasiswa->id,
-            'judul' => 'Level Up! 🎉',
-            'pesan' => "Selamat! Kamu naik ke level {$newLevel->nama_level}!"
-                . ($bonusPoin > 0 ? " Bonus +{$bonusPoin} poin!" : ""),
-            'tipe' => 'level_up',
-            'is_read' => 0,
-        ]);
+        // 🎁 Buat reward jika tier punya hadiah (urutan 2-5)
+        $rewardInfo = null;
+        if (isset($this->tierRewards[$newLevel->urutan])) {
+            $alreadyClaimed = TierRewardClaim::where('mahasiswa_id', $mahasiswa->id)
+                ->where('level_urutan', $newLevel->urutan)
+                ->exists();
+
+            if (!$alreadyClaimed) {
+                $hadiah = $this->tierRewards[$newLevel->urutan][0]; // default hadiah pertama di tier
+
+                do {
+                    $kode = 'RWD-' . strtoupper(Str::random(6));
+                } while (TierRewardClaim::where('kode_reward', $kode)->exists());
+
+                TierRewardClaim::create([
+                    'mahasiswa_id' => $mahasiswa->id,
+                    'level_urutan' => $newLevel->urutan,
+                    'nama_hadiah'  => $hadiah,
+                    'kode_reward'  => $kode,
+                    'status'       => 'aktif',
+                ]);
+
+                $rewardInfo = $hadiah;
+
+                Notifikasi::create([
+                    'mahasiswa_id' => $mahasiswa->id,
+                    'judul'        => '🎁 Hadiah Tier Tersedia!',
+                    'pesan'        => "Selamat naik ke {$newLevel->nama_level}! Kamu mendapat hadiah: {$hadiah}. Kode reward sudah tersedia di menu Reward.",
+                    'tipe'         => 'level_up',
+                    'is_read'      => 0,
+                ]);
+            }
+        } else {
+            Notifikasi::create([
+                'mahasiswa_id' => $mahasiswa->id,
+                'judul' => 'Level Up! 🎉',
+                'pesan' => "Selamat! Kamu naik ke level {$newLevel->nama_level}!"
+                    . ($bonusPoin > 0 ? " Bonus +{$bonusPoin} poin!" : ""),
+                'tipe' => 'level_up',
+                'is_read' => 0,
+            ]);
+        }
 
         return [
-            'old_level' => $currentLevel->nama_level,
-            'new_level' => $newLevel->nama_level,
-            'bonus_poin' => $bonusPoin,
+            'old_level'   => $currentLevel->nama_level,
+            'new_level'   => $newLevel->nama_level,
+            'bonus_poin'  => $bonusPoin,
+            'reward'      => $rewardInfo,
         ];
     }
-
     /**
      * Check dan unlock achievement
      */

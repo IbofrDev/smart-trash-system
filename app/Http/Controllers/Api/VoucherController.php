@@ -91,6 +91,23 @@ class VoucherController extends Controller
         ]);
     }
 
+        /**
+     * List reward tier milik mahasiswa
+     * GET /api/rewards/my
+     */
+    public function myRewards(Request $request)
+    {
+        $mahasiswa = $request->user();
+
+        $rewards = \App\Models\TierRewardClaim::where('mahasiswa_id', $mahasiswa->id)
+            ->orderByDesc('created_at')
+            ->get();
+
+        return response()->json([
+            'success' => true,
+            'data' => $rewards,
+        ]);
+    }
     /**
      * Endpoint lama - sekarang voucher hanya bisa divalidasi oleh kasir
      */
